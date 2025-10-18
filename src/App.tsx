@@ -1,0 +1,60 @@
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Landing from "./Pages/Landing";
+import AboutUs from "./Pages/AboutUs";
+import Internships from "./Pages/Internships";
+import InternshipDetails from "./Pages/InternshipDetails";
+import RegisterInternships from "./Pages/RegisterInternships";
+import RegisterDone from "./Pages/RegisterDone";
+import OurDeveloper from "./Pages/OurDeveloper";
+import LoginAdmin from "./Pages/LoginAdmin";
+import AddProduct from "./Pages/AddProduct";
+import InternshipList from "./Pages/InternshipList";
+import InternshipDetailsAdmin from "./Pages/InternshipDetailsAdmin";
+import EditKontenAdmin from "./Pages/EditKontenAdmin";
+import PartnershipsList from "./Pages/PartnershipsList";
+import AddPartnershipAdmin from "./Pages/AddPartnershipAdmin";
+import DetailsProduct from "./Pages/DetailsProduct";
+import PrivateRoute from "./Pages/utils/PrivateRoute";
+import EditPartnerships from "./Pages/EditPartnerships";
+import ListLowongan from "./Pages/ListLowongan";
+import ListProduct from "./Pages/ListProduct";
+import AddProductHumic from "./Pages/AddProductHumic";
+import EditProductHumic from "./Pages/EditProductHumic";
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/about-us" element={<AboutUs />} />
+        <Route path="/internships" element={<Internships />} />
+        <Route path="/details/:id" element={<InternshipDetails />} />
+        <Route path="/register-intern/:id" element={<RegisterInternships />} />
+        <Route path="/register-done" element={<RegisterDone />} />
+        <Route path="/our-developer" element={<OurDeveloper />} />
+        <Route path="/details-product/:id" element={<DetailsProduct />} />
+        <Route path="/humic-20242025-2" element={<LoginAdmin />} />
+        {/* Endpoint khusus admin login langsung di inject ajah */}
+
+        <Route element={<PrivateRoute />}>  
+          <Route path="/add-product-admin" element={<AddProduct />} />
+          <Route path="/internships-list" element={<InternshipList />} />
+          <Route path="/lowongan-list" element={<ListLowongan />} />
+          <Route path="/product-list" element={<ListProduct />} />
+          <Route path="/add-product-humic" element={<AddProductHumic />} />
+          <Route path="/edit-product-humic/:id" element={<EditProductHumic />} />
+          <Route path="/kontent-aktif/edit/:id" element={<EditKontenAdmin />} />
+          <Route
+            path="/internships-details-admin/:id"
+            element={<InternshipDetailsAdmin />}
+          />
+          <Route path="/partnership-admin" element={<PartnershipsList />} />
+          <Route path="/add-partnership" element={<AddPartnershipAdmin />} />
+          <Route path="/edit-partnership/:id" element={<EditPartnerships />} />
+        </Route>
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
