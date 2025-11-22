@@ -52,9 +52,15 @@ const Footer = () => {
             <p>Tentang</p>
             <p>Life at Humic</p>
           </div>
-          <div className="sec-2 flex flex-col gap-3">
+          <div className="sec-2 flex flex-col gap-3 hover:cursor-pointer">
             <p className="font-bold">Lainnya</p>
-            <p>Humic Website</p>
+            <p
+              onClick={() =>
+                window.open("https://humic.telkomuniversity.ac.id", "_blank")
+              }
+            >
+              Humic Website
+            </p>
             <p>Our Activity</p>
             <p>Life at Humic</p>
             <p

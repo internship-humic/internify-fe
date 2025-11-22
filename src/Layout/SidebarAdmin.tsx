@@ -11,7 +11,37 @@ const SidebarAdmin = () => {
         <div className="list-of-sidebar flex flex-col p-7 gap-4">
           <div
             className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${
-              location.pathname === "/produc-lList"
+              location.pathname === "/product-list"
+                ? "bg-[#D3DFEA] font-bold"
+                : "hover:bg-[#D3DFEA] "
+            }`}
+            onClick={() => navigate("/dashboard")}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              className="size-8 text-[#2C5282]"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 3 L5 8 A4 4 0 0 0 3 11 L3 15 A4 4 0 0 0 7 19 L17 19 A4 4 0 0 0 21 15 L21 11 A4 4 0 0 0 19 8 L12 3 Z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 13 v4"
+              />
+            </svg>
+
+            <h2 className="text-[#2C5282]">Dashboard</h2>
+          </div>
+          <div
+            className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${
+              location.pathname === "/product-list"
                 ? "bg-[#D3DFEA] font-bold"
                 : "hover:bg-[#D3DFEA] "
             }`}
@@ -107,6 +137,67 @@ const SidebarAdmin = () => {
             </svg>
 
             <h2 className="text-[#2C5282]">Pelamar</h2>
+          </div>
+          <div
+            className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${
+              location.pathname === "/feedbacks-list"
+                ? "bg-[#D3DFEA] font-bold"
+                : "hover:bg-[#D3DFEA]"
+            }`}
+            onClick={() => navigate("/feedback-list")}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-8 text-[#2C5282]"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 4h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-5l-3 3-3-3H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"
+              />
+              <circle cx="8" cy="10" r="1.2" fill="currentColor" />
+              <circle cx="12" cy="10" r="1.2" fill="currentColor" />
+              <circle cx="16" cy="10" r="1.2" fill="currentColor" />
+            </svg>
+
+            <h2 className="text-[#2C5282]">Feedback</h2>
+          </div>
+          <div
+            className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${
+              location.pathname === "/faq-list"
+                ? "bg-[#D3DFEA] font-bold"
+                : "hover:bg-[#D3DFEA]"
+            }`}
+            onClick={() => navigate("/faq-list")}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-8 text-[#2C5282]"
+            >
+              {/* Balon chat */}
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 4h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-5l-3 3-3-3H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"
+              />
+              {/* Tanda tanya */}
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9.75 9.5a2.25 2.25 0 1 1 4.5 0c0 1.25-.75 1.75-1.5 1.85s-1 1-1 1.75"
+              />
+              <circle cx="12" cy="16" r="0.6" fill="currentColor" />
+            </svg>
+
+            <h2 className="text-[#2C5282]">FAQ</h2>
           </div>
         </div>
       </div>

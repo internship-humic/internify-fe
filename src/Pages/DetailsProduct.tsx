@@ -23,8 +23,10 @@ const DetailsProduct = () => {
     fetch(`${import.meta.env.VITE_API_BASE_URL}/hasil-research-api/get/${id}`)
       .then((res) => res.json())
       .then((data) => {
-        if (data && data.data && data.data.length > 0) {
-          setProduct(data.data[0]);
+        if (data && data.data) {
+          setProduct(data.data);
+        } else {
+          setProduct(null);
         }
         setLoading(false);
       })
@@ -43,6 +45,8 @@ const DetailsProduct = () => {
       <div className="text-center mt-10 text-red-500">Data tidak ditemukan</div>
     );
   }
+  console.log(`${import.meta.env.VITE_API_BASE_URL}${product.image_path}`);
+
 
   return (
     <div className="body-details-of-product bg-[#F8F9FA] min-h-screen">

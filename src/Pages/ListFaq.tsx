@@ -3,40 +3,39 @@ import SidebarAdmin from "../Layout/SidebarAdmin";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-type Project = {
+type Faq = {
   id: number;
-  nama_project: string;
+  pertanyaan: string;
+  jawaban: string;
   created_at: string;
 };
 
-const ListProduct = () => {
+const ListFaq = () => {
   const navigate = useNavigate();
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [faq, setFaq] = useState<Faq[]>([]);
 
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchFaq = async () => {
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/hasil-research-api/get`
+          `${import.meta.env.VITE_API_BASE_URL}/faq-api/get`
         );
         const result = await response.json();
         if (response.ok) {
-          setProjects(result.data);
+          setFaq(result.data);
         } else {
-          console.error("Gagal mengambil data project:", result.message);
+          console.error("Gagal mengambil data FAQ:", result.message);
         }
       } catch (error) {
         console.error("Terjadi kesalahan:", error);
       }
     };
 
-    fetchProjects();
+    fetchFaq();
   }, []);
 
   const handleDelete = async (id: number) => {
-    const confirmDelete = confirm(
-      "Apakah Anda yakin ingin menghapus project ini?"
-    );
+    const confirmDelete = confirm("Apakah Anda yakin ingin menghapus FAQ ini?");
     if (!confirmDelete) return;
 
     const token = document.cookie
@@ -51,7 +50,7 @@ const ListProduct = () => {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/hasil-research-api/delete/${id}`,
+        `${import.meta.env.VITE_API_BASE_URL}/faq-api/delete/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -62,14 +61,14 @@ const ListProduct = () => {
 
       const result = await response.json();
       if (response.ok) {
-        alert("Project berhasil dihapus!");
-        setProjects((prev) => prev.filter((project) => project.id !== id));
+        alert("Feedback berhasil dihapus!");
+        setFaq((prev) => prev.filter((faq) => faq.id !== id));
       } else {
-        alert(result.message || "Gagal menghapus project.");
+        alert(result.message || "Gagal menghapus FAQ.");
       }
     } catch (error) {
       console.error("Gagal menghapus:", error);
-      alert("Terjadi kesalahan saat menghapus project.");
+      alert("Terjadi kesalahan saat menghapus FAQ.");
     }
   };
 
@@ -81,10 +80,12 @@ const ListProduct = () => {
         <SidebarAdmin />
         <div className="p-10 bg-white flex-col flex-wrap w-full">
           <div className="flex flex-row justify-between items-center mb-[50px]">
-            <h2 className="text-[24px] font-semibold">Daftar Project</h2>
+            <h2 className="text-[24px] font-semibold">
+              Frequently Asked Questions
+            </h2>
             <button
               className="px-[20px] py-[10px] rounded-xl bg-[#1F4A92] hover:bg-[#677c9f] cursor-pointer text-white font-semibold"
-              onClick={() => navigate("/add-product-humic")}
+              onClick={() => navigate("/add-faq")}
             >
               Tambah
             </button>
@@ -94,24 +95,29 @@ const ListProduct = () => {
             <table className="min-w-full">
               <thead>
                 <tr className="text-left">
-                  <th className="px-6 py-3">Nama Project</th>
+                  <th className="px-6 py-3">Questions</th>
+                  <th className="px-6 py-3">Answers</th>
                   <th className="px-6 py-3">Tanggal Unggah</th>
                   <th className="px-6 py-3">Aksi</th>
                 </tr>
               </thead>
               <tbody>
-                {projects.map((project) => (
-                  <tr key={project.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-3">{project.nama_project}</td>
+                {faq.map((faq) => (
+                  <tr key={faq.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-3">{faq.pertanyaan}</td>
                     <td className="px-6 py-3">
-                      {new Date(project.created_at).toLocaleDateString()}
+                      <div dangerouslySetInnerHTML={{ __html: faq.jawaban }} />
+                    </td>
+
+                    <td className="px-6 py-3">
+                      {new Date(faq.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-3 flex gap-2">
                       {/* Tombol View */}
                       <button
                         className="bg-[#3BE21D] cursor-pointer text-white p-2 rounded-xl"
                         onClick={() =>
-                          window.open(`/details-product/${project.id}`, "_blank")
+                          window.open(`/details-product/${faq.id}`, "_blank")
                         }
                       >
                         <svg
@@ -138,9 +144,7 @@ const ListProduct = () => {
                       {/* Tombol Edit */}
                       <button
                         className="bg-[#2CAEFF] text-white cursor-pointer p-2 rounded-xl"
-                        onClick={() =>
-                          navigate(`/edit-product-humic/${project.id}`)
-                        }
+                        onClick={() => navigate(`/edit-faq/${faq.id}`)}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -166,7 +170,7 @@ const ListProduct = () => {
                       {/* Tombol Hapus */}
                       <button
                         className="bg-[#E41E1E] text-white cursor-pointer p-2 rounded-xl"
-                        onClick={() => handleDelete(project.id)}
+                        onClick={() => handleDelete(faq.id)}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -189,8 +193,10 @@ const ListProduct = () => {
               </tbody>
             </table>
 
-            {projects.length === 0 && (
-              <p className="text-gray-500 mt-4 text-center">Belum ada data project.</p>
+            {faq.length === 0 && (
+              <p className="text-gray-500 mt-4 text-center">
+                Belum ada data FAQ.
+              </p>
             )}
           </div>
         </div>
@@ -199,4 +205,4 @@ const ListProduct = () => {
   );
 };
 
-export default ListProduct;
+export default ListFaq;

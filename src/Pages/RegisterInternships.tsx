@@ -17,7 +17,10 @@ const RegisterInternships = () => {
     nama_belakang: "",
     email: "",
     kontak: "",
+    universitas: "",
+    negara: "",
     jurusan: "",
+    batch: "",
     motivasi: "",
     relevant_skills: "",
     cv: null as File | null,
@@ -44,7 +47,10 @@ const RegisterInternships = () => {
     }
     data.append("email", formData.email);
     data.append("kontak", formData.kontak);
+    data.append("universitas", formData.universitas);
+    data.append("negara", formData.negara);
     data.append("jurusan", formData.jurusan);
+    data.append("batch", formData.batch);
     data.append("motivasi", formData.motivasi);
     data.append("relevant_skills", formData.relevant_skills);
     data.append("g-recaptcha-response", recaptchaToken);
@@ -131,12 +137,13 @@ const RegisterInternships = () => {
             <input
               type="text"
               className="w-full border-2 border-[#A9B5C0] rounded-md p-2 mt-3 text-black"
-              placeholder="John"
+              placeholder="Muhammad Budi"
               value={formData.nama_depan}
               onChange={(e) =>
                 setFormData({ ...formData, nama_depan: e.target.value })
               }
             />
+            <p className="text-sm text-[#C3423F] mt-1">*required</p>
           </div>
 
           <div>
@@ -144,13 +151,13 @@ const RegisterInternships = () => {
             <input
               type="text"
               className="w-full border-2 border-[#A9B5C0] rounded-md p-2 mt-3 text-black"
-              placeholder="Doe"
+              placeholder="Pekerti"
               value={formData.nama_belakang}
               onChange={(e) =>
                 setFormData({ ...formData, nama_belakang: e.target.value })
               }
             />
-            <p className="text-sm text-[#C3423F] mt-1">*not required</p>
+            <p className="text-sm text-[#C3423F] mt-1">*required</p>
           </div>
 
           <div>
@@ -176,6 +183,32 @@ const RegisterInternships = () => {
               value={formData.kontak}
               onChange={(e) =>
                 setFormData({ ...formData, kontak: e.target.value })
+              }
+            />
+          </div>
+          
+          <div>
+            <label className="block mb-1 font-bold">Universitas</label>
+            <input
+              type="text"
+              className="w-full border-2 border-[#A9B5C0] rounded-md p-2 mt-3 text-black"
+              placeholder="Telkom University Bandung"
+              value={formData.universitas}
+              onChange={(e) =>
+                setFormData({ ...formData, universitas: e.target.value })
+              }
+            />
+          </div>
+
+          <div>
+            <label className="block mb-1 font-bold">Negara</label>
+            <input
+              type="text"
+              className="w-full border-2 border-[#A9B5C0] rounded-md p-2 mt-3 text-black"
+              placeholder="Indonesia"
+              value={formData.negara}
+              onChange={(e) =>
+                setFormData({ ...formData, negara: e.target.value })
               }
             />
           </div>
@@ -205,6 +238,19 @@ const RegisterInternships = () => {
               }
             />
             <p className="text-sm text-[#C3423F] mt-1">*separate with commas</p>
+          </div>
+
+          <div>
+            <label className="block mb-1 font-bold">Batch</label>
+            <input
+              type="text"
+              className="w-full border-2 border-[#A9B5C0] rounded-md p-2 mt-3 text-black"
+              placeholder="1"
+              value={formData.batch}
+              onChange={(e) =>
+                setFormData({ ...formData, batch: e.target.value })
+              }
+            />
           </div>
 
           <div>

@@ -57,7 +57,7 @@ const Internships = () => {
             title: item.posisi,
             location: item.lokasi,
             category: item.kelompok_peminatan,
-            status: item.status_lowongan === "dibuka" ? "Opened" : "Closed",
+            status: item.status_lowongan === "dibuka" ? "Open" : "Closed",
             statusColor:
               item.status_lowongan === "dibuka" ? "#4EAD00" : "#C3423F",
             isPaid: item.paid === "paid",
@@ -171,12 +171,12 @@ const Internships = () => {
             <div
               key={index}
               className={`card-1 flex flex-col items-start p-5 lg:p-7 rounded-xl shadow-2xl ${
-                intern.status === "Opened"
+                intern.status === "Open"
                   ? "bg-white cursor-pointer hover:shadow-xl transition"
                   : "bg-gray-200 cursor-not-allowed opacity-60"
               }`}
               onClick={() => {
-                if (intern.status === "Opened") {
+                if (intern.status === "Open") {
                   navigate(`/details/${intern.id}`);
                 }
               }}
@@ -189,7 +189,7 @@ const Internships = () => {
                   className="p-2 border-2 text-[12px] lg:text-[14px] font-bold rounded-4xl"
                   style={{
                     backgroundColor:
-                      intern.status === "Opened" ? "#F6FFF4" : "#FAF0EF",
+                      intern.status === "Open" ? "#F6FFF4" : "#FAF0EF",
                     color: intern.statusColor,
                     borderColor: intern.statusColor,
                   }}

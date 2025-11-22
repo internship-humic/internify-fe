@@ -20,6 +20,11 @@ import ListLowongan from "./Pages/ListLowongan";
 import ListProduct from "./Pages/ListProduct";
 import AddProductHumic from "./Pages/AddProductHumic";
 import EditProductHumic from "./Pages/EditProductHumic";
+import ListFeedback from "./Pages/ListFeedback";
+import AddFeedback from "./Pages/AddFeedback";
+import ListFaq from "./Pages/ListFaq";
+import AddFaq from "./Pages/AddFAQ";
+import Dashboard from "./Pages/Dashboard";
 
 function App() {
   return (
@@ -51,6 +56,11 @@ function App() {
           <Route path="/partnership-admin" element={<PartnershipsList />} />
           <Route path="/add-partnership" element={<AddPartnershipAdmin />} />
           <Route path="/edit-partnership/:id" element={<EditPartnerships />} />
+          <Route path="/feedback-list" element={<ListFeedback />} />
+          <Route path="/add-feedback" element={<AddFeedback />} />
+          <Route path="/faq-list" element={<ListFaq />} />
+          <Route path="/add-faq" element={<AddFaq />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Route>
       </Routes>
     </Router>

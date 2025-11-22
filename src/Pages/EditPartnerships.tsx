@@ -144,9 +144,9 @@ const EditPartnerships = () => {
       <div className="flex flex-row">
         <SidebarAdmin />
         <div className="p-10 bg-white flex-col flex-wrap w-full">
-          <div className="header-button flex justify-between items-center mb-[45px]">
+          <div className="flex justify-between items-center mb-[45px]">
             <h2 className="text-[24px] font-semibold">Edit Partnership</h2>
-            <div className="flex gap-4">
+            <div className="flex gap-4 pr-10">
               <button
                 type="button"
                 onClick={handleSubmit}
@@ -165,7 +165,7 @@ const EditPartnerships = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-8 w-full">
-            <div className="flex flex-row gap-16">
+            <div className="flex flex-row gap-10">
               <div className="flex flex-col items-start gap-[15px]">
                 <h2 className="text-[16px] font-bold">Nama</h2>
                 <input
