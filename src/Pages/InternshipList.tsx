@@ -32,7 +32,16 @@ const InternshipList = () => {
           },
         })
         .then((res) => {
-          setApplications(res.data.data || []);
+          const raw = Array.isArray(res.data.data) ? res.data.data : [];
+
+          const mapped: Application[] = raw.map((item: any) => ({
+            id: item.id,
+            nama_depan: item.mahasiswa?.nama_depan ?? "",
+            posisi: item.lowongan_magang?.posisi ?? "",
+            status: item.status ?? "diproses",
+          }));
+
+          setApplications(mapped);
         })
         .catch((err) => {
           console.error("Gagal mengambil data lamaran:", err);
@@ -42,7 +51,6 @@ const InternshipList = () => {
     fetchApplications();
 
     const interval = setInterval(fetchApplications, 10000);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -62,11 +70,13 @@ const InternshipList = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-  const filteredApplications = applications.filter(
-    (app) =>
-      app.nama_depan.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      app.posisi.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredApplications = applications.filter((app) => {
+    const term = searchTerm.toLowerCase();
+    const nama = (app.nama_depan ?? "").toLowerCase();
+    const posisi = (app.posisi ?? "").toLowerCase();
+
+    return nama.includes(term) || posisi.includes(term);
+  });
 
   const currentItems = filteredApplications.slice(
     indexOfFirstItem,
@@ -213,17 +223,17 @@ const InternshipList = () => {
                     <td className="px-6 py-3">
                       <span
                         className={`px-3 py-1 rounded-full font-semibold text-sm ${getStatusStyle(
-                          app.status
+                          app.status ?? "diproses"
                         )}`}
                       >
-                        {app.status.charAt(0).toUpperCase() +
-                          app.status.slice(1)}
+                        {(app.status ?? "diproses").charAt(0).toUpperCase() +
+                          (app.status ?? "diproses").slice(1)}
                       </span>
                     </td>
                     <td className="px-6 py-3">
                       <button
                         onClick={() =>
-                          navigate(`/InternshipsDetailsAdmin/${app.id}`)
+                          navigate(`/internships-details-admin/${app.id}`)
                         }
                         className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white px-4 py-2 rounded-lg"
                       >

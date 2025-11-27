@@ -4,16 +4,35 @@ import NavbarAdmin from "../Layout/NavbarAdmin";
 import SidebarAdmin from "../Layout/SidebarAdmin";
 import axios from "axios";
 
+type Applicant = {
+  id: number;
+  nama_depan: string;
+  nama_belakang: string;
+  email: string;
+  kontak: string;
+  jurusan: string;
+  motivasi: string;
+  relevant_skills: string;
+  cv_path: string;
+  portofolio_path: string;
+  posisi: string;
+  kelompok_peminatan?: string;
+  status: string;
+};
+
 const InternshipDetailsAdmin = () => {
   const { id } = useParams(); // id lamaran magang
-  const [applicant, setApplicant] = useState<any>(null);
-
-  const token = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("token="))
-    ?.split("=")[1];
+  const [applicant, setApplicant] = useState<Applicant | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!id) return;
+
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("token="))
+      ?.split("=")[1];
+
     axios
       .get(
         `${import.meta.env.VITE_API_BASE_URL}/lamaran-magang-api/get/${id}`,
@@ -24,14 +43,74 @@ const InternshipDetailsAdmin = () => {
         }
       )
       .then((res) => {
-        setApplicant(res.data.data[0]);
+        console.log("Detail lamaran:", res.data);
+
+        const raw =
+          Array.isArray(res.data?.data) && res.data.data.length > 0
+            ? res.data.data[0]
+            : Array.isArray(res.data)
+            ? res.data[0]
+            : res.data?.data ?? res.data;
+
+        if (!raw) {
+          setError("Data lamaran tidak ditemukan.");
+          return;
+        }
+
+        console.log("Raw detail:", raw); // cek struktur asli
+
+        const mapped: Applicant = {
+          id: raw.id,
+
+          // dari relasi mahasiswa
+          nama_depan: raw.mahasiswa?.nama_depan ?? "",
+          nama_belakang: raw.mahasiswa?.nama_belakang ?? "",
+          email: raw.mahasiswa?.email ?? raw.email ?? "",
+          kontak: raw.mahasiswa?.kontak ?? raw.kontak ?? "",
+          jurusan: raw.mahasiswa?.jurusan ?? raw.jurusan ?? "",
+
+          // dari relasi lowongan_magang
+          posisi: raw.lowongan_magang?.posisi ?? raw.posisi ?? "",
+          kelompok_peminatan:
+            raw.lowongan_magang?.kelompok_peminatan ??
+            raw.kelompok_peminatan ??
+            "",
+
+          // 🔥 ini dia: ambil dari mahasiswa
+          motivasi: raw.mahasiswa?.motivasi ?? raw.motivasi ?? "",
+
+          relevant_skills:
+            raw.mahasiswa?.relevant_skills ??
+            raw.relevant_skills ??
+            raw.relevant_skill ??
+            "",
+
+          // sekalian amankan CV & portofolio kalau memang ikut di object mahasiswa
+          cv_path: raw.cv_path ?? raw.mahasiswa?.cv_path ?? "",
+          portofolio_path:
+            raw.portofolio_path ?? raw.mahasiswa?.portofolio_path ?? "",
+
+          status: raw.status ?? "diproses",
+        };
+
+        setApplicant(mapped);
+        setError(null);
       })
+
       .catch((err) => {
         console.error("Gagal fetch detail lamaran", err);
+        setError("Gagal mengambil detail lamaran.");
       });
   }, [id]);
 
+  const token = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("token="))
+    ?.split("=")[1];
+
   const handleStatusUpdate = (status: "diterima" | "ditolak") => {
+    if (!id) return;
+
     axios
       .patch(
         `${import.meta.env.VITE_API_BASE_URL}/lamaran-magang-api/update/${id}`,
@@ -44,12 +123,16 @@ const InternshipDetailsAdmin = () => {
       )
       .then(() => {
         alert(`Status berhasil diubah menjadi ${status}`);
-        setApplicant((prev: any) => ({ ...prev, status }));
+        setApplicant((prev) => (prev ? { ...prev, status } : prev));
       })
       .catch((err) => {
         console.error("Gagal update status", err);
       });
   };
+
+  if (error) {
+    return <p className="p-10 text-red-500">{error}</p>;
+  }
 
   if (!applicant) return <p className="p-10">Loading...</p>;
 
@@ -117,9 +200,10 @@ const InternshipDetailsAdmin = () => {
               </p>
               <div className="flex gap-2 items-center">
                 <h2 className="font-semibold">Skill:</h2>
-                {applicant.relevant_skills
+                {(applicant.relevant_skills || "")
                   .split(",")
-                  .map((skill: string, idx: number) => (
+                  .filter((s) => s.trim() !== "")
+                  .map((skill, idx) => (
                     <span
                       key={idx}
                       className="text-[#9F9F9F] font-semibold px-3 py-1 border border-[#9F9F9F] rounded-3xl"

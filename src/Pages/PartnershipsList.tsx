@@ -183,6 +183,11 @@ const PartnershipsList = () => {
                 })}
               </tbody>
             </table>
+
+            {partnerships.length === 0 && (
+              <p className="text-gray-500 mt-4 text-center">Belum ada data partnerships.</p>
+            )}
+
           </div>
         </div>
       </div>
