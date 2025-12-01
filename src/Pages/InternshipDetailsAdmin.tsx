@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import NavbarAdmin from "../Layout/NavbarAdmin";
 import SidebarAdmin from "../Layout/SidebarAdmin";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 type Applicant = {
   id: number;
@@ -24,6 +25,7 @@ const InternshipDetailsAdmin = () => {
   const { id } = useParams(); // id lamaran magang
   const [applicant, setApplicant] = useState<Applicant | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!id) return;
@@ -43,8 +45,6 @@ const InternshipDetailsAdmin = () => {
         }
       )
       .then((res) => {
-        console.log("Detail lamaran:", res.data);
-
         const raw =
           Array.isArray(res.data?.data) && res.data.data.length > 0
             ? res.data.data[0]
@@ -57,26 +57,21 @@ const InternshipDetailsAdmin = () => {
           return;
         }
 
-        console.log("Raw detail:", raw); // cek struktur asli
-
         const mapped: Applicant = {
           id: raw.id,
 
-          // dari relasi mahasiswa
           nama_depan: raw.mahasiswa?.nama_depan ?? "",
           nama_belakang: raw.mahasiswa?.nama_belakang ?? "",
           email: raw.mahasiswa?.email ?? raw.email ?? "",
           kontak: raw.mahasiswa?.kontak ?? raw.kontak ?? "",
           jurusan: raw.mahasiswa?.jurusan ?? raw.jurusan ?? "",
 
-          // dari relasi lowongan_magang
           posisi: raw.lowongan_magang?.posisi ?? raw.posisi ?? "",
           kelompok_peminatan:
             raw.lowongan_magang?.kelompok_peminatan ??
             raw.kelompok_peminatan ??
             "",
 
-          // 🔥 ini dia: ambil dari mahasiswa
           motivasi: raw.mahasiswa?.motivasi ?? raw.motivasi ?? "",
 
           relevant_skills:
@@ -85,7 +80,6 @@ const InternshipDetailsAdmin = () => {
             raw.relevant_skill ??
             "",
 
-          // sekalian amankan CV & portofolio kalau memang ikut di object mahasiswa
           cv_path: raw.cv_path ?? raw.mahasiswa?.cv_path ?? "",
           portofolio_path:
             raw.portofolio_path ?? raw.mahasiswa?.portofolio_path ?? "",
@@ -124,6 +118,7 @@ const InternshipDetailsAdmin = () => {
       .then(() => {
         alert(`Status berhasil diubah menjadi ${status}`);
         setApplicant((prev) => (prev ? { ...prev, status } : prev));
+        navigate("/internships-list")
       })
       .catch((err) => {
         console.error("Gagal update status", err);
@@ -190,6 +185,14 @@ const InternshipDetailsAdmin = () => {
           {/* Detail */}
           <div className="flex gap-[200px] mb-12">
             <div className="flex flex-col gap-4">
+              <p>
+                <span className="font-semibold">Negara:</span>{" "}
+                {applicant.jurusan}
+              </p>
+              <p>
+                <span className="font-semibold">Universitas:</span>{" "}
+                {applicant.jurusan}
+              </p>
               <p>
                 <span className="font-semibold">Jurusan:</span>{" "}
                 {applicant.jurusan}
