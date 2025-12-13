@@ -25,6 +25,9 @@ import AddFeedback from "./Pages/AddFeedback";
 import ListFaq from "./Pages/ListFaq";
 import AddFaq from "./Pages/AddFAQ";
 import Dashboard from "./Pages/Dashboard";
+import EditFaq from "./Pages/EditFAQ";
+import EditFeedback from "./Pages/EditFeedback";
+import EditLowongan from "./Pages/EditLowongan";
 
 function App() {
   return (
@@ -61,6 +64,9 @@ function App() {
           <Route path="/faq-list" element={<ListFaq />} />
           <Route path="/add-faq" element={<AddFaq />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/edit-faq/:id" element={<EditFaq/>}></Route>
+          <Route path="/edit-feedback/:id" element={<EditFeedback/>}></Route>
+          <Route path="/edit-lowongan/:id" element={<EditLowongan/>}></Route>
         </Route>
       </Routes>
     </Router>

@@ -144,7 +144,7 @@ const ListFeedback = () => {
                       <button
                         className="bg-[#2CAEFF] text-white cursor-pointer p-2 rounded-xl"
                         onClick={() =>
-                          navigate(`/edit-product-humic/${feedback.id}`)
+                          navigate(`/edit-feedback/${feedback.id}`)
                         }
                       >
                         <svg
