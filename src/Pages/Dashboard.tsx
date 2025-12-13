@@ -171,7 +171,7 @@ const Dashboard: React.FC = () => {
             api.get<CountryStatsResponse>(
               "/lamaran-magang-api/statistics/country"
             ),
-            api.get<BatchResponse>("/api/batch"),
+            api.get<BatchResponse>("/batch-api"),
           ]
         );
 
