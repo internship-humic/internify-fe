@@ -117,7 +117,7 @@ const ListFaq = () => {
                       <button
                         className="bg-[#3BE21D] cursor-pointer text-white p-2 rounded-xl"
                         onClick={() =>
-                          window.open(`/details-product/${faq.id}`, "_blank")
+                          window.open(`/?faq=${faq.id}#faq`, "_blank")
                         }
                       >
                         <svg

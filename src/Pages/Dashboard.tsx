@@ -1,6 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import { Search, ChevronDown, Users, UserCheck, UserX, Clock } from "lucide-react";
+import {
+  Search,
+  ChevronDown,
+  Users,
+  UserCheck,
+  UserX,
+  Clock,
+} from "lucide-react";
+import axios, { AxiosError } from "axios";
 import NavbarAdmin from "../Layout/NavbarAdmin";
 import SidebarAdmin from "../Layout/SidebarAdmin";
 
@@ -17,104 +25,262 @@ type StatCard = {
   iconColor: string;
 };
 
-type DashboardApiResponse = {
-  totalPendaftar: number;
-  totalDiterima: number;
-  totalDitolak: number;
-  totalDiproses: number;
-  universitas: ChartDataItem[];
-  negara: ChartDataItem[];
+// ====== BE RESPONSE TYPES ======
+type DashboardStatsResponse = {
+  status: boolean;
+  data: {
+    total_pendaftar: number;
+    total_diterima: number;
+    total_ditolak: number;
+    sedang_diproses: number;
+    acceptance_rate: string;
+    rejection_rate: string;
+    pending_rate: string;
+  };
+  message: string;
+  code?: number;
+};
+
+type PositionStatsResponse = {
+  status: boolean;
+  data: Array<{
+    posisi: string;
+    total: number;
+    diterima: number;
+    ditolak: number;
+  }>;
+  message?: string;
+  code?: number;
+};
+
+type CountryStatsResponse = {
+  status: boolean;
+  data: Array<{
+    negara: string;
+    total: number;
+    diterima: number;
+    ditolak: number;
+    diproses: number;
+  }>;
+  message?: string;
+  code?: number;
+};
+
+type BatchResponse = {
+  success: boolean;
+  message: string;
+  data: Array<{
+    id: number;
+    batch_number: number;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+  }>;
 };
 
 const UNIVERSITAS_COLORS = ["#001a66", "#334d99", "#6699cc", "#99b3ff"];
 const PENERIMAAN_COLORS = ["#0088ff", "#00cc00", "#ff3333"];
 const NEGARA_COLORS = ["#cc3333", "#dd6666", "#ee9999", "#f0b3b3", "#f5cccc"];
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL?.trim() ||
+  "https://internify-ruddy.vercel.app";
+
 const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+
   const [statCards, setStatCards] = useState<StatCard[]>([]);
   const [universitasData, setUniversitasData] = useState<ChartDataItem[]>([]);
   const [penerimaanData, setPenerimaanData] = useState<ChartDataItem[]>([]);
   const [negaraData, setNegaraData] = useState<ChartDataItem[]>([]);
 
+  const [, setBatches] = useState<BatchResponse["data"]>([]);
+
+  const getTokenFromCookie = () => {
+    return document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("token="))
+      ?.split("=")[1];
+  };
+
+  const api = useMemo(() => {
+    const instance = axios.create({
+      baseURL: API_BASE_URL,
+      headers: {
+        Accept: "application/json",
+      },
+      timeout: 15000,
+    });
+
+    instance.interceptors.request.use((config) => {
+      const token = getTokenFromCookie();
+      if (token) {
+        config.headers = config.headers ?? {};
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    });
+
+    return instance;
+  }, []);
+
+  const getAxiosErrorMessage = (err: unknown) => {
+    if (!axios.isAxiosError(err)) {
+      return "Terjadi kesalahan saat mengambil data dashboard.";
+    }
+
+    const axErr = err as AxiosError<any>;
+    const status = axErr.response?.status;
+
+    const msgFromBe =
+      axErr.response?.data?.message ||
+      axErr.response?.data?.error ||
+      axErr.message;
+
+    if (status === 401) {
+      return msgFromBe || "Unauthorized (401). Silakan login ulang.";
+    }
+
+    return msgFromBe || `Request gagal (status ${status ?? "unknown"}).`;
+  };
+
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/lowongan-magang-api/get`
-        );
-        const result = await response.json();
+        setLoading(true);
+        setErrorMessage("");
 
-        if (!response.ok) {
-          console.error("Gagal mengambil data dashboard:", result.message);
-          setErrorMessage(result.message || "Gagal mengambil data dashboard.");
+        const token = getTokenFromCookie();
+        if (!token) {
+          setErrorMessage(
+            "Token tidak ditemukan di cookie. Silakan login ulang."
+          );
           setLoading(false);
           return;
         }
 
-        const data: DashboardApiResponse = result.data;
+        const [statsRes, positionRes, countryRes, batchRes] = await Promise.all(
+          [
+            api.get<DashboardStatsResponse>(
+              "/lamaran-magang-api/statistics/dashboard"
+            ),
+            api.get<PositionStatsResponse>(
+              "/lamaran-magang-api/statistics/position"
+            ),
+            api.get<CountryStatsResponse>(
+              "/lamaran-magang-api/statistics/country"
+            ),
+            api.get<BatchResponse>("/api/batch"),
+          ]
+        );
+
+        const statsJson = statsRes.data;
+        const positionJson = positionRes.data;
+        const countryJson = countryRes.data;
+        const batchJson = batchRes.data;
+
+        if (!statsJson?.status) {
+          setErrorMessage(
+            statsJson?.message ||
+              "Gagal mengambil data dashboard (statistics/dashboard)."
+          );
+          setLoading(false);
+          return;
+        }
+
+        if (!positionJson?.status) {
+          setErrorMessage(
+            positionJson?.message ||
+              "Gagal mengambil data dashboard (statistics/position)."
+          );
+          setLoading(false);
+          return;
+        }
+
+        if (!countryJson?.status) {
+          setErrorMessage(
+            countryJson?.message ||
+              "Gagal mengambil data dashboard (statistics/country)."
+          );
+          setLoading(false);
+          return;
+        }
+
+        if (batchJson?.success) {
+          setBatches(batchJson.data || []);
+        } else {
+          console.warn("Fetch batch gagal:", batchJson?.message);
+        }
+
+        const stats = statsJson.data;
+        const positions = positionJson.data || [];
+        const countries = countryJson.data || [];
 
         const statCardsFromApi: StatCard[] = [
           {
             title: "Total Pendaftar",
-            value: data.totalPendaftar,
-            subtitle: "+200 dari batch sebelumnya", // sesuaikan bila BE sudah support
+            value: stats.total_pendaftar,
+            subtitle: "+200 dari batch sebelumnya",
             icon: <Users size={24} />,
             iconColor: "#0088ff",
           },
           {
             title: "Total Diterima",
-            value: data.totalDiterima,
-            subtitle: `${(
-              (data.totalDiterima / (data.totalPendaftar || 1)) *
-              100
-            ).toFixed(1)}% acceptance rate`,
+            value: stats.total_diterima,
+            subtitle: `${stats.acceptance_rate} acceptance rate`,
             icon: <UserCheck size={24} />,
             iconColor: "#00cc00",
           },
           {
             title: "Total Ditolak",
-            value: data.totalDitolak,
-            subtitle: `${(
-              (data.totalDitolak / (data.totalPendaftar || 1)) *
-              100
-            ).toFixed(1)}% rejection rate`,
+            value: stats.total_ditolak,
+            subtitle: `${stats.rejection_rate} rejection rate`,
             icon: <UserX size={24} />,
             iconColor: "#ff3333",
           },
           {
             title: "Sedang Diproses",
-            value: data.totalDiproses,
-            subtitle: `${(
-              (data.totalDiproses / (data.totalPendaftar || 1)) *
-              100
-            ).toFixed(1)}% pending review`,
+            value: stats.sedang_diproses,
+            subtitle: `${stats.pending_rate} pending review`,
             icon: <Clock size={24} />,
             iconColor: "#ffaa00",
           },
         ];
 
         const penerimaanFromApi: ChartDataItem[] = [
-          { name: "Total Pendaftar", value: data.totalPendaftar },
-          { name: "Total Diterima", value: data.totalDiterima },
-          { name: "Total Ditolak", value: data.totalDitolak },
+          { name: "Total Pendaftar", value: stats.total_pendaftar },
+          { name: "Total Diterima", value: stats.total_diterima },
+          { name: "Total Ditolak", value: stats.total_ditolak },
         ];
 
+        const universitasFromApi: ChartDataItem[] = positions.map((p) => ({
+          name: p.posisi,
+          value: p.total,
+        }));
+
+        const negaraFromApi: ChartDataItem[] = countries.map((c) => ({
+          name: c.negara,
+          value: c.total,
+        }));
+
         setStatCards(statCardsFromApi);
-        setUniversitasData(data.universitas || []);
         setPenerimaanData(penerimaanFromApi);
-        setNegaraData(data.negara || []);
+        setUniversitasData(universitasFromApi);
+        setNegaraData(negaraFromApi);
+
         setLoading(false);
-      } catch (error) {
-        console.error("Terjadi kesalahan saat mengambil data dashboard:", error);
-        setErrorMessage("Terjadi kesalahan saat mengambil data dashboard.");
+      } catch (err) {
+        console.error("Terjadi kesalahan saat mengambil data dashboard:", err);
+        setErrorMessage(getAxiosErrorMessage(err));
         setLoading(false);
       }
     };
 
+    console.log("AXIOS BASE URL:", API_BASE_URL);
+
     fetchDashboardData();
-  }, []);
+  }, [api]);
 
   return (
     <div className="min-h-screen w-full overflow-hidden">
@@ -149,7 +315,9 @@ const Dashboard: React.FC = () => {
 
           {/* Loading / Error State */}
           {loading && (
-            <p className="text-center text-gray-600">Memuat data dashboard...</p>
+            <p className="text-center text-gray-600">
+              Memuat data dashboard...
+            </p>
           )}
 
           {!loading && errorMessage && (
@@ -329,9 +497,7 @@ const Dashboard: React.FC = () => {
                               <Cell
                                 key={`negara-cell-${index}`}
                                 fill={
-                                  NEGARA_COLORS[
-                                    index % NEGARA_COLORS.length
-                                  ]
+                                  NEGARA_COLORS[index % NEGARA_COLORS.length]
                                 }
                               />
                             ))}

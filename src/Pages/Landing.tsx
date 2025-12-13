@@ -216,7 +216,9 @@ const Landing = () => {
       </div>
 
       {/* Hero 5 Section FaQ */}
-      <Faq />
+      <div id="faq">
+        <Faq />
+      </div>
 
       {/* Footer */}
       <Footer />

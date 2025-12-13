@@ -26,8 +26,6 @@ const NavbarAdmin = () => {
         );
 
         const result = await response.json();
-        console.log("Response status:", response.status);
-        console.log("Response body:", result);
 
         if (response.ok && result.data?.nama_depan) {
           setNamaDepan(result.data.nama_depan);

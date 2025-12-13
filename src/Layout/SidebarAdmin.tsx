@@ -11,7 +11,7 @@ const SidebarAdmin = () => {
         <div className="list-of-sidebar flex flex-col p-7 gap-4">
           <div
             className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${
-              location.pathname === "/product-list"
+              location.pathname === "/dashboard"
                 ? "bg-[#D3DFEA] font-bold"
                 : "hover:bg-[#D3DFEA] "
             }`}
