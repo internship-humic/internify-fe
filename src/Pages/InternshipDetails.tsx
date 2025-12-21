@@ -28,6 +28,10 @@ const InternshipDetails = () => {
   if (!intern)
     return <div className="p-10 text-center">Internship not found.</div>;
 
+  const isExpired =
+    new Date(intern.durasi_akhir) < new Date() ||
+    intern.status_lowongan !== "dibuka";
+
   return (
     <div className="bg-[#F8F9FA] min-h-screen flex flex-col">
       {/* Navbar Section */}
@@ -115,10 +119,21 @@ const InternshipDetails = () => {
           {/* Apply Button */}
           <div className="self-start md:self-center">
             <button
-              className="bg-[#C3423F] hover:bg-[#b36462] cursor-pointer text-white text-sm md:text-[14px] font-semibold px-6 py-2 md:px-9 md:py-3 rounded-2xl shadow-xl"
-              onClick={() => navigate(`/register-intern/${intern.id}`)}
+              disabled={isExpired}
+              onClick={() => {
+                if (!isExpired) {
+                  navigate(`/register-intern/${intern.id}`);
+                }
+              }}
+              className={`text-white text-sm md:text-[14px] font-semibold px-6 py-2 md:px-9 md:py-3 rounded-2xl shadow-xl transition-all
+              ${
+                isExpired
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-[#C3423F] hover:bg-[#b36462] cursor-pointer"
+              }
+              `}
             >
-              Apply
+              {isExpired ? "Pendaftaran Ditutup" : "Apply"}
             </button>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SidebarAdmin from "../Layout/SidebarAdmin";
 import NavbarAdmin from "../Layout/NavbarAdmin";
@@ -11,10 +11,17 @@ type Application = {
   status: string;
 };
 
+type StatusFilter = "all" | "diterima" | "ditolak";
+
 const InternshipList = () => {
   const [applications, setApplications] = useState<Application[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+
+  //FILTER STATE
+  const [selectedPosisi, setSelectedPosisi] = useState<string>("all");
+  const [selectedStatus, setSelectedStatus] = useState<StatusFilter>("all");
+
   const itemsPerPage = 10;
   const navigate = useNavigate();
 
@@ -66,18 +73,45 @@ const InternshipList = () => {
     }
   };
 
+  // OPTIONS POSISI
+  const posisiOptions = useMemo(() => {
+    const set = new Set<string>();
+    applications.forEach((a) => {
+      const p = (a.posisi ?? "").trim();
+      if (p) set.add(p);
+    });
+    return ["all", ...Array.from(set).sort((a, b) => a.localeCompare(b))];
+  }, [applications]);
+
+  // FILTER + SEARCH
+  const filteredApplications = useMemo(() => {
+    const term = searchTerm.toLowerCase();
+
+    return applications.filter((app) => {
+      const nama = (app.nama_depan ?? "").toLowerCase();
+      const posisi = (app.posisi ?? "").toLowerCase();
+      const status = (app.status ?? "diproses").toLowerCase();
+
+      const matchSearch = nama.includes(term) || posisi.includes(term);
+
+      const matchPosisi =
+        selectedPosisi === "all" ? true : app.posisi === selectedPosisi;
+
+      const matchStatus =
+        selectedStatus === "all" ? true : status === selectedStatus;
+
+      return matchSearch && matchPosisi && matchStatus;
+    });
+  }, [applications, searchTerm, selectedPosisi, selectedStatus]);
+
+  // Reset page kalau filter/search berubah biar ga nyangkut di page besar
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedPosisi, selectedStatus]);
+
   // Pagination Logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-
-  const filteredApplications = applications.filter((app) => {
-    const term = searchTerm.toLowerCase();
-    const nama = (app.nama_depan ?? "").toLowerCase();
-    const posisi = (app.posisi ?? "").toLowerCase();
-
-    return nama.includes(term) || posisi.includes(term);
-  });
-
   const currentItems = filteredApplications.slice(
     indexOfFirstItem,
     indexOfLastItem
@@ -124,15 +158,11 @@ const InternshipList = () => {
 
   const handleUpdateBatch = async () => {
     const exportSuccess = await handleExportExcel();
-
-    if (!exportSuccess) {
-      return;
-    }
+    if (!exportSuccess) return;
 
     const confirmDelete = window.confirm(
       "Apakah Anda yakin ingin menghapus seluruh data pelamar setelah melakukan ekspor?"
     );
-
     if (!confirmDelete) return;
 
     const token = document.cookie
@@ -158,15 +188,23 @@ const InternshipList = () => {
     }
   };
 
+  const handleResetFilter = () => {
+    setSelectedPosisi("all");
+    setSelectedStatus("all");
+    setSearchTerm("");
+  };
+
   return (
     <div className="min-h-screen w-full overflow-hidden">
       <NavbarAdmin />
       <div className="flex flex-row">
         <SidebarAdmin />
         <div className="p-10 bg-white flex-col flex-wrap w-full">
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex justify-between items-center mb-6 gap-4 flex-wrap">
             <h2 className="font-semibold text-[24px]">Daftar Pelamar</h2>
-            <div className="flex gap-2 flex-wrap">
+
+            <div className="flex gap-2 flex-wrap items-center">
+              {/* SEARCH */}
               <input
                 type="text"
                 placeholder="Cari Nama, Posisi"
@@ -174,6 +212,42 @@ const InternshipList = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="px-4 py-2 rounded-2xl w-[20rem] border border-slate-400"
               />
+
+              {/*FILTER POSISI*/}
+              <select
+                value={selectedPosisi}
+                onChange={(e) => setSelectedPosisi(e.target.value)}
+                className="px-4 py-2 rounded-2xl border border-slate-400 bg-white"
+              >
+                {posisiOptions.map((p) => (
+                  <option key={p} value={p}>
+                    {p === "all" ? "Semua Posisi" : p}
+                  </option>
+                ))}
+              </select>
+
+              {/*FILTER STATUS (diterima / ditolak)*/}
+              <select
+                value={selectedStatus}
+                onChange={(e) =>
+                  setSelectedStatus(e.target.value as StatusFilter)
+                }
+                className="px-4 py-2 rounded-2xl border border-slate-400 bg-white"
+              >
+                <option value="all">Semua Status</option>
+                <option value="diterima">Diterima</option>
+                <option value="ditolak">Ditolak</option>
+              </select>
+
+              {/* RESET FILTER */}
+              <button
+                onClick={handleResetFilter}
+                className="px-4 py-2 rounded-lg border border-slate-400 hover:bg-slate-50"
+              >
+                Reset
+              </button>
+
+              {/* Update Batch dan Ekspor */}
               <button
                 onClick={handleUpdateBatch}
                 className="bg-[#923120] hover:bg-[#8d5050] cursor-pointer text-white px-4 py-2 rounded-lg flex flex-row items-center gap-2"
@@ -196,6 +270,7 @@ const InternshipList = () => {
                   </svg>
                 </span>
               </button>
+
               <button
                 onClick={handleExportExcel}
                 className="bg-[#227014] hover:bg-green-700 cursor-pointer text-white px-4 py-2 rounded-lg"
@@ -203,6 +278,13 @@ const InternshipList = () => {
                 Ekspor ke Excel
               </button>
             </div>
+          </div>
+
+          {/* INFO JUMLAH */}
+          <div className="mb-4 text-sm text-slate-600">
+            Menampilkan{" "}
+            <span className="font-semibold">{filteredApplications.length}</span>{" "}
+            data (setelah filter).
           </div>
 
           <div className="overflow-x-auto">
@@ -216,8 +298,8 @@ const InternshipList = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentItems.map((app, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50">
+                {currentItems.map((app) => (
+                  <tr key={app.id} className="hover:bg-gray-50">
                     <td className="px-6 py-3">{app.nama_depan}</td>
                     <td className="px-6 py-3">{app.posisi}</td>
                     <td className="px-6 py-3">
@@ -231,20 +313,6 @@ const InternshipList = () => {
                       </span>
                     </td>
                     <td className="px-6 py-3">
-                      {/* <button
-                        onClick={() => handleStatusUpdate("diterima")}
-                        className="bg-[#3BB525] hover:bg-green-600 cursor-pointer text-white p-2 rounded-xl"
-                      >
-                        Terima
-                      </button>
-
-                      <button
-                        onClick={() => handleStatusUpdate("ditolak")}
-                        className="bg-[#C3423F] hover:bg-red-600 cursor-pointer text-white p-2 rounded-xl"
-                      >
-                        Tolak
-                      </button> */}
-
                       <button
                         className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white p-2 rounded-xl"
                         onClick={() =>
@@ -277,26 +345,28 @@ const InternshipList = () => {
               </tbody>
             </table>
 
-            {applications.length === 0 && (
+            {filteredApplications.length === 0 && (
               <p className="text-center text-gray-500 mt-5">Tidak ada data.</p>
             )}
 
             {/* Pagination Controls */}
-            <div className="flex justify-center mt-6 gap-2">
-              {Array.from({ length: totalPages }, (_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrentPage(i + 1)}
-                  className={`px-4 py-2 rounded-lg border ${
-                    currentPage === i + 1
-                      ? "bg-blue-500 text-white"
-                      : "bg-white text-gray-700"
-                  }`}
-                >
-                  {i + 1}
-                </button>
-              ))}
-            </div>
+            {totalPages > 1 && (
+              <div className="flex justify-center mt-6 gap-2">
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={`px-4 py-2 rounded-lg border ${
+                      currentPage === i + 1
+                        ? "bg-blue-500 text-white"
+                        : "bg-white text-gray-700"
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
