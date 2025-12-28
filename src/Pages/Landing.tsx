@@ -1,24 +1,37 @@
 import Navbar from "../Layout/Navbar";
 import team from "../assets/teamwokr.jpg";
-import person1 from "../assets/reihan.jpeg";
-import person2 from "../assets/yohanes.jpeg";
-import person3 from "../assets/shafa.jpeg";
-import person4 from "../assets/reinhard.jpeg";
 import bghero1 from "../assets/hero1.png";
 import Footer from "../Layout/Footer";
 import Faq from "../Layout/Faq";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+type Internship = {
+  id: string;
+  posisi: string;
+  image_path: string;
+  status_lowongan: string;
+};
+
+type Feedback = {
+  id: number;
+  nama: string;
+  universitas: string;
+  pesan: string;
+  batch: number;
+  posisi: string;
+  tahun: number;
+  image_path: string;
+  created_at: string;
+};
+
 const Landing = () => {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
-  type Internship = {
-    id: string;
-    posisi: string;
-    image_path: string;
-    status_lowongan: string;
-  };
+
+  const [internships, setInternships] = useState<Internship[]>([]);
+  const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,9 +40,11 @@ const Landing = () => {
     }
   };
 
-  const [internships, setInternships] = useState<Internship[]>([]);
+  const getFeedbackImageUrl = (path: string) =>
+    `${import.meta.env.VITE_API_BASE_URL}${path}`;
 
   useEffect(() => {
+    // Fetch internships
     fetch(`${import.meta.env.VITE_API_BASE_URL}/lowongan-magang-api/get`)
       .then((res) => res.json())
       .then((data) => {
@@ -38,7 +53,28 @@ const Landing = () => {
       .catch((error) => {
         console.error("Error fetching internships:", error);
       });
+
+    // Fetch feedback
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/feedback-api/get`)
+      .then((res) => res.json())
+      .then((data) => {
+        setFeedbacks(data.data as Feedback[]);
+        setActiveIndex(0);
+      })
+      .catch((err) => console.error("Error fetching feedback:", err));
   }, []);
+
+  // Auto slide testimonial
+  useEffect(() => {
+    if (feedbacks.length === 0) return;
+
+    const intervalId = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % feedbacks.length);
+    }, 5000); // 5 detik
+
+    return () => clearInterval(intervalId);
+  }, [feedbacks.length]);
+
   return (
     <div className="body-landing bg-[#F8F9FA] min-h-screen">
       <div className="navbar-section py-[20px]">
@@ -120,45 +156,80 @@ const Landing = () => {
       </div>
 
       {/* Hero 3 Section */}
-      <div className="hero-3-section flex flex-col lg:flex-row items-center justify-between mx-5 lg:mx-[200px] mt-[60px] gap-10">
-        <div className="relative w-full max-w-[550px] h-[600px]">
-          <img
-            src={person1}
-            alt=""
-            className="absolute top-1/2 left-1/2 w-60 h-80 object-cover rounded-lg shadow-lg transform -translate-x-1/2 -translate-y-1/2 z-10"
-          />
-          <img
-            src={person4}
-            alt=""
-            className="absolute top-6 right-6 w-32 h-44 object-cover rounded-lg shadow-md z-20"
-          />
-          <img
-            src={person3}
-            alt=""
-            className="absolute top-0 left-0 w-28 h-40 object-cover rounded-lg shadow-md z-30"
-          />
-          <img
-            src={person2}
-            alt=""
-            className="absolute bottom-4 left-6 w-32 h-44 object-cover rounded-lg shadow-md z-40"
-          />
-        </div>
+      {feedbacks.length > 0 && (
+        <div className="hero-3-section mx-5 lg:mx-[80px] xl:mx-[140px] mt-[60px] rounded-2xl bg-[#F8F9FA]">
+          <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-stretch py-10 px-4 sm:px-8">
+            {/* LEFT: big + small image */}
+            <div className="relative flex-1 min-h-[320px] lg:min-h-[380px]">
+              <img
+                src={getFeedbackImageUrl(feedbacks[activeIndex].image_path)}
+                alt={feedbacks[activeIndex].nama}
+                className="absolute left-1/2 top-1/2 w-[230px] h-[320px] sm:w-[260px] sm:h-[340px] lg:w-[280px] lg:h-[360px] -translate-x-1/2 -translate-y-1/2 rounded-xl object-cover shadow-xl"
+              />
 
-        <div className="content-section flex flex-col items-start w-full lg:w-[650px]">
-          <h2 className="font-bold text-2xl sm:text-[32px]">
-            Kata mereka tentang Humic Engineering
-          </h2>
-          <p className="font-medium text-base sm:text-[16px] mt-[16px]">
-            Humic engineering menjadi tempat yang menyenangkan bagi saya, karena
-            dapat meningkatkan kemampuan saya dalam melakukan desain UI/UX.
-            Banyak pembelajaran yang berharga serta memiliki lingkungan yang
-            suportif
-          </p>
-          <p className="text-[16px] text-[#C3423F] font-bold mt-[20px]">
-            Reinhard, Humic Internship Batch 3 2025
-          </p>
+              {feedbacks.length > 1 && (
+                <img
+                  src={getFeedbackImageUrl(
+                    feedbacks[(activeIndex + 1) % feedbacks.length].image_path
+                  )}
+                  alt={feedbacks[(activeIndex + 1) % feedbacks.length].nama}
+                  className="absolute left-0 bottom-6 w-[110px] h-[150px] rounded-lg object-cover shadow-md hidden sm:block"
+                />
+              )}
+            </div>
+
+            {/* RIGHT: text + thumbnails */}
+            <div className="flex-1 flex flex-col justify-between">
+              <div>
+                <h2 className="font-bold text-2xl sm:text-[32px] text-[#111827]">
+                  Kata mereka tentang Humic Engineering
+                </h2>
+
+                <p
+                  className="font-medium text-base sm:text-[16px] text-[#4B5563] mt-4 leading-relaxed"
+                  dangerouslySetInnerHTML={{
+                    __html: feedbacks[activeIndex].pesan,
+                  }}
+                ></p>
+
+                <p className="mt-5 text-[16px] text-[#C3423F] font-semibold">
+                  {feedbacks[activeIndex].nama},{" "}
+                  <span className="font-normal text-[#6B7280]">
+                    {feedbacks[activeIndex].posisi} · Humic Internship Batch{" "}
+                    {feedbacks[activeIndex].batch}{" "}
+                    {feedbacks[activeIndex].tahun}
+                  </span>
+                </p>
+
+                <p className="mt-1 text-sm text-[#9CA3AF]">
+                  {feedbacks[activeIndex].universitas}
+                </p>
+              </div>
+
+              <div className="mt-8 flex items-center gap-4 overflow-x-auto pb-2">
+                {feedbacks.map((fb, index) => (
+                  <button
+                    key={fb.id}
+                    type="button"
+                    onClick={() => setActiveIndex(index)}
+                    className={`relative shrink-0 rounded-xl overflow-hidden border transition-all duration-200 ${
+                      index === activeIndex
+                        ? "border-[#C3423F] ring-2 ring-[#C3423F]/40"
+                        : "border-transparent opacity-60 hover:opacity-100"
+                    }`}
+                  >
+                    <img
+                      src={getFeedbackImageUrl(fb.image_path)}
+                      alt={fb.nama}
+                      className="w-[90px] h-[110px] object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Hero 4 Section */}
       <div className="hero4-section flex flex-col justify-center items-center mt-[50px]">
