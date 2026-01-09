@@ -25,7 +25,7 @@ const LoginAdmin = () => {
 
       if (response.status === 200) {
         document.cookie = `token=${response.data.data.token}; path=/;`;
-        navigate("/internships-list");
+        navigate("/dashboard");
       } else {
         setErrorMsg(response.data.message || "Login failed");
       }

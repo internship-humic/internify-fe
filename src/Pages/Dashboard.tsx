@@ -277,8 +277,6 @@ const Dashboard: React.FC = () => {
       }
     };
 
-    console.log("AXIOS BASE URL:", API_BASE_URL);
-
     fetchDashboardData();
   }, [api]);
 

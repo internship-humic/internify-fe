@@ -3,7 +3,7 @@ import team from "../assets/teamwokr.jpg";
 import bghero1 from "../assets/hero1.png";
 import Footer from "../Layout/Footer";
 import Faq from "../Layout/Faq";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 type Internship = {
@@ -33,6 +33,11 @@ const Landing = () => {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
+  // Smooth fade animation
+  const [displayIndex, setDisplayIndex] = useState(0);
+  const [fadeIn, setFadeIn] = useState(true);
+  const FADE_MS = 450;
+
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (search.trim()) {
@@ -40,8 +45,22 @@ const Landing = () => {
     }
   };
 
-  const getFeedbackImageUrl = (path: string) =>
-    `${import.meta.env.VITE_API_BASE_URL}${path}`;
+  // helper url image
+  const getFeedbackImageUrl = (path: string) => {
+    if (!path) return "";
+    if (/^https?:\/\//i.test(path)) return path;
+    return `${import.meta.env.VITE_API_BASE_URL}${path}`;
+  };
+
+  const currentFeedback = useMemo(() => {
+    if (feedbacks.length === 0) return null;
+    return feedbacks[displayIndex];
+  }, [feedbacks, displayIndex]);
+
+  const currentImgUrl = useMemo(() => {
+    if (!currentFeedback) return "";
+    return getFeedbackImageUrl(currentFeedback.image_path);
+  }, [currentFeedback]);
 
   useEffect(() => {
     // Fetch internships
@@ -58,22 +77,59 @@ const Landing = () => {
     fetch(`${import.meta.env.VITE_API_BASE_URL}/feedback-api/get`)
       .then((res) => res.json())
       .then((data) => {
-        setFeedbacks(data.data as Feedback[]);
+        const arr = data.data as Feedback[];
+        setFeedbacks(arr);
         setActiveIndex(0);
+        setDisplayIndex(0);
+        setFadeIn(true);
       })
       .catch((err) => console.error("Error fetching feedback:", err));
   }, []);
 
-  // Auto slide testimonial
+  // Auto slide target index
   useEffect(() => {
     if (feedbacks.length === 0) return;
 
     const intervalId = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % feedbacks.length);
-    }, 5000); // 5 detik
+    }, 5000);
 
     return () => clearInterval(intervalId);
   }, [feedbacks.length]);
+
+  // ✅ Animasi fade 2-phase: fade-out -> switch content -> fade-in
+  useEffect(() => {
+    if (feedbacks.length === 0) return;
+    if (activeIndex === displayIndex) return;
+
+    // 1) fade-out konten lama
+    setFadeIn(false);
+
+    // 2) setelah fade-out selesai, ganti konten, lalu fade-in
+    const t = setTimeout(() => {
+      setDisplayIndex(activeIndex);
+
+      // next frame biar browser apply dom update
+      requestAnimationFrame(() => {
+        setFadeIn(true);
+      });
+    }, FADE_MS);
+
+    return () => clearTimeout(t);
+  }, [activeIndex, displayIndex, feedbacks.length]);
+
+  // preload gambar slide berikutnya biar next slide lebih cepat
+  useEffect(() => {
+    if (feedbacks.length === 0) return;
+
+    const next = feedbacks[(activeIndex + 1) % feedbacks.length];
+    const nextUrl = getFeedbackImageUrl(next.image_path);
+    if (!nextUrl) return;
+
+    const img = new Image();
+    img.decoding = "async";
+    img.src = nextUrl;
+  }, [activeIndex, feedbacks]);
 
   return (
     <div className="body-landing bg-[#F8F9FA] min-h-screen">
@@ -97,8 +153,8 @@ const Landing = () => {
             Tingkatkan keahlian, perluas kesempatan
           </h2>
           <h2 className="font-semibold text-base sm:text-lg lg:text-[20px] text-white mt-2">
-            Asah keterampilanmu dan jadilah mahasiswa yang siap bersaing di
-            dunia industri
+            Asah keterampilanmu dan jadilah mahasiswa yang siap bersaing di dunia
+            industri
           </h2>
 
           <div className="search-section bg-white p-[15px] rounded-xl shadow-md w-full max-w-lg mt-[40px] text-black">
@@ -118,9 +174,7 @@ const Landing = () => {
                 viewBox="0 0 24 24"
                 onClick={() => {
                   if (search.trim())
-                    navigate(
-                      `/internships?search=${encodeURIComponent(search)}`
-                    );
+                    navigate(`/internships?search=${encodeURIComponent(search)}`);
                 }}
               >
                 <path
@@ -141,11 +195,10 @@ const Landing = () => {
             Life at Humic Engineering
           </h2>
           <p className="font-medium text-base sm:text-[16px]">
-            Raih pengalaman internship yang bernilai dengan berkontribusi
-            langsung dalam pengembangan solusi teknologi kami. Kembangkan
-            kompetensi Anda melalui keterlibatan nyata dalam proyek IT serta
-            bimbingan langsung dari para expert di bidang Software engineering
-            dan IoT.
+            Raih pengalaman internship yang bernilai dengan berkontribusi langsung
+            dalam pengembangan solusi teknologi kami. Kembangkan kompetensi Anda
+            melalui keterlibatan nyata dalam proyek IT serta bimbingan langsung
+            dari para expert di bidang Software engineering dan IoT.
           </p>
         </div>
 
@@ -156,30 +209,35 @@ const Landing = () => {
       </div>
 
       {/* Hero 3 Section */}
-      {feedbacks.length > 0 && (
+      {feedbacks.length > 0 && currentFeedback && (
         <div className="hero-3-section mx-5 lg:mx-[80px] xl:mx-[140px] mt-[60px] rounded-2xl bg-[#F8F9FA]">
           <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-stretch py-10 px-4 sm:px-8">
-            {/* LEFT: big + small image */}
-            <div className="relative flex-1 min-h-[320px] lg:min-h-[380px]">
-              <img
-                src={getFeedbackImageUrl(feedbacks[activeIndex].image_path)}
-                alt={feedbacks[activeIndex].nama}
-                className="absolute left-1/2 top-1/2 w-[230px] h-[320px] sm:w-[260px] sm:h-[340px] lg:w-[280px] lg:h-[360px] -translate-x-1/2 -translate-y-1/2 rounded-xl object-cover shadow-xl"
-              />
-
-              {feedbacks.length > 1 && (
+            {/* LEFT: image */}
+            <div className="relative flex-1 min-h-[320px] lg:min-h-[380px] flex items-center justify-center">
+              <div
+                className={`w-[230px] h-[320px] sm:w-[260px] sm:h-[340px] lg:w-[280px] lg:h-[360px]
+                            rounded-xl shadow-xl bg-white/70 backdrop-blur p-3 flex items-center justify-center
+                            transition-opacity duration-[450ms] ease-in-out
+                            ${fadeIn ? "opacity-100" : "opacity-0"}`}
+              >
                 <img
-                  src={getFeedbackImageUrl(
-                    feedbacks[(activeIndex + 1) % feedbacks.length].image_path
-                  )}
-                  alt={feedbacks[(activeIndex + 1) % feedbacks.length].nama}
-                  className="absolute left-0 bottom-6 w-[110px] h-[150px] rounded-lg object-cover shadow-md hidden sm:block"
+                  key={currentImgUrl}
+                  src={currentImgUrl}
+                  alt={currentFeedback.nama}
+                  loading="eager"
+                  decoding="async"
+                  // @ts-ignore
+                  fetchPriority="high"
+                  className="w-full h-full object-contain rounded-lg"
                 />
-              )}
+              </div>
             </div>
 
-            {/* RIGHT: text + thumbnails */}
-            <div className="flex-1 flex flex-col justify-between">
+            {/* RIGHT: text */}
+            <div
+              className={`flex-1 flex flex-col justify-between transition-opacity duration-[450ms] ease-in-out
+                          ${fadeIn ? "opacity-100" : "opacity-0"}`}
+            >
               <div>
                 <h2 className="font-bold text-2xl sm:text-[32px] text-[#111827]">
                   Kata mereka tentang Humic Engineering
@@ -188,44 +246,24 @@ const Landing = () => {
                 <p
                   className="font-medium text-base sm:text-[16px] text-[#4B5563] mt-4 leading-relaxed"
                   dangerouslySetInnerHTML={{
-                    __html: feedbacks[activeIndex].pesan,
+                    __html: currentFeedback.pesan,
                   }}
-                ></p>
+                />
 
                 <p className="mt-5 text-[16px] text-[#C3423F] font-semibold">
-                  {feedbacks[activeIndex].nama},{" "}
+                  {currentFeedback.nama},{" "}
                   <span className="font-normal text-[#6B7280]">
-                    {feedbacks[activeIndex].posisi} · Humic Internship Batch{" "}
-                    {feedbacks[activeIndex].batch}{" "}
-                    {feedbacks[activeIndex].tahun}
+                    {currentFeedback.posisi} · Humic Internship Batch{" "}
+                    {currentFeedback.batch} {currentFeedback.tahun}
                   </span>
                 </p>
 
                 <p className="mt-1 text-sm text-[#9CA3AF]">
-                  {feedbacks[activeIndex].universitas}
+                  {currentFeedback.universitas}
                 </p>
               </div>
 
-              <div className="mt-8 flex items-center gap-4 overflow-x-auto pb-2">
-                {feedbacks.map((fb, index) => (
-                  <button
-                    key={fb.id}
-                    type="button"
-                    onClick={() => setActiveIndex(index)}
-                    className={`relative shrink-0 rounded-xl overflow-hidden border transition-all duration-200 ${
-                      index === activeIndex
-                        ? "border-[#C3423F] ring-2 ring-[#C3423F]/40"
-                        : "border-transparent opacity-60 hover:opacity-100"
-                    }`}
-                  >
-                    <img
-                      src={getFeedbackImageUrl(fb.image_path)}
-                      alt={fb.nama}
-                      className="w-[90px] h-[110px] object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
+              <div className="mt-8" />
             </div>
           </div>
         </div>
@@ -255,22 +293,17 @@ const Landing = () => {
                   }
                 }}
               >
-                {/* Background image */}
                 <div
                   className="absolute inset-0"
                   style={{
-                    backgroundImage: `url(${import.meta.env.VITE_API_BASE_URL}${
-                      intern.image_path
-                    })`,
+                    backgroundImage: `url(${import.meta.env.VITE_API_BASE_URL}${intern.image_path})`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                   }}
                 />
 
-                {/* Gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-60" />
 
-                {/* Text content */}
                 <div
                   className={`relative z-10 flex flex-col justify-end h-full p-4 ${
                     isClosed ? "text-gray-400" : "text-white"
