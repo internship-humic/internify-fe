@@ -20,7 +20,6 @@ type ChartDataItem = {
 type StatCard = {
   title: string;
   value: number;
-  subtitle: string;
   icon: React.ReactNode;
   iconColor: string;
 };
@@ -78,19 +77,79 @@ type BatchResponse = {
   }>;
 };
 
-const UNIVERSITAS_COLORS = ["#001a66", "#334d99", "#6699cc", "#99b3ff"];
-const PENERIMAAN_COLORS = ["#0088ff", "#00cc00", "#ff3333"];
-const NEGARA_COLORS = ["#cc3333", "#dd6666", "#ee9999", "#f0b3b3", "#f5cccc"];
+type ApplicationsListResponse = {
+  status: boolean;
+  data: Array<{
+    universitas?: string | null;
+  }>;
+  message?: string;
+  code?: number;
+};
+
+const CATEGORY_COLORS = [
+  "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
+  "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",
+  "#393b79", "#637939", "#8c6d31", "#843c39", "#7b4173",
+  "#3182bd", "#e6550d", "#31a354", "#756bb1", "#636363",
+  "#6baed6", "#fd8d3c", "#74c476", "#9e9ac8", "#969696",
+  "#9ecae1", "#fdae6b", "#a1d99b", "#bcbddc", "#bdbdbd",
+];
+
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL?.trim() ||
   "https://internify-ruddy.vercel.app";
+
+// helper: group by key -> count
+function groupCount(list: Array<string>) {
+  const map = new Map<string, number>();
+  for (const raw of list) {
+    const key = (raw || "").trim();
+    if (!key) continue;
+    map.set(key, (map.get(key) || 0) + 1);
+  }
+  return Array.from(map.entries())
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value);
+}
+
+function PieLegend({
+  data,
+  colors,
+}: {
+  data: ChartDataItem[];
+  colors: string[];
+}) {
+  return (
+    <div className="space-y-3 text-sm">
+      {data.map((item, index) => (
+        <div
+          key={`${item.name}-${index}`}
+          className="flex items-center justify-between"
+        >
+          <div className="flex items-center gap-2">
+            <div
+              className="h-3 w-3 rounded"
+              style={{ backgroundColor: colors[index % colors.length] }}
+            />
+            <span className="text-gray-700">{item.name}</span>
+          </div>
+          <span className="text-sm font-semibold text-gray-900">
+            {item.value}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
   const [statCards, setStatCards] = useState<StatCard[]>([]);
+
+  const [positionData, setPositionData] = useState<ChartDataItem[]>([]);
   const [universitasData, setUniversitasData] = useState<ChartDataItem[]>([]);
   const [penerimaanData, setPenerimaanData] = useState<ChartDataItem[]>([]);
   const [negaraData, setNegaraData] = useState<ChartDataItem[]>([]);
@@ -107,9 +166,7 @@ const Dashboard: React.FC = () => {
   const api = useMemo(() => {
     const instance = axios.create({
       baseURL: API_BASE_URL,
-      headers: {
-        Accept: "application/json",
-      },
+      headers: { Accept: "application/json" },
       timeout: 15000,
     });
 
@@ -153,15 +210,13 @@ const Dashboard: React.FC = () => {
 
         const token = getTokenFromCookie();
         if (!token) {
-          setErrorMessage(
-            "Token tidak ditemukan di cookie. Silakan login ulang."
-          );
+          setErrorMessage("Token tidak ditemukan di cookie. Silakan login ulang.");
           setLoading(false);
           return;
         }
 
-        const [statsRes, positionRes, countryRes, batchRes] = await Promise.all(
-          [
+        const [statsRes, positionRes, countryRes, batchRes, appsRes] =
+          await Promise.all([
             api.get<DashboardStatsResponse>(
               "/lamaran-magang-api/statistics/dashboard"
             ),
@@ -172,13 +227,14 @@ const Dashboard: React.FC = () => {
               "/lamaran-magang-api/statistics/country"
             ),
             api.get<BatchResponse>("/batch-api"),
-          ]
-        );
+            api.get<ApplicationsListResponse>("/lamaran-magang-api/statistics/university"),
+          ]);
 
         const statsJson = statsRes.data;
         const positionJson = positionRes.data;
         const countryJson = countryRes.data;
         const batchJson = batchRes.data;
+        const appsJson = appsRes.data;
 
         if (!statsJson?.status) {
           setErrorMessage(
@@ -213,61 +269,83 @@ const Dashboard: React.FC = () => {
           console.warn("Fetch batch gagal:", batchJson?.message);
         }
 
+        if (!appsJson?.status) {
+          console.warn(
+            "Fetch applicants list gagal (untuk universitas chart):",
+            appsJson?.message
+          );
+        }
+
         const stats = statsJson.data;
         const positions = positionJson.data || [];
         const countries = countryJson.data || [];
 
+        // === Stat Cards ===
         const statCardsFromApi: StatCard[] = [
           {
             title: "Total Pendaftar",
             value: stats.total_pendaftar,
-            subtitle: "+200 dari batch sebelumnya",
             icon: <Users size={24} />,
             iconColor: "#0088ff",
           },
           {
             title: "Total Diterima",
             value: stats.total_diterima,
-            subtitle: `${stats.acceptance_rate} acceptance rate`,
             icon: <UserCheck size={24} />,
             iconColor: "#00cc00",
           },
           {
             title: "Total Ditolak",
             value: stats.total_ditolak,
-            subtitle: `${stats.rejection_rate} rejection rate`,
             icon: <UserX size={24} />,
             iconColor: "#ff3333",
           },
           {
             title: "Sedang Diproses",
             value: stats.sedang_diproses,
-            subtitle: `${stats.pending_rate} pending review`,
             icon: <Clock size={24} />,
             iconColor: "#ffaa00",
           },
         ];
 
-        const penerimaanFromApi: ChartDataItem[] = [
+        // === Position ===
+        const positionCounts: ChartDataItem[] = positions.map((p) => ({
+          name: p.posisi,
+          value: p.total,
+        }));
+
+        // === Universitas ===
+        const applicants = appsJson?.status ? appsJson.data || [] : [];
+        const uniCountsRaw = groupCount(
+          applicants.map((a) => (a.universitas ?? "").toString())
+        );
+
+        // Top 5 + Lainnya
+        const topN = 5;
+        const top = uniCountsRaw.slice(0, topN);
+        const rest = uniCountsRaw.slice(topN);
+        const othersValue = rest.reduce((acc, x) => acc + x.value, 0);
+        const uniCounts: ChartDataItem[] =
+          othersValue > 0 ? [...top, { name: "Lainnya", value: othersValue }] : top;
+
+        // === Negara ===
+        const negaraCounts: ChartDataItem[] = countries.map((c) => ({
+          name: c.negara,
+          value: c.total,
+        }));
+
+        // === Penerimaan ===
+        const penerimaanCounts: ChartDataItem[] = [
           { name: "Total Pendaftar", value: stats.total_pendaftar },
           { name: "Total Diterima", value: stats.total_diterima },
           { name: "Total Ditolak", value: stats.total_ditolak },
         ];
 
-        const universitasFromApi: ChartDataItem[] = positions.map((p) => ({
-          name: p.posisi,
-          value: p.total,
-        }));
-
-        const negaraFromApi: ChartDataItem[] = countries.map((c) => ({
-          name: c.negara,
-          value: c.total,
-        }));
-
         setStatCards(statCardsFromApi);
-        setPenerimaanData(penerimaanFromApi);
-        setUniversitasData(universitasFromApi);
-        setNegaraData(negaraFromApi);
+        setPositionData(positionCounts);
+        setUniversitasData(uniCounts);
+        setNegaraData(negaraCounts);
+        setPenerimaanData(penerimaanCounts);
 
         setLoading(false);
       } catch (err) {
@@ -313,9 +391,7 @@ const Dashboard: React.FC = () => {
 
           {/* Loading / Error State */}
           {loading && (
-            <p className="text-center text-gray-600">
-              Memuat data dashboard...
-            </p>
+            <p className="text-center text-gray-600">Memuat data dashboard...</p>
           )}
 
           {!loading && errorMessage && (
@@ -342,44 +418,40 @@ const Dashboard: React.FC = () => {
                         {card.title}
                       </h3>
                     </div>
-                    <div className="mb-2">
-                      <p className="text-2xl font-bold text-gray-900">
-                        {card.value}
-                      </p>
-                    </div>
-                    <p className="text-xs" style={{ color: card.iconColor }}>
-                      {card.subtitle}
+
+                    <p className="text-2xl font-bold text-gray-900">
+                      {card.value}
                     </p>
                   </div>
                 ))}
               </div>
 
-              {/* Charts Section */}
+              {/* ====== Charts ====== */}
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                {/* Universitas Chart */}
+                {/* 1) Position */}
                 <div className="rounded-lg border border-gray-300 bg-white p-6">
                   <h2 className="mb-6 text-lg font-bold text-gray-900">
-                    Universitas
+                    Position
                   </h2>
 
                   <div className="mb-6 flex justify-center">
-                    <ResponsiveContainer width="100%" height={250}>
+                    <ResponsiveContainer width="100%" height={220}>
                       <PieChart>
                         <Pie
-                          data={universitasData}
+                          data={positionData}
                           cx="50%"
                           cy="50%"
                           innerRadius={0}
-                          outerRadius={100}
+                          outerRadius={85}
                           paddingAngle={2}
                           dataKey="value"
                         >
-                          {universitasData.map((_, index) => (
+                          {positionData.map((_, index) => (
                             <Cell
-                              key={`universitas-cell-${index}`}
+                              key={`position-cell-${index}`}
                               fill={
-                                UNIVERSITAS_COLORS[
-                                  index % UNIVERSITAS_COLORS.length
+                                CATEGORY_COLORS[
+                                  index % CATEGORY_COLORS.length
                                 ]
                               }
                             />
@@ -389,140 +461,114 @@ const Dashboard: React.FC = () => {
                     </ResponsiveContainer>
                   </div>
 
-                  {/* Legend */}
-                  <div className="space-y-3 text-sm">
-                    {universitasData.map((item, index) => (
-                      <div
-                        key={`universitas-legend-${index}`}
-                        className="flex items-center justify-between"
-                      >
-                        <div className="flex items-center gap-2">
-                          <div
-                            className="h-3 w-3 rounded"
-                            style={{
-                              backgroundColor:
-                                UNIVERSITAS_COLORS[
-                                  index % UNIVERSITAS_COLORS.length
-                                ],
-                            }}
-                          />
-                          <span className="text-gray-700">{item.name}</span>
-                        </div>
-                        <span className="text-sm font-semibold text-gray-900">
-                          {item.value}%
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+                  <PieLegend data={positionData} colors={CATEGORY_COLORS} />
                 </div>
 
-                {/* Right Column - Penerimaan & Negara */}
-                <div className="space-y-6">
-                  {/* Penerimaan Chart */}
-                  <div className="rounded-lg border border-gray-300 bg-white p-6">
-                    <h2 className="mb-6 text-lg font-bold text-gray-900">
-                      Penerimaan
-                    </h2>
+                {/* 2) Universitas */}
+                <div className="rounded-lg border border-gray-300 bg-white p-6">
+                  <h2 className="mb-6 text-lg font-bold text-gray-900">
+                    Universitas
+                  </h2>
 
-                    <div className="mb-6 flex justify-center">
-                      <ResponsiveContainer width="100%" height={180}>
-                        <PieChart>
-                          <Pie
-                            data={penerimaanData}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={0}
-                            outerRadius={70}
-                            paddingAngle={2}
-                            dataKey="value"
-                          >
-                            {penerimaanData.map((_, index) => (
-                              <Cell
-                                key={`penerimaan-cell-${index}`}
-                                fill={
-                                  PENERIMAAN_COLORS[
-                                    index % PENERIMAAN_COLORS.length
-                                  ]
-                                }
-                              />
-                            ))}
-                          </Pie>
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </div>
-
-                    {/* Legend */}
-                    <div className="space-y-2 text-sm">
-                      {penerimaanData.map((item, index) => (
-                        <div
-                          key={`penerimaan-legend-${index}`}
-                          className="flex items-center gap-2"
+                  <div className="mb-6 flex justify-center">
+                    <ResponsiveContainer width="100%" height={220}>
+                      <PieChart>
+                        <Pie
+                          data={universitasData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={0}
+                          outerRadius={85}
+                          paddingAngle={2}
+                          dataKey="value"
                         >
-                          <div
-                            className="h-3 w-3 rounded"
-                            style={{
-                              backgroundColor:
-                                PENERIMAAN_COLORS[
-                                  index % PENERIMAAN_COLORS.length
-                                ],
-                            }}
-                          />
-                          <span className="text-gray-700">{item.name}</span>
-                        </div>
-                      ))}
-                    </div>
+                          {universitasData.map((_, index) => (
+                            <Cell
+                              key={`universitas-cell-${index}`}
+                              fill={
+                                CATEGORY_COLORS[
+                                  index % CATEGORY_COLORS.length
+                                ]
+                              }
+                            />
+                          ))}
+                        </Pie>
+                      </PieChart>
+                    </ResponsiveContainer>
                   </div>
 
-                  {/* Negara Chart */}
-                  <div className="rounded-lg border border-gray-300 bg-white p-6">
-                    <h2 className="mb-6 text-lg font-bold text-gray-900">
-                      Negara
-                    </h2>
+                  <PieLegend
+                    data={universitasData}
+                    colors={CATEGORY_COLORS}
+                  />
+                </div>
 
-                    <div className="mb-6 flex justify-center">
-                      <ResponsiveContainer width="100%" height={180}>
-                        <PieChart>
-                          <Pie
-                            data={negaraData}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={0}
-                            outerRadius={70}
-                            paddingAngle={2}
-                            dataKey="value"
-                          >
-                            {negaraData.map((_, index) => (
-                              <Cell
-                                key={`negara-cell-${index}`}
-                                fill={
-                                  NEGARA_COLORS[index % NEGARA_COLORS.length]
-                                }
-                              />
-                            ))}
-                          </Pie>
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </div>
+                {/* 3) Negara */}
+                <div className="rounded-lg border border-gray-300 bg-white p-6">
+                  <h2 className="mb-6 text-lg font-bold text-gray-900">
+                    Negara
+                  </h2>
 
-                    {/* Legend */}
-                    <div className="space-y-2 text-sm">
-                      {negaraData.map((item, index) => (
-                        <div
-                          key={`negara-legend-${index}`}
-                          className="flex items-center gap-2"
+                  <div className="mb-6 flex justify-center">
+                    <ResponsiveContainer width="100%" height={220}>
+                      <PieChart>
+                        <Pie
+                          data={negaraData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={0}
+                          outerRadius={85}
+                          paddingAngle={2}
+                          dataKey="value"
                         >
-                          <div
-                            className="h-3 w-3 rounded"
-                            style={{
-                              backgroundColor:
-                                NEGARA_COLORS[index % NEGARA_COLORS.length],
-                            }}
-                          />
-                          <span className="text-gray-700">{item.name}</span>
-                        </div>
-                      ))}
-                    </div>
+                          {negaraData.map((_, index) => (
+                            <Cell
+                              key={`negara-cell-${index}`}
+                              fill={CATEGORY_COLORS[index % CATEGORY_COLORS.length]}
+                            />
+                          ))}
+                        </Pie>
+                      </PieChart>
+                    </ResponsiveContainer>
                   </div>
+
+                  <PieLegend data={negaraData} colors={CATEGORY_COLORS} />
+                </div>
+
+                {/* 4) Penerimaan */}
+                <div className="rounded-lg border border-gray-300 bg-white p-6">
+                  <h2 className="mb-6 text-lg font-bold text-gray-900">
+                    Penerimaan
+                  </h2>
+
+                  <div className="mb-6 flex justify-center">
+                    <ResponsiveContainer width="100%" height={220}>
+                      <PieChart>
+                        <Pie
+                          data={penerimaanData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={0}
+                          outerRadius={85}
+                          paddingAngle={2}
+                          dataKey="value"
+                        >
+                          {penerimaanData.map((_, index) => (
+                            <Cell
+                              key={`penerimaan-cell-${index}`}
+                              fill={
+                                CATEGORY_COLORS[
+                                  index % CATEGORY_COLORS.length
+                                ]
+                              }
+                            />
+                          ))}
+                        </Pie>
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  <PieLegend data={penerimaanData} colors={CATEGORY_COLORS} />
                 </div>
               </div>
             </>

@@ -10,16 +10,50 @@ const LoginAdmin = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  // helper validasi sederhana
+  const validate = () => {
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+
+    if (!trimmedEmail && !trimmedPassword) {
+      setErrorMsg("Field Email dan Password kosong, mohon diisi terlebih dahulu");
+      return false;
+    }
+
+    if (!trimmedEmail) {
+      setErrorMsg("Field Email kosong, mohon diisi terlebih dahulu");
+      return false;
+    }
+
+    if (!trimmedPassword) {
+      setErrorMsg("Field Password kosong, mohon diisi terlebih dahulu");
+      return false;
+    }
+
+    // opsional: validasi format email sederhana
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      setErrorMsg("Format email tidak valid");
+      return false;
+    }
+
+    return true;
+  };
+
   const handleLogin = async () => {
+    // reset error dulu
+    setErrorMsg("");
+
+    // validasi sebelum request
+    if (!validate()) return;
+
     setIsLoading(true);
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/auth-api/login`,
-        { email, password },
+        { email: email.trim(), password: password.trim() },
         {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
         }
       );
 
@@ -30,12 +64,17 @@ const LoginAdmin = () => {
         setErrorMsg(response.data.message || "Login failed");
       }
     } catch (error: any) {
-      setErrorMsg(
-        error?.response?.data?.message || "Something went wrong"
-      );
+      setErrorMsg(error?.response?.data?.message || "Something went wrong");
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Enter submit: cukup pakai form onSubmit
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (isLoading) return;
+    handleLogin();
   };
 
   return (
@@ -45,7 +84,11 @@ const LoginAdmin = () => {
           <img src={logoblack} className="w-[250px] mb-4" alt="Logo" />
         </div>
 
-        <div className="form-input bg-white rounded-3xl flex flex-col items-center gap-8 p-[30px] w-[30rem] shadow-2xl">
+        {/* Pakai form agar Enter bisa submit */}
+        <form
+          onSubmit={handleSubmit}
+          className="form-input bg-white rounded-3xl flex flex-col items-center gap-8 p-[30px] w-[30rem] shadow-2xl"
+        >
           {/* Email */}
           <div className="username-section flex flex-col w-full gap-2">
             <div className="title-of-username flex flex-row items-center gap-3">
@@ -70,7 +113,11 @@ const LoginAdmin = () => {
               placeholder="Enter your email"
               className="w-full p-4 bg-[#EDF2F7] rounded-xl"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (errorMsg) setErrorMsg(""); // opsional: hapus warning saat user mulai mengetik
+              }}
+              autoComplete="email"
             />
           </div>
 
@@ -99,7 +146,11 @@ const LoginAdmin = () => {
               placeholder="Enter your password"
               className="w-full p-4 bg-[#EDF2F7] rounded-xl"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (errorMsg) setErrorMsg("");
+              }}
+              autoComplete="current-password"
             />
           </div>
 
@@ -108,10 +159,10 @@ const LoginAdmin = () => {
             <p className="text-red-600 text-sm font-medium">{errorMsg}</p>
           )}
 
-          {/* Sign In Button */}
+          {/* Sign In Button: type="submit" biar form bisa Enter */}
           <button
-            className="bg-[#2A4365] hover:bg-[#7f9bc3] cursor-pointer text-[20px] text-white w-full p-3 rounded-xl font-medium flex justify-center items-center gap-2"
-            onClick={handleLogin}
+            type="submit"
+            className="bg-[#2A4365] hover:bg-[#7f9bc3] cursor-pointer text-[20px] text-white w-full p-3 rounded-xl font-medium flex justify-center items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
             disabled={isLoading}
           >
             {isLoading ? (
@@ -144,7 +195,6 @@ const LoginAdmin = () => {
           </button>
 
           <h2 className="font-semibold flex flex-row items-center gap-2 text-red-700">
-            {" "}
             <span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -163,7 +213,7 @@ const LoginAdmin = () => {
             </span>
             Halaman Khusus Login Petugas HUMIC
           </h2>
-        </div>
+        </form>
       </div>
     </div>
   );
