@@ -1,11 +1,28 @@
 # Internify - Sistem Manajemen Magang Humic Engineering
 
+<div align="center">
+
+![React](https://img.shields.io/badge/React-18.2.0-61DAFB?style=for-the-badge&logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-6.3.5-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.1.6-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+
+![License](https://img.shields.io/badge/License-Proprietary-red?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
+![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+
+</div>
+
 Platform web untuk mengelola program magang, lowongan kerja, produk research, partnership, FAQ, dan feedback untuk Humic Engineering. Aplikasi ini menyediakan antarmuka yang user-friendly untuk calon magang dan dashboard administrasi yang lengkap untuk mengelola semua aspek program magang.
+
+---
 
 ## 📋 Daftar Isi
 
 - [Tentang Proyek](#tentang-proyek)
 - [Fitur-Fitur](#fitur-fitur)
+  - [Fitur untuk Pengguna Umum](#fitur-untuk-pengguna-umum)
+  - [Fitur untuk Administrator](#fitur-untuk-administrator)
 - [Teknologi yang Digunakan](#teknologi-yang-digunakan)
 - [Prasyarat](#prasyarat)
 - [Instalasi](#instalasi)
@@ -16,8 +33,12 @@ Platform web untuk mengelola program magang, lowongan kerja, produk research, pa
 - [Authentication](#authentication)
 - [Deployment](#deployment)
 - [Kontribusi](#kontribusi)
+- [Catatan Tambahan](#catatan-tambahan)
+- [Lisensi](#lisensi)
 
-## 🎯 Tentang Proyek
+---
+
+## Tentang Proyek
 
 **Internify** adalah sistem manajemen magang yang dikembangkan untuk Humic Engineering. Aplikasi ini memungkinkan:
 
@@ -26,7 +47,7 @@ Platform web untuk mengelola program magang, lowongan kerja, produk research, pa
 
 Aplikasi ini dibangun dengan teknologi modern untuk memberikan pengalaman pengguna yang optimal dan performa yang tinggi.
 
-## ✨ Fitur-Fitur
+## Fitur-Fitur
 
 ### Fitur untuk Pengguna Umum
 
@@ -87,7 +108,7 @@ Aplikasi ini dibangun dengan teknologi modern untuk memberikan pengalaman penggu
   
 - **Manajemen Konten**: Edit konten aktif
 
-## 🛠 Teknologi yang Digunakan
+## Teknologi yang Digunakan
 
 ### Frontend Framework & Tools
 - **React 18.2.0**: Library JavaScript untuk membangun user interface
@@ -121,7 +142,7 @@ Aplikasi ini dibangun dengan teknologi modern untuk memberikan pengalaman penggu
 - **ESLint**: Linting tool untuk menjaga kualitas kode
 - **TypeScript ESLint**: ESLint rules untuk TypeScript
 
-## 📦 Prasyarat
+## Prasyarat
 
 Sebelum memulai, pastikan Anda telah menginstall:
 
@@ -130,7 +151,7 @@ Sebelum memulai, pastikan Anda telah menginstall:
 - Akses ke backend API Internify
 - Google reCAPTCHA Site Key (untuk fitur pendaftaran)
 
-## 🚀 Instalasi
+## Instalasi
 
 1. **Clone repository**
    ```bash
@@ -162,7 +183,7 @@ Sebelum memulai, pastikan Anda telah menginstall:
    
    Aplikasi akan berjalan di `http://localhost:5173` (atau port yang ditampilkan di terminal)
 
-## ⚙️ Konfigurasi
+## Konfigurasi
 
 ### Environment Variables
 
@@ -188,7 +209,7 @@ Aplikasi ini memerlukan backend API yang menyediakan endpoint berikut:
 
 Pastikan backend API sudah berjalan dan dapat diakses sebelum menggunakan aplikasi.
 
-## 📁 Struktur Proyek
+## Struktur Proyek
 
 ```
 Internify_Project/
@@ -257,7 +278,7 @@ Internify_Project/
 - **assets/**: File gambar dan asset lainnya
 - **types/**: Type definitions untuk TypeScript
 
-## 📜 Scripts yang Tersedia
+## Scripts yang Tersedia
 
 ### Development
 ```bash
@@ -283,7 +304,7 @@ npm run preview
 ```
 Preview production build secara lokal sebelum deploy.
 
-## 🗺 Halaman dan Routing
+## Halaman dan Routing
 
 ### Public Routes (Tidak Memerlukan Authentication)
 
@@ -325,7 +346,7 @@ Semua route di bawah ini dilindungi oleh `PrivateRoute` dan memerlukan token aut
 | `/edit-feedback/:id` | `EditFeedback` | Edit feedback |
 | `/kontent-aktif/edit/:id` | `EditKontenAdmin` | Edit konten aktif |
 
-## 🔐 Authentication
+## Authentication
 
 Aplikasi menggunakan sistem autentikasi berbasis **token** yang disimpan dalam **cookie**.
 
@@ -361,7 +382,7 @@ headers: {
 }
 ```
 
-## 🚢 Deployment
+## Deployment
 
 ### Vercel Deployment
 
@@ -416,7 +437,7 @@ Pastikan semua environment variables sudah di-set di Vercel dashboard:
 - `VITE_API_BASE_URL`
 - `VITE_RECAPTCHA_SITE_KEY`
 
-## 🤝 Kontribusi
+## Kontribusi
 
 Kontribusi sangat diterima! Untuk berkontribusi:
 
@@ -433,16 +454,24 @@ Kontribusi sangat diterima! Untuk berkontribusi:
 - Update dokumentasi jika diperlukan
 - Commit message yang jelas dan deskriptif
 
-## 📝 Catatan Tambahan
+## Catatan Tambahan
 
 - Pastikan backend API sudah berjalan sebelum menggunakan aplikasi
 - Google reCAPTCHA diperlukan untuk fitur pendaftaran magang
 - Semua gambar dan asset disimpan di backend, frontend hanya menampilkan
 
-## 📄 Lisensi
+## Lisensi
 
 Proyek ini adalah proyek internal untuk Humic Engineering.
 
 ---
 
+<div align="center">
+
 **Dikembangkan dengan ❤️ untuk Humic Engineering**
+
+[![Made with React](https://img.shields.io/badge/Made%20with-React-61DAFB?style=flat-square&logo=react)](https://reactjs.org/)
+[![Made with TypeScript](https://img.shields.io/badge/Made%20with-TypeScript-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Powered by Vite](https://img.shields.io/badge/Powered%20by-Vite-646CFF?style=flat-square&logo=vite)](https://vitejs.dev/)
+
+</div>
