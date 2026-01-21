@@ -41,7 +41,7 @@ function App() {
         <Route path="/register-done" element={<RegisterDone />} />
         <Route path="/our-developer" element={<OurDeveloper />} />
         <Route path="/details-product/:id" element={<DetailsProduct />} />
-        <Route path="/humic-20242025-2" element={<LoginAdmin />} />
+        <Route path="/login-admin" element={<LoginAdmin />} />
         {/* Endpoint khusus admin login langsung di inject ajah */}
 
         <Route element={<PrivateRoute />}>  

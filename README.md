@@ -297,7 +297,7 @@ Preview production build secara lokal sebelum deploy.
 | `/register-done` | `RegisterDone` | Halaman konfirmasi setelah pendaftaran |
 | `/our-developer` | `OurDeveloper` | Halaman tentang tim developer |
 | `/details-product/:id` | `DetailsProduct` | Detail produk research |
-| `/humic-20242025-2` | `LoginAdmin` | Halaman login admin |
+| `/login-admin` | `LoginAdmin` | Halaman login admin |
 
 ### Protected Routes (Memerlukan Authentication)
 
@@ -331,7 +331,7 @@ Aplikasi menggunakan sistem autentikasi berbasis **token** yang disimpan dalam *
 
 ### Flow Authentication
 
-1. **Login**: Admin login melalui `/humic-20242025-2`
+1. **Login**: Admin login melalui `/login-admin`
 2. **Token Storage**: Token disimpan dalam cookie dengan nama `token`
 3. **Protected Routes**: `PrivateRoute` component memeriksa keberadaan token
 4. **API Requests**: Token dikirim sebagai Bearer token di header Authorization
@@ -435,7 +435,6 @@ Kontribusi sangat diterima! Untuk berkontribusi:
 
 ## 📝 Catatan Tambahan
 
-- Aplikasi ini adalah frontend-only, memerlukan backend API yang terpisah
 - Pastikan backend API sudah berjalan sebelum menggunakan aplikasi
 - Google reCAPTCHA diperlukan untuk fitur pendaftaran magang
 - Semua gambar dan asset disimpan di backend, frontend hanya menampilkan
