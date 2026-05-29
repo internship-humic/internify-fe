@@ -475,3 +475,4 @@ Proyek ini adalah proyek internal untuk Humic Engineering.
 [![Powered by Vite](https://img.shields.io/badge/Powered%20by-Vite-646CFF?style=flat-square&logo=vite)](https://vitejs.dev/)
 
 </div>
+# internify-fe
