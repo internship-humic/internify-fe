@@ -28,6 +28,16 @@ import Dashboard from "./Pages/Dashboard";
 import EditFaq from "./Pages/EditFAQ";
 import EditFeedback from "./Pages/EditFeedback";
 import EditLowongan from "./Pages/EditLowongan";
+import HomeInternPage from "./Pages/internify/intern/HomeInternPage";
+import {InternLayout, MentorLayout} from "./Pages/internify/layout";
+import ProjectsPage from "./Pages/internify/intern/ProjectsPage";
+import SertificatePage from "./Pages/internify/intern/SertificatePage";
+import ProjectDetailPage from "./Pages/internify/intern/ProjectDetailPage";
+import HomeMentorPage from "./Pages/internify/mentor/HomeMentorPage";
+import MentorProjectsPage from "./Pages/internify/mentor/MentorProjectsPage";
+import MentorCertificatePage from "./Pages/internify/mentor/MentorCertificatePage";
+import MentorInternPage from "./Pages/internify/mentor/MentorInternPage";
+import MentorDetailProject from "./Pages/internify/mentor/MentorDetailProject";
 
 function App() {
   return (
@@ -42,9 +52,9 @@ function App() {
         <Route path="/our-developer" element={<OurDeveloper />} />
         <Route path="/details-product/:id" element={<DetailsProduct />} />
         <Route path="/login-admin" element={<LoginAdmin />} />
-        {/* Endpoint khusus admin login langsung di inject ajah */}
 
-        <Route element={<PrivateRoute />}>  
+        {/* Endpoint khusus admin login langsung di inject ajah */}
+        <Route element={<PrivateRoute />}>
           <Route path="/add-product-admin" element={<AddProduct />} />
           <Route path="/internships-list" element={<InternshipList />} />
           <Route path="/lowongan-list" element={<ListLowongan />} />
@@ -52,10 +62,7 @@ function App() {
           <Route path="/add-product-humic" element={<AddProductHumic />} />
           <Route path="/edit-product-humic/:id" element={<EditProductHumic />} />
           <Route path="/kontent-aktif/edit/:id" element={<EditKontenAdmin />} />
-          <Route
-            path="/internships-details-admin/:id"
-            element={<InternshipDetailsAdmin />}
-          />
+          <Route path="/internships-details-admin/:id"element={<InternshipDetailsAdmin />}/>
           <Route path="/partnership-admin" element={<PartnershipsList />} />
           <Route path="/add-partnership" element={<AddPartnershipAdmin />} />
           <Route path="/edit-partnership/:id" element={<EditPartnerships />} />
@@ -64,10 +71,27 @@ function App() {
           <Route path="/faq-list" element={<ListFaq />} />
           <Route path="/add-faq" element={<AddFaq />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/edit-faq/:id" element={<EditFaq/>}></Route>
-          <Route path="/edit-feedback/:id" element={<EditFeedback/>}></Route>
-          <Route path="/edit-lowongan/:id" element={<EditLowongan/>}></Route>
+          <Route path="/edit-faq/:id" element={<EditFaq />}></Route>
+          <Route path="/edit-feedback/:id" element={<EditFeedback />}></Route>
+          <Route path="/edit-lowongan/:id" element={<EditLowongan />}></Route>
+
         </Route>
+
+        {/* // Endpoints for intern-specific pages */}
+        <Route path="/intern" element={<InternLayout />}>
+          <Route index element={<HomeInternPage />} />
+          <Route path="projects" element={<ProjectsPage />} />
+          <Route path="certificates" element={<SertificatePage />} />
+          <Route path="projects/:id" element={<ProjectDetailPage/>}/>
+        </Route>
+
+      <Route path="mentor-intern" element={<MentorLayout/>}>
+        <Route index element={<HomeMentorPage/>}/>
+        <Route path="projects" element={<MentorProjectsPage/>} />
+        <Route path="certificates" element={<MentorCertificatePage/>} />
+        <Route path="intern" element={<MentorInternPage/>} />
+        <Route path="projects/:id" element={<MentorDetailProject  />}/>
+      </Route>
       </Routes>
     </Router>
   );
