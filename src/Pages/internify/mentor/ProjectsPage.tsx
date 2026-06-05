@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { mockProjects } from '../../../lib/mockData';
-import ForumTab from './ForumTab';
-import ParticipantsTab from './ParticipantTab';
 import { ChevronLeft } from 'lucide-react';
+import MentorForumTab from './ProjectForumTab';
+import InternsTab from './ProjectsInternTab';
+import TaskTab from './TaskTab';
 
 // ─── ProjectDetailPage ─────────────────────────────────────────────────────────
 export default function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'forum' | 'participants'>('forum');
+  const [activeTab, setActiveTab] = useState<'forum' | 'participants' | 'Task'>('forum');
 
   const handleBack = () => {
     if (window.history.length > 1) {
@@ -51,20 +52,31 @@ export default function ProjectDetailPage() {
         </button>
 
         {/* Tabs */}
-        <div className="flex mb-4">
+        <div className="flex mb-4 border-b-1 border-gray-300">
           <button className={tabClass('forum')} onClick={() => setActiveTab('forum')}>
             Forum
           </button>
           <button className={tabClass('participants')} onClick={() => setActiveTab('participants')}>
             Participants
           </button>
+          <button className={tabClass('Task')} onClick={() => setActiveTab('Task')}>
+            Tasks
+          </button>
         </div>
 
         {/* Tab content */}
-        {activeTab === 'forum'
-          ? <ForumTab project={project} />
-          : <ParticipantsTab project={project} />
-        }
+        {(() => {
+          switch (activeTab) {
+            case 'forum':
+              return <MentorForumTab project={project} />;
+            case 'participants':
+              return <InternsTab project={project} />;
+            case 'Task':
+              return <TaskTab project={project} />; // Tambahkan komponen TaskTab di sini
+            default:
+              return null;
+          }
+          })()}
       </div>
     </div>
   );

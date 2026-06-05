@@ -109,6 +109,16 @@ const Navbar = () => {
           >
             Internship
           </button>
+
+          <button
+            onClick={() => {
+              navigate("/login-internify");
+              setOpenMenu(false);
+            }}
+            className="block w-full text-left hover:text-blue-600 transition"
+          >
+            Login
+          </button>
         </div>
       )}
     </nav>

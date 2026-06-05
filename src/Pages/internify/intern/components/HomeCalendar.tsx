@@ -83,7 +83,7 @@ const HomeCalendar = () => {
   }
 
   return (
-    <div className=" px-13 py-5">
+    <div className=" px-13 py-5 border border-gray-200 rounded-2xl">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-base font-semibold text-gray-800">

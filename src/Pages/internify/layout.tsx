@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom";
-import Header from './Header';
+import Header from './mentor/components/Header';
 import SidebarIntern from './intern/components/SidebarIntern';
 import SidebarAdmin from '../../Layout/SidebarAdmin';
-import FooterIntern from './intern/components/FooterIntern';
+import FooterIntern from '../../Layout/Footer-Internify';
 
 export const InternLayout = () => {
   return (

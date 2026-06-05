@@ -1,5 +1,5 @@
 import { Bell } from "lucide-react"
-import humiclogo from "../../assets/logo.png";
+import humiclogo from "../../../../assets/logo.png";
 
 const Header = () => {
   return (

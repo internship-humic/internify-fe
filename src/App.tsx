@@ -29,15 +29,19 @@ import EditFaq from "./Pages/EditFAQ";
 import EditFeedback from "./Pages/EditFeedback";
 import EditLowongan from "./Pages/EditLowongan";
 import HomeInternPage from "./Pages/internify/intern/HomeInternPage";
-import {InternLayout, MentorLayout} from "./Pages/internify/layout";
+import { InternLayout, MentorLayout } from "./Pages/internify/layout";
 import ProjectsPage from "./Pages/internify/intern/ProjectsPage";
 import SertificatePage from "./Pages/internify/intern/SertificatePage";
 import ProjectDetailPage from "./Pages/internify/intern/ProjectDetailPage";
-import HomeMentorPage from "./Pages/internify/mentor/HomeMentorPage";
-import MentorProjectsPage from "./Pages/internify/mentor/MentorProjectsPage";
-import MentorCertificatePage from "./Pages/internify/mentor/MentorCertificatePage";
-import MentorInternPage from "./Pages/internify/mentor/MentorInternPage";
-import MentorDetailProject from "./Pages/internify/mentor/MentorDetailProject";
+import HomeMentorPage from "./Pages/internify/mentor/HomePage";
+import MentorProjectsPage from "./Pages/internify/mentor/BaseProjectsPage";
+import MentorCertificatePage from "./Pages/internify/mentor/CertificatePage";
+import MentorInternPage from "./Pages/internify/mentor/InternsPage";
+import MentorDetailProject from "./Pages/internify/mentor/ProjectsPage";
+import InternifyLogin from "./Pages/internify/page"
+import FAQPage from "./Pages/internify/FAQpage";
+import NotificationList from "./Pages/internify/NotificationList";
+import SettingsContent from "./Pages/internify/SettingsPage";
 
 function App() {
   return (
@@ -62,7 +66,7 @@ function App() {
           <Route path="/add-product-humic" element={<AddProductHumic />} />
           <Route path="/edit-product-humic/:id" element={<EditProductHumic />} />
           <Route path="/kontent-aktif/edit/:id" element={<EditKontenAdmin />} />
-          <Route path="/internships-details-admin/:id"element={<InternshipDetailsAdmin />}/>
+          <Route path="/internships-details-admin/:id" element={<InternshipDetailsAdmin />} />
           <Route path="/partnership-admin" element={<PartnershipsList />} />
           <Route path="/add-partnership" element={<AddPartnershipAdmin />} />
           <Route path="/edit-partnership/:id" element={<EditPartnerships />} />
@@ -77,21 +81,28 @@ function App() {
 
         </Route>
 
+        <Route path="/login-internify" element={<InternifyLogin />} />
         {/* // Endpoints for intern-specific pages */}
         <Route path="/intern" element={<InternLayout />}>
           <Route index element={<HomeInternPage />} />
           <Route path="projects" element={<ProjectsPage />} />
           <Route path="certificates" element={<SertificatePage />} />
-          <Route path="projects/:id" element={<ProjectDetailPage/>}/>
+          <Route path="projects/:id" element={<ProjectDetailPage />} />
+          <Route path="faq" element={<FAQPage />} />
+          <Route path="notifications" element={<NotificationList />} />
+          <Route path="settings" element={<SettingsContent />} />
         </Route>
 
-      <Route path="mentor-intern" element={<MentorLayout/>}>
-        <Route index element={<HomeMentorPage/>}/>
-        <Route path="projects" element={<MentorProjectsPage/>} />
-        <Route path="certificates" element={<MentorCertificatePage/>} />
-        <Route path="intern" element={<MentorInternPage/>} />
-        <Route path="projects/:id" element={<MentorDetailProject  />}/>
-      </Route>
+        <Route path="/mentor" element={<MentorLayout />}>
+          <Route index element={<HomeMentorPage />} />
+          <Route path="projects" element={<MentorProjectsPage />} />
+          <Route path="certificates" element={<MentorCertificatePage />} />
+          <Route path="intern" element={<MentorInternPage />} />
+          <Route path="projects/:id" element={<MentorDetailProject />} />
+          <Route path="faq" element={<FAQPage />} />
+          <Route path="notifications" element={<NotificationList />} />
+          <Route path="settings" element={<SettingsContent />} />
+        </Route>
       </Routes>
     </Router>
   );

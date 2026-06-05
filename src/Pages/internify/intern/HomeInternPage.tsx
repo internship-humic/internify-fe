@@ -1,7 +1,7 @@
 import HomeHeader from "./components/HomeHeader";
 import HomeProjectList from "./components/HomeProjectList";
 import HomeCalendar from "./components/HomeCalendar";
-import TaskTimeline from "./components/TaskTImeline";
+import TaskTimeline from "./components/TaskTimeline";
 
 // PR: tambahin breadcrumb
 export default function HomeInternPage()  {

@@ -24,6 +24,8 @@ export interface Task {
   description: string;
   deadline: Deadline;
   isSubmitted: boolean;
+  submittedCount: number;
+  totalInterns: number;
 }
 
 export interface Intern {
@@ -57,24 +59,32 @@ export const mockProjects: Project[] = [
         title: "Laporan tugas",
         description: "Berisi design ulux, dan user flow dari aplikasi internify",
         deadline: { date: new Date(2026, 4, 1), label: "Laporan tugas – 1 Mei", time: "23:59 PM" },
+        submittedCount: 6,
+        totalInterns: 6,
         isSubmitted: true,
       },
       {
         title: "Laporan tugas 1",
         description: "Berisi design ulux, dan user flow dari aplikasi internify",
         deadline: { date: new Date(2026, 4, 14), label: "Laporan tugas 1 – 14 Mei", time: "23:59 PM" },
+        submittedCount: 2,
+        totalInterns: 6,
         isSubmitted: false,
       },
       {
         title: "Laporan tugas 2",
         description: "Berisi design ulux, dan user flow dari aplikasi internify",
         deadline: { date: new Date(2026, 4, 28), label: "Laporan tugas 2 – 28 Mei", time: "23:59 PM" },
+        submittedCount: 3,
+        totalInterns: 6,
         isSubmitted: false,
       },
       {
         title: "Laporan tugas 3",
         description: "Berisi wireframe halaman dashboard aplikasi internify",
         deadline: { date: new Date(2026, 5, 5), label: "Laporan tugas 3 – 5 Jun", time: "23:59 PM" },
+        submittedCount: 0,
+        totalInterns: 6,
         isSubmitted: false,
       },
     ],
@@ -101,24 +111,32 @@ export const mockProjects: Project[] = [
         title: "Analisis Kebutuhan Sistem",
         description: "Dokumentasi kebutuhan fungsional dan non-fungsional platform rekrutmen",
         deadline: { date: new Date(2026, 4, 5), label: "Analisis Kebutuhan – 5 Mei", time: "23:59 PM" },
+        submittedCount: 6,
+        totalInterns: 6,
         isSubmitted: true,
       },
       {
         title: "Desain Database Schema",
         description: "Rancangan struktur database untuk kandidat, lowongan, dan proses seleksi",
         deadline: { date: new Date(2026, 4, 10), label: "Desain Database – 10 Mei", time: "23:59 PM" },
+        submittedCount: 6,
+        totalInterns: 6,
         isSubmitted: true,
       },
       {
         title: "Implementasi Auth Module",
         description: "Pengembangan sistem autentikasi dan otorisasi multi-role",
         deadline: { date: new Date(2026, 4, 18), label: "Auth Module – 18 Mei", time: "23:59 PM" },
+        submittedCount: 3,
+        totalInterns: 6,
         isSubmitted: true,
       },
       {
         title: "Modul Posting Lowongan",
         description: "Fitur buat, edit, dan publish lowongan pekerjaan",
         deadline: { date: new Date(2026, 4, 25), label: "Posting Lowongan – 25 Mei", time: "23:59 PM" },
+        submittedCount: 0,
+        totalInterns: 6,
         isSubmitted: false,
       },
     ],
@@ -146,25 +164,33 @@ export const mockProjects: Project[] = [
         title: "Setup Pipeline Data",
         description: "Konfigurasi ETL pipeline dari database transaksi ke data warehouse",
         deadline: { date: new Date(2026, 4, 3), label: "Setup Pipeline – 3 Mei", time: "23:59 PM" },
+        submittedCount: 6,
+        totalInterns: 6,
         isSubmitted: true,
       },
       {
         title: "Desain Komponen Chart",
         description: "Pembuatan reusable chart component untuk berbagai tipe visualisasi data",
         deadline: { date: new Date(2026, 4, 12), label: "Komponen Chart – 12 Mei", time: "23:59 PM" },
+        submittedCount: 6,
+        totalInterns: 6,
         isSubmitted: true,
       },
       {
         title: "Dashboard Overview Page",
         description: "Halaman utama dengan ringkasan KPI dan metric utama bisnis",
         deadline: { date: new Date(2026, 4, 20), label: "Overview Page – 20 Mei", time: "23:59 PM" },
-        isSubmitted: true,
+        submittedCount: 0,
+        totalInterns: 6,
+        isSubmitted: false,
       },
       {
         title: "Laporan Penjualan",
         description: "Modul analitik penjualan dengan filter periode dan kategori produk",
         deadline: { date: new Date(2026, 4, 28), label: "Laporan Penjualan – 28 Mei", time: "23:59 PM" },
-        isSubmitted: true,
+        submittedCount: 0,
+        totalInterns: 6,
+        isSubmitted: false,
       },
     ],
     interns: [
@@ -182,8 +208,34 @@ export const mockProjects: Project[] = [
   },
 ];
 
-export const certificateData = {
-  isReceived: true, // ubah ke false untuk tampilan "belum tersedia"
+export interface Certificate {
+  id: string;
+  issuedDate: string;
+  recipientName: string;
+  programName: string;
+  duration: string;
+  finalScore: number;
+  grade: string;
+  status: string;
+}
+
+export interface CertificateHistory {
+  id: number;
+  month: string;
+  title: string;
+  grade: string;
+}
+
+export interface CertificateData {
+  isReceived: boolean;
+  projectProgress: number;
+  remainingTasks: number;
+  certificate: Certificate;
+  history: CertificateHistory[];
+}
+
+export const certificateData: CertificateData = {
+  isReceived: false, // ubah ke false untuk tampilan "belum tersedia"
   projectProgress: 65,
   remainingTasks: 3,
   certificate: {
@@ -208,12 +260,6 @@ export const certificateData = {
       month: "Maret 2023",
       title: "UI/UX Design Essentials",
       grade: "A",
-    },
-    {
-      id: 3,
-      month: "Januari 2023",
-      title: "Data Analytics Bootcamp",
-      grade: "B+",
-    },
+    }
   ],
 };

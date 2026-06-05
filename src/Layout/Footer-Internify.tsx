@@ -1,5 +1,6 @@
 import { Briefcase, Globe, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { FaInstagram, FaLinkedin, FaRegEnvelope } from "react-icons/fa";
 
 const footerLinks = {
   Internship: [
@@ -16,9 +17,9 @@ const footerLinks = {
 };
 
 const socials = [
-  { label: "Website", icon: Globe, href: "https://placeholder.com" },
-  { label: "Team", icon: Users, href: "https://placeholder.com" },
-  { label: "Work", icon: Briefcase, href: "https://placeholder.com" },
+  { label: "Instagram", icon: FaInstagram, href: "https://placeholder.com" },
+  { label: "LinkedIn", icon: FaLinkedin, href: "https://placeholder.com" },
+  { label: "Email", icon: FaRegEnvelope, href: "https://placeholder.com" },
 ];
 
 
@@ -26,13 +27,12 @@ export function FooterIntern() {
   const navigate = useNavigate();
 
   return (
-    <footer className="bg-white border-t border-gray-100 px-14 py-8 flex gap-12 flex-wrap">
+    <footer className="bg-white border-t border-gray-300 px-14 py-8 flex gap-12 flex-wrap">
       {/* Brand info */}
-      <div className="flex flex-col gap-2 flex-shrink-0 w-52">
-        <p className="text-sm font-bold text-gray-900">Internify Logo</p>
-        <address className="text-[12.5px] text-gray-400 leading-relaxed not-italic">
-          Gedung Kultubai Selatan, Blok F<br />
-          Jl. Telekomunikasi, Terusan Buah Batu Bandung<br />
+      <div className="flex flex-col gap-2 flex-shrink-0 w-70">
+        <address className="text-xs text-gray-800 leading-relaxed not-italic">
+          Gedung Kultubai Selatan, Blok F
+          Jl. Telekomunikasi, Terusan Buah Batu Bandung
           Jawa Barat, Indonesia. 40257
         </address>
         <div className="flex gap-2 mt-1">
@@ -43,7 +43,7 @@ export function FooterIntern() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={label}
-              className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+              className="w-10 h-10 border rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors"
             >
               <Icon className="w-4 h-4" />
             </a>
@@ -56,12 +56,12 @@ export function FooterIntern() {
         {Object.entries(footerLinks).map(([title, links]) => (
           <div key={title} className="flex flex-col gap-2.5 min-w-[110px]">
             <p className="text-[13px] font-bold text-gray-900">{title}</p>
-            <ul className="flex flex-col gap-2">
+            <ul className="flex flex-col gap-0.5">
               {links.map(({ label, path }) => (
                 <li key={label}>
                   <button
                     onClick={() => navigate(path)}
-                    className="text-[12.5px] text-gray-400 hover:text-red-600 transition-colors text-left bg-transparent border-none p-0 cursor-pointer"
+                    className="text-[12.5px] text-gray-600 hover:text-red-800 transition-colors text-left bg-transparent border-none p-0 cursor-pointer"
                   >
                     {label}
                   </button>

@@ -1,14 +1,5 @@
-import { Code2, ChessKing, Beef } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { mockProjects } from '../../../../lib/mockData'
-
-interface Project {
-  name: string
-  role: string
-  logo: React.ElementType
-  iconBg: string
-  iconColor: string
-}
 
 const HomeProjectList = () => {
   const navigate = useNavigate();
