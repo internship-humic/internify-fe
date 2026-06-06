@@ -137,7 +137,7 @@ const HomeCalendar = () => {
                 className={`w-full h-7 flex items-center justify-center text-xs rounded
                   ${isBold(day) ? 'font-bold text-gray-800' : 'text-gray-700'}
                   ${hasDeadline(day) ? 'bg-red-700 text-white' : ''}
-                  hover:bg-gray-100 cursor-pointer transition-colors`}
+                  transition-colors`}
               >
                 {day}
               </span>

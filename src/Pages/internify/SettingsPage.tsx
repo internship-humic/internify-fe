@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ChevronRight } from "lucide-react"; // dari lucide-react
 
 // Mock Data Profile awal
 const mockProfileData = {
@@ -10,7 +8,6 @@ const mockProfileData = {
 };
 
 export default function SettingsContent() {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState(mockProfileData);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -29,24 +26,18 @@ export default function SettingsContent() {
   const initialLetter = formData.fullName ? formData.fullName.charAt(0).toUpperCase() : "U";
 
   return (
-    <div className="w-full max-w-5xl px-6 py-6 font-sans">
-      {/* Breadcrumb */}
-      <div className="flex items-center text-xs text-gray-400 font-medium mb-1">
-        <span className="cursor-pointer hover:underline" onClick={() => navigate("/")}>Home</span>
-        <ChevronRight className="w-3.5 h-3.5 mx-1" />
-        <span className="text-[#B30000] font-semibold">Settings</span>
-      </div>
+    <div className="container">
 
       {/* Header Title */}
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Settings</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="page-title">Settings</h1>
+        <p className="page-title-desc">
           Manage and edit your profile and account information.
         </p>
       </div>
 
       {/* White Card Container */}
-      <div className="w-full bg-white rounded-xl border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.01)] overflow-hidden">
+      <div className="w-full bg-white rounded-xl border border-gray-100 shadow-lg overflow-hidden">
         
         {/* Card Header */}
         <div className="p-6 border-b border-gray-100">
@@ -79,7 +70,7 @@ export default function SettingsContent() {
             
             {/* Field: Full Name */}
             <div className="space-y-1">
-              <label className="text-[10px] font-bold tracking-wider text-gray-400 uppercase block">
+              <label className="text-[10px] font-bold tracking-wider text-gray-700 uppercase block">
                 Full Name
               </label>
               <input
@@ -93,7 +84,7 @@ export default function SettingsContent() {
 
             {/* Field: Email Address */}
             <div className="space-y-1">
-              <label className="text-[10px] font-bold tracking-wider text-gray-400 uppercase block">
+              <label className="text-[10px] font-bold tracking-wider text-gray-700 uppercase block">
                 Email Address
               </label>
               <input
@@ -108,7 +99,7 @@ export default function SettingsContent() {
 
           {/* Field: Professional Bio */}
           <div className="space-y-1">
-            <label className="text-[10px] font-bold tracking-wider text-gray-400 uppercase block">
+            <label className="text-[10px] font-bold tracking-wider text-gray-700 uppercase block">
               Professional Bio
             </label>
             <textarea
@@ -118,13 +109,13 @@ export default function SettingsContent() {
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-colors bg-white font-medium resize-none"
             />
-            <p className="text-[11px] text-gray-400 font-normal pt-0.5">
+            <p className="text-[11px] text-gray-700 font-normal pt-0.5">
               Brief description for your profile. URLs and @mentions are allowed.
             </p>
           </div>
 
           {/* Form Action Footer Row */}
-          <div className="flex justify-end pt-4">
+          <div className="flex justify-end pt-2">
             <button
               type="submit"
               className="px-6 py-2 bg-[#B30000] hover:bg-[#990000] text-white font-bold text-xs rounded-lg shadow-sm transition-colors uppercase tracking-wider"

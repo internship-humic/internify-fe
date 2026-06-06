@@ -1,11 +1,13 @@
 import type { Task } from "../../../../lib/mockData";
+import { useNavigate } from "react-router-dom";
 
 const formatDate = (date: Date) =>
   new Date(date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
 
 export default function TaskCard({ task }: { task: Task }) {
+  const navigate = useNavigate();
   return (
-    <div className="border border-[#eee] rounded-[10px] px-5 py-4 mb-3 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.05)] flex items-start justify-between gap-3">
+    <div className="border border-gray-200 rounded-[10px] px-6 py-4 mb-3 bg-white flex items-start justify-between gap-3">
       <div className="flex-1 min-w-0">
         <div className=" text-[11px] text-[#888] mb-1">
           Deadline : {formatDate(task.deadline.date)} at {task.deadline.time}
@@ -24,8 +26,8 @@ export default function TaskCard({ task }: { task: Task }) {
             DONE
           </span>
         ) : (
-          <button className=" bg-white text-[#1a1a1a] border-[1.5px] border-[#d0d0d0] font-semibold text-xs px-3.5 py-[5px] rounded-md cursor-pointer whitespace-nowrap transition-colors duration-150 hover:border-[#C0392B] hover:text-[#C0392B]">
-            Mark as Done
+          <button className=" bg-white text-[#1a1a1a] border-[1.5px] border-[#d0d0d0] font-semibold text-xs px-3.5 py-[5px] rounded-md cursor-pointer whitespace-nowrap transition-colors duration-150 hover:border-[#C0392B] hover:text-[#C0392B]" onClick={() => navigate(`/intern/tasks/${task.id}/submit`)}>
+            Add Submission
           </button>
         )}
       </div>

@@ -1,6 +1,3 @@
-import { useNavigate } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
-
 const mockFAQData = [
   {
     id: 1,
@@ -20,47 +17,30 @@ const mockFAQData = [
 ];
 
 export default function FAQPage() {
-  const navigate = useNavigate();
-
   return (
-    <div className="w-full max-w-5xl px-6 py-6 font-sans">
-      {/* Breadcrumb */}
-      <div className="flex items-center text-xs text-gray-400 font-medium mb-1">
-        <span className="cursor-pointer hover:underline" onClick={() => navigate("/")}>Home</span>
-        <ChevronRight className="w-3.5 h-3.5 mx-1" />
-        <span className="text-[#B30000] font-semibold">FAQ</span>
-      </div>
-
+    <div className="container">
       {/* Header Title */}
       <div className="mb-10">
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">FAQ</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="page-title">FAQ</h1>
+        <p className="page-title-desc">
           Quick answers to common questions about the Internify LMS platform.
         </p>
       </div>
 
       {/* FAQ Lists */}
-      <div className="space-y-8 max-w-4xl">
+      <div className="space-y-8 max-w-auto">
         {mockFAQData.map((faq) => (
-          <div key={faq.id} className="relative pl-6 group">
-            
-            {/* Indikator Garis/Kotak Kecil Merah di Sisi Kiri sesuai gambar */}
-            <div className="absolute left-0 top-1.5 w-1 h-3.5 bg-[#B30000] rounded-sm transition-transform duration-200 group-hover:scale-y-125"></div>
+          <div key={faq.id} className="relative shadow-md group py-5 px-10 rounded-md bg-white">
             
             {/* Item Question */}
-            <h2 className="text-[17px] font-bold text-[#8A0000] tracking-tight leading-snug mb-2">
+            <h2 className="text-[17px] font-bold text-[#8A0000] tracking-tight leading-snug mb-2 border-l-4 border-[#8A0000] pl-3">
               {faq.question}
             </h2>
             
             {/* Item Answer */}
-            <p className="text-sm text-gray-500 font-medium leading-relaxed tracking-normal">
+            <p className="text-[14px] pl-8 text-[#8A0000] font-light leading-relaxed tracking-normal">
               {faq.answer}
             </p>
-            
-            {/* Divider Line tipis di bawah setiap item, kecuali item terakhir */}
-            {faq.id !== mockFAQData.length && (
-              <div className="border-b border-gray-100 pt-8"></div>
-            )}
           </div>
         ))}
       </div>

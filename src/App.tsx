@@ -42,6 +42,7 @@ import InternifyLogin from "./Pages/internify/page"
 import FAQPage from "./Pages/internify/FAQpage";
 import NotificationList from "./Pages/internify/NotificationList";
 import SettingsContent from "./Pages/internify/SettingsPage";
+import TaskSubmission from "./Pages/internify/intern/TaskSubmission";
 
 function App() {
   return (
@@ -88,6 +89,7 @@ function App() {
           <Route path="projects" element={<ProjectsPage />} />
           <Route path="certificates" element={<SertificatePage />} />
           <Route path="projects/:id" element={<ProjectDetailPage />} />
+          <Route path="tasks/:id/submit" element={<TaskSubmission />} />
           <Route path="faq" element={<FAQPage />} />
           <Route path="notifications" element={<NotificationList />} />
           <Route path="settings" element={<SettingsContent />} />

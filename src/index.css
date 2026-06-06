@@ -11,3 +11,37 @@
   font-family: JakartaSans, sans-serif;
   color: black;
 }
+
+.container {
+  padding-inline: calc(var(--spacing) * 14);
+  padding-block: calc(var(--spacing) * 12);
+  background-color: var(--color-gray-50);
+  min-height: 100vh;
+}
+
+.sidebar {
+
+}
+
+.footer {
+
+}
+
+.box {
+
+}
+
+.page-title {
+  font-size: var(--text-3xl) /* 1.875rem = 30px */;
+  line-height: var(--tw-leading, var(--text-3xl--line-height) /* calc(2.25 / 1.875) ≈ 1.2 */);
+  font-weight: bold;
+  color: var(--color-gray-900);
+  --tw-tracking: var(--tracking-tight) /* -0.025em */;
+  letter-spacing: var(--tracking-tight) /* -0.025em */;
+}
+
+.page-title-desc {
+  font-size: var(--text-sm) /* 0.875rem = 14px */;
+  color: var(--color-gray-500);
+  margin-top: calc(var(--spacing) * 1)
+}

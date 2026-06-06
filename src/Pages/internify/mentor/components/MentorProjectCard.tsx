@@ -17,7 +17,7 @@ export default function MentorProjectCard({
 }: ProjectCardProps) {
   const navigate = useNavigate();
   const handleCardClick = () => {
-    navigate(`/admin/projects/${id}`)
+    navigate(`/mentor/projects/${id}`)
   };
 
   const handleDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {

@@ -6,12 +6,12 @@ const SertificatePage = () => {
   const data = certificateData; // ganti isReceived di object atas
 
   return (
-    <div className="px-15 py-10 bg-white min-h-screen">
+    <div className="container">
       {/* Header */}
-      <div className="mb-6 flex flex-col gap-1">
+      <div className="mb-12 flex flex-col gap-1">
 
-        <h1 className="text-4xl font-bold mb-2">Certificates</h1>
-        <p className="font-light text-gray-500">View and download internship certificates</p>
+        <h1 className="page-title">Certificates</h1>
+        <p className="page-title-desc">View and download internship certificates</p>
       </div>
 
       {/* Content */}

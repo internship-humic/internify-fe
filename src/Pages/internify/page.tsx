@@ -31,10 +31,7 @@ export default function InternifyLogin() {
         );
 
         if (user) {
-            // 3. Gunakan navigate() sesuai dengan role masing-masing
-            if (user.role === "admin") {
-                navigate("/admin");
-            } else if (user.role === "intern") {
+            if (user.role === "intern") {
                 navigate("/intern");
             } else if (user.role === "mentor") {
                 navigate("/mentor");

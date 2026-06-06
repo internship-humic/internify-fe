@@ -113,7 +113,6 @@ const Navbar = () => {
           <button
             onClick={() => {
               navigate("/login-internify");
-              setOpenMenu(false);
             }}
             className="block w-full text-left hover:text-blue-600 transition"
           >

@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ChevronRight, Check, Download, Info, Award } from "lucide-react";
+import { Check, Download, Info } from "lucide-react";
 import { LuFileSpreadsheet } from "react-icons/lu"; // Alternatif icon task dari react-icons
 
 const initialNotifications = [
@@ -34,7 +33,6 @@ const initialNotifications = [
 ];
 
 export default function NotificationList() {
-  const navigate = useNavigate();
   const [notifications, setNotifications] = useState(initialNotifications);
 
   const handleMarkAllRead = () => {
@@ -43,19 +41,12 @@ export default function NotificationList() {
   };
 
   return (
-    <div className="w-full max-w-5xl px-6 py-6 font-sans">
-      {/* Breadcrumb */}
-      <div className="flex items-center text-xs text-gray-400 font-medium mb-1">
-        <span className="cursor-pointer hover:underline" onClick={() => navigate("/")}>Home</span>
-        <ChevronRight className="w-3.5 h-3.5 mx-1" />
-        <span className="text-[#B30000] font-semibold">Notification</span>
-      </div>
-
+    <div className="container">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Notifications</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="page-title">Notifications</h1>
+          <p className="page-title-desc">
             Keep track of your interns' progress and system updates.
           </p>
         </div>
