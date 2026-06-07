@@ -106,10 +106,10 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
   return (
     <dialog
       ref={dialogRef}
-      className="fixed inset-0 m-auto flex flex-col w-[calc(100%-2rem)] max-w-[620px] max-h-[calc(100vh-4rem)] rounded-2xl border border-gray-100 bg-white p-0 shadow-2xl backdrop:bg-black/40 backdrop:backdrop-blur-sm animate-in fade-in zoom-in-95 duration-200"
+      className="custom-dialog"
     >
       {/* Header Modal */}
-      <div className="flex items-start justify-between px-6 md:px-8 py-4 md:py-5 border-b border-gray-100">
+      <div className="dialog-header">
         <div>
           <h2 className="text-xl font-bold text-gray-900 tracking-tight">Create New Project</h2>
           <p className="text-xs text-gray-400 font-medium mt-0.5">

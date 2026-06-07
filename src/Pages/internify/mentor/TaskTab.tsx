@@ -1,11 +1,11 @@
 import type { Project, Task } from '../../../lib/mockData';
 import { ClipboardList, Pencil, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import CreateTaskModal from './components/CreateTaskDialog';
 
 export default function TaskTab({ project }: { project: Project }) {
-  
-  const handleAddTask = () => {
-    console.log('Trigger modal / halaman tambah tugas');
-  };
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleEditTask = (taskTitle: string) => {
     console.log('Edit task:', taskTitle);
@@ -20,9 +20,9 @@ export default function TaskTab({ project }: { project: Project }) {
       {/* Header Section */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold text-slate-800 tracking-tight">Tasks</h2>
-        
-        <button 
-          onClick={handleAddTask}
+
+        <button
+          onClick={() => setIsModalOpen(true)}
           className="bg-[#C0392B] hover:bg-[#A93226] text-white px-6 py-2.5 rounded-full font-bold text-sm transition-colors shadow-sm"
         >
           Add Task
@@ -37,9 +37,8 @@ export default function TaskTab({ project }: { project: Project }) {
           project.tasks.map((task: Task, idx: number) => (
             <div
               key={idx}
-              className={`flex items-center justify-between py-4 group ${
-                idx < project.tasks.length - 1 ? 'border-b border-gray-100' : ''
-              }`}
+              className={`flex items-center justify-between py-4 group ${idx < project.tasks.length - 1 ? 'border-b border-gray-100' : ''
+                }`}
             >
               {/* Task Title & Icon */}
               <div className="flex items-center gap-3 min-w-0">
@@ -51,14 +50,14 @@ export default function TaskTab({ project }: { project: Project }) {
 
               {/* Action Buttons (Edit & Delete) */}
               <div className="flex items-center gap-4 text-slate-600 shrink-0">
-                <button 
+                <button
                   onClick={() => handleEditTask(task.title)}
                   className="hover:text-blue-600 transition-colors p-1"
                   title="Edit Task"
                 >
                   <Pencil size={20} />
                 </button>
-                <button 
+                <button
                   onClick={() => handleDeleteTask(task.title)}
                   className="hover:text-red-600 transition-colors p-1"
                   title="Delete Task"
@@ -74,6 +73,12 @@ export default function TaskTab({ project }: { project: Project }) {
           </div>
         )}
       </div>
+      {isModalOpen &&
+        <CreateTaskModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      }
     </div>
   );
 }

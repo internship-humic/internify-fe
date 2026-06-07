@@ -12,6 +12,25 @@
   color: black;
 }
 
+@theme {
+  /* Dasar Warna Gelap */
+  --color-background: #e9e3e3;
+  --color-foreground: #1e282c;
+
+  --color-card: #f3f3f3;
+  --color-card-hover: #d5d5d5;
+
+  --color-primary: #6d180d;
+  --color-primary-foreground: #ffffff;
+
+  --color-border: #a8a9aa;
+
+  --radius: 0.7rem;
+
+  --color-success: #12950d;
+  --color-danger: #c62611;
+}
+
 .container {
   padding-inline: calc(var(--spacing) * 14);
   padding-block: calc(var(--spacing) * 12);
@@ -28,7 +47,11 @@
 }
 
 .box {
-
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+              0 2px 4px -2px rgba(0, 0, 0, 0.1);
 }
 
 .page-title {
@@ -44,4 +67,74 @@
   font-size: var(--text-sm) /* 0.875rem = 14px */;
   color: var(--color-gray-500);
   margin-top: calc(var(--spacing) * 1)
+}
+
+/* Selector utama untuk elemen dialog */
+dialog.custom-dialog {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - 2rem);
+  max-width: 540px;
+  max-height: calc(100vh - 4rem);
+  border-radius: 1rem; /* 16px */
+  border: 1px solid #f3f4f6; /* border-gray-100 */
+  background-color: #ffffff;
+  padding: 1.5rem; /* 24px */
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* shadow-2xl */
+  
+  /* Animasi (Masuk) */
+  animation: fadeInZoom 200ms ease-out forwards;
+}
+
+/* Pseudo-element untuk Backdrop (Latar belakang gelap) */
+dialog.custom-dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.4); /* bg-black/40 */
+  backdrop-filter: blur(4px); /* backdrop-blur-sm */
+}
+
+/* Keyframes untuk animasi Tailwind (animate-in fade-in zoom-in-95) */
+@keyframes fadeInZoom {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.dialog-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  
+  /* Padding default untuk layar kecil (px-6 py-4) */
+  padding-left: 1.5rem;   /* 24px */
+  padding-right: 1.5rem;  /* 24px */
+  padding-top: 1rem;      /* 16px */
+  padding-bottom: 1rem;   /* 16px */
+  
+  border-bottom: 1px solid #f3f4f6; /* border-gray-100 */
+}
+
+/* Breakpoint Medium (md:) - Aktif saat lebar layar >= 768px */
+@media (min-width: 768px) {
+  .box {
+    
+  }
+  
+  .dialog-header {
+    /* Perubahan padding untuk layar desktop (md:px-8 md:py-5) */
+    padding-left: 2rem;     /* 32px */
+    padding-right: 2rem;    /* 32px */
+    padding-top: 1.25rem;   /* 20px */
+    padding-bottom: 1.25rem;/* 20px */
+  }
 }

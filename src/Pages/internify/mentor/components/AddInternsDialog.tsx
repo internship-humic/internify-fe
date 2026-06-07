@@ -47,7 +47,7 @@ export default function ManageInternsModal({ isOpen, onClose }: ManageInternsMod
   return (
     <dialog
       ref={dialogRef}
-      className="fixed inset-0 m-auto flex flex-col w-[calc(100%-2rem)] max-w-[540px] max-h-[calc(100vh-4rem)] rounded-2xl border border-gray-100 bg-white p-6 shadow-2xl backdrop:bg-black/40 backdrop:backdrop-blur-sm animate-in fade-in zoom-in-95 duration-200"
+      className="custom-dialog"
     >
       {/* Search Input Area */}
       <div className="relative flex items-center mb-4">
