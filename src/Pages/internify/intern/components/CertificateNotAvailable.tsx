@@ -2,7 +2,7 @@ import { Lock, Clock } from "lucide-react";
 
 export default function CertificateNotAvailable({ progress, remainingTasks }: { progress: number; remainingTasks: number }) {
   return (
-    <div className="bg-white w-full rounded-2xl border border-gray-100 shadow-sm py-16 p-23 flex flex-col items-center text-center max-w-3/5 mx-auto z-10">
+    <div className="bg-white w-full rounded-2xl border border-gray-100 shadow-sm py-16 p-23 flex flex-col items-center text-center md:max-w-3/5 mx-auto z-10">
       {/* Icon */}
       <div className="relative mb-6">
         <div className=" w-33 h-33 border-2 border-dashed border-gray-600 rounded-xl flex justify-center items-center">

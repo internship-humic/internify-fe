@@ -29,7 +29,7 @@ export default function InternsManagement() {
   }, [searchEmail, selectedProject]);
 
   return (
-    <div className="w-full px-16 py-12 font-sans">
+    <div className="">
       {/* Header Title */}
       <div className="mb-6">
         <h1 className="page-title">Interns Management</h1>

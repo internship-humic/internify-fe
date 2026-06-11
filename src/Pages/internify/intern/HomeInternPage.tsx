@@ -3,10 +3,9 @@ import HomeProjectList from "./components/HomeProjectList";
 import HomeCalendar from "./components/HomeCalendar";
 import TaskTimeline from "./components/TaskTimeline";
 
-// PR: tambahin breadcrumb
 export default function HomeInternPage()  {
   return (
-    <div className="container flex-1">
+    <div className="flex-1">
       <HomeHeader />
       <div className="flex flex-col gap-5">
         <div className="grid grid-cols-2 gap-5">

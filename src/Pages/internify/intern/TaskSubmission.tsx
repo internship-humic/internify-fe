@@ -22,7 +22,7 @@ export default function TaskSubmission() {
   };
 
   return (
-    <div className="container space-y-4">
+    <div className="space-y-4">
       {/* Header Card */}
       <div className="w-full bg-white rounded-2xl border border-gray-100 p-6 shadow-[0_4px_20px_rgba(0,0,0,0.01)]">
         <div className="flex justify-between items-start">

@@ -23,10 +23,10 @@ export default function SettingsContent() {
   };
 
   // Mendapatkan inisial huruf pertama untuk avatar profile gambar
-  const initialLetter = formData.fullName ? formData.fullName.charAt(0).toUpperCase() : "U";
+  const initialLetter = formData.fullName ? formData.fullName.charAt(1).toUpperCase() : "U";
 
   return (
-    <div className="container">
+    <div className="">
 
       {/* Header Title */}
       <div className="mb-6">

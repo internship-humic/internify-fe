@@ -36,20 +36,8 @@ export default function ProjectDetailPage() {
     }`;
 
   return (
-    <div className="container">
+    <div className="">
       <div>
-
-        {/* Back Button */}
-        <button
-          onClick={handleBack}
-          className="flex items-center gap-2 mb-6 text-sm font-medium text-[#666] hover:text-[#C0392B] transition-colors duration-150 group"
-        >
-          <span className='flex flex-row gap-2'>
-            <ChevronLeft width={20} height={20} className="transition-transform duration-150 group-hover:-translate-x-1" />
-            Kembali ke Daftar Project
-          </span>
-        </button>
-
         {/* Tabs */}
         <div className="flex mb-4">
           <button className={tabClass('forum')} onClick={() => setActiveTab('forum')}>

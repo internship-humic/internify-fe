@@ -3,7 +3,7 @@ import { mockProjects } from '../../../lib/mockData'
 
 export default function ProjectsPage() {
   return (
-    <div className="container">
+    <div className="">
       <div className="flex flex-col gap-1 mb-6">
         <span className="page-title">List Projects</span>
         <h1 className="page-title-desc">View assigned projects and track their progress.</h1>

@@ -48,12 +48,9 @@ const MentorCertificatePage = () => {
   };
 
   return (
-    <div className="px-6 md:px-14 py-8 md:py-12 bg-gray-50 min-h-screen">
-      {/* Breadcrumb & Header Title */}
+    <div>
+      {/*  Title */}
       <div className="mb-8">
-        <p className="text-xs font-semibold text-[#B30000] mb-1 flex items-center gap-1 cursor-pointer">
-          Certificates <span className="text-gray-400 font-normal">&gt;</span>
-        </p>
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">Certificates</h1>
         <p className="text-sm md:text-base text-gray-500 mt-1">
           Administrate, issue, and track professional certifications for all interns.

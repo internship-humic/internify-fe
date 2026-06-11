@@ -41,7 +41,7 @@ export default function NotificationList() {
   };
 
   return (
-    <div className="container">
+    <div className="">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
@@ -50,13 +50,13 @@ export default function NotificationList() {
             Keep track of your interns' progress and system updates.
           </p>
         </div>
-        <button 
+        {/* <button 
           onClick={handleMarkAllRead}
           className="flex items-center gap-1.5 self-start sm:self-center px-4 py-2 border border-gray-200 rounded-lg text-xs font-semibold text-gray-700 bg-white hover:bg-gray-50 transition-colors shadow-sm"
         >
           <Check className="w-4 h-4 text-green-600 stroke-[3]" />
           Mark all as read
-        </button>
+        </button> */}
       </div>
 
       {/* List Group Section */}

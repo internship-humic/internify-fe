@@ -18,9 +18,9 @@ const mockFAQData = [
 
 export default function FAQPage() {
   return (
-    <div className="container">
+    <div>
       {/* Header Title */}
-      <div className="mb-10">
+      <div className="mb-10 ">
         <h1 className="page-title">FAQ</h1>
         <p className="page-title-desc">
           Quick answers to common questions about the Internify LMS platform.

@@ -141,7 +141,7 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
                   key={item.id}
                   type="button"
                   onClick={() => setSelectedIcon(item.id)}
-                  className={`w-10 h-10 flex items-center justify-center rounded-lg border text-lg transition-all ${isSelected
+                  className={`w-8 h-8 flex items-center justify-center rounded-lg border text-lg transition-all ${isSelected
                       ? "border-[#B30000] bg-red-50/50 text-[#B30000] ring-2 ring-[#B30000]/20 font-bold"
                       : "border-gray-200 bg-gray-50 text-gray-500 hover:bg-gray-100"
                     }`}

@@ -6,8 +6,8 @@ import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 
 // Data user dummy untuk keperluan simulasi navigasi frontend
 const DataUsers = [
-    { "Name": "John Doe", "Email": "john@email.com", "Password": "password123", "role": "intern" },
-    { "Name": "Jane Smith", "Email": "jane@email.com", "Password": "password123", "role": "mentor" },
+    { "Email": "intern@email.com", "Password": "password123", "role": "intern" },
+    { "Email": "mentor@email.com", "Password": "password123", "role": "mentor" },
 ];
 
 export default function InternifyLogin() {
@@ -44,12 +44,10 @@ export default function InternifyLogin() {
     };
 
     return (
-        <div className="min-h-screen bg-[#F9F9F9] flex flex-col justify-between items-center py-8 px-4 font-sans selection:bg-red-200">
+        <div className="min-h-screen bg-gray-100 flex flex-col justify-between items-center py-8 px-4 font-sans selection:bg-red-200">
             <div className="hidden md:block"></div>
 
-            {/* Main Container */}
             <div className="w-full max-w-[440px] flex flex-col items-center">
-                {/* Logo Section */}
                 <div className="text-center mb-6">
                     <div className="flex items-center justify-center gap-2 font-bold text-2xl tracking-tight text-black">
                         <img src={logo} alt="Logo" className="w-32 h-20" />
@@ -59,7 +57,6 @@ export default function InternifyLogin() {
                     </p>
                 </div>
 
-                {/* Card Login */}
                 <div className="max-w-md bg-white rounded-2xl border border-gray-100 p-8 md:p-12">
                     <h2 className="text-xl font-bold text-gray-900 mb-1">Welcome back</h2>
                     <p className="text-sm text-gray-500 mb-6">Access your dashboard with your credentials.</p>
@@ -82,7 +79,6 @@ export default function InternifyLogin() {
                             </div>
                         </div>
 
-                        {/* Input Password */}
                         <div className="space-y-1.5">
                             <label className="text-xs font-medium text-gray-700">Password</label>
                             <div className="relative">
@@ -110,14 +106,12 @@ export default function InternifyLogin() {
                             </div>
                         </div>
 
-                        {/* Error Message */}
                         {error && (
                             <p className="text-xs text-red-600 bg-red-50 p-2 rounded-md font-medium">
                                 {error}
                             </p>
                         )}
 
-                        {/* Button Sign In */}
                         <button
                             type="submit"
                             className="w-full bg-[#B30000] hover:bg-[#990000] text-white font-medium text-sm py-2.5 rounded-lg transition-colors shadow-sm mt-2"
@@ -153,12 +147,11 @@ export default function InternifyLogin() {
                 </div>
             </div>
 
-            {/* Footer Section */}
             <div className="text-center text-[11px] text-gray-400 space-y-1">
-                <p>© 2024 Internify. CoE Humic Engineering.</p>
+                <p>© 2026 Internify. CoE Humic Engineering.</p>
                 <div className="space-x-2">
                     <a href="#" className="hover:underline">Privacy Policy</a>
-                    <span>•</span>
+                    <span></span>
                     <a href="#" className="hover:underline">Terms of Service</a>
                 </div>
             </div>

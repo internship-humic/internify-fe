@@ -6,7 +6,7 @@ const SertificatePage = () => {
   const data = certificateData; // ganti isReceived di object atas
 
   return (
-    <div className="container">
+    <div className="">
       {/* Header */}
       <div className="mb-12 flex flex-col gap-1">
 

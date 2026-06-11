@@ -4,6 +4,7 @@ import Header from './mentor/components/Header';
 import SidebarIntern from './intern/components/SidebarIntern';
 import SidebarMentor from './mentor/components/SidebarMentor';
 import FooterIntern from '../../Layout/Footer-Internify';
+import Breadcrumbs from "./Breadcumbs";
 
 export const InternLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -20,7 +21,8 @@ export const InternLayout = () => {
             onClick={closeSidebar}
           />
         )}
-        <main className="flex-1 flex flex-col">
+        <main className="container">
+          <Breadcrumbs/>
           <Outlet />
         </main>
       </div>
@@ -44,7 +46,8 @@ export const MentorLayout = () => {
             onClick={closeSidebar}
           />
         )}
-        <main className="flex-1 flex flex-col min-w-0">
+        <main className="container">
+          <Breadcrumbs/>
           <Outlet />
         </main>
       </div>

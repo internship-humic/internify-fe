@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface Deadline {
@@ -9,8 +9,7 @@ interface Deadline {
 }
 
 const DEADLINES: Deadline[] = [
-  { date: 4, month: 4, year: 2025, label: 'Laporan Progress 1 Internify– 4 May' },
-  { date: 5, month: 4, year: 2025, label: 'Laporan Progress 1 Internify– 4 May' },
+  { date: 30, month: 6, year: 2026, label: 'Tenggat Proyek Internify Internify - 4 May' },
 ]
 
 const DAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
@@ -20,7 +19,7 @@ const MONTH_NAMES = [
 ]
 
 function getDaysInMonth(year: number, month: number) {
-  return new Date(year, month + 1, 0).getDate()
+  return new Date(year, month+1, 0).getDate()
 }
 
 function getFirstDayOfMonth(year: number, month: number) {
@@ -28,9 +27,18 @@ function getFirstDayOfMonth(year: number, month: number) {
 }
 
 const HomeCalendar = () => {
-  const today = new Date()
-  const [currentYear, setCurrentYear] = useState(2025)
-  const [currentMonth, setCurrentMonth] = useState(4) // May = 4 (0-indexed)
+const [today, setToday] = useState(new Date())
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setToday(new Date())
+    }, 60 * 1000) // update tiap 1 menit
+
+    return () => clearInterval(interval)
+  }, [])
+
+  const [currentYear, setCurrentYear] = useState(today.getFullYear())
+  const [currentMonth, setCurrentMonth] = useState(today.getMonth())
 
   const daysInMonth = getDaysInMonth(currentYear, currentMonth)
   const firstDay = getFirstDayOfMonth(currentYear, currentMonth)
@@ -59,7 +67,7 @@ const HomeCalendar = () => {
     currentYear === today.getFullYear()
 
   const hasDeadline = (day: number) =>
-    DEADLINES.some(d => d.date === day && d.month === currentMonth && d.year === currentYear)
+    DEADLINES.some(d => d.date === day && d.month - 1 === currentMonth && d.year === currentYear)
 
   const upcomingDeadlines = DEADLINES.filter(
     d => d.month === currentMonth && d.year === currentYear
@@ -129,7 +137,7 @@ const HomeCalendar = () => {
         {currentDays.map(day => (
           <div key={day} className="flex justify-center items-center py-1 px-4">
             {isToday(day) ? (
-              <span className="w-8 h-7 flex items-center justify-center rounded bg-red-800 text-white text-xs font-semibold">
+              <span className="w-8 h-7 flex items-center justify-center border-b-2 border-red-800 text-xs font-semibold">
                 {day}
               </span>
             ) : (
@@ -171,7 +179,7 @@ const HomeCalendar = () => {
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-gray-400">No upcoming deadlines this month.</p>
+          <p className="text-[11px] text-gray-400">No upcoming deadlines this month.</p>
         )}
       </div>
     </div>

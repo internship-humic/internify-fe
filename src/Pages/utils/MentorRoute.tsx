@@ -1,14 +1,14 @@
 // App.tsx / router.tsx
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import HomeInternPage from "../internify/intern/HomeInternPage";
-import {InternLayout} from "../internify/mentor/layout";
+import HomeMentorPage from "../internify/mentor/HomePage";
+import {MentorLayout} from "../internify/mentor/layout";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <InternLayout />,
+    element: <MentorLayout />,
     children: [
-      { path: "home", element: <HomeInternPage /> },
+      { path: "home", element: <HomeMentorPage /> },
     ],
   },
 ]);

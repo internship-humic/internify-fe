@@ -4,7 +4,7 @@ import HomeMentorProject from './components/HomeMentorProject'
 
 const HomeMentorPage = () => {
   return (
-    <div className="container flex-1 bg-gray-50">
+    <div className="flex-1">
       <HomeHeader />
       <div className="flex flex-col gap-5">
         <div className="">

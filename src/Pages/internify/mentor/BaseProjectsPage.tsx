@@ -16,7 +16,7 @@ export default function MentorProjectsPage(){
   };
 
   return (
-    <div className="container">
+    <div className="">
       <div className="flex justify-between items-center mb-6">
         <div className="flex flex-col">
           <h1 className="page-title">List Projects</h1>
