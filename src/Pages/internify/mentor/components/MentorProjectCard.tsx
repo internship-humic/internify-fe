@@ -1,5 +1,5 @@
 import { Trash2, UsersRound } from 'lucide-react'
-import type { Intern } from '../../../../lib/mockData'
+import type { Intern } from '../../../../lib/mockProjects'
 import { useNavigate } from 'react-router-dom'
 
 interface ProjectCardProps {
@@ -9,6 +9,8 @@ interface ProjectCardProps {
   thumbnailUrl?: string
 }
 
+const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
+
 export default function MentorProjectCard({
   id,
   name,
@@ -17,7 +19,7 @@ export default function MentorProjectCard({
 }: ProjectCardProps) {
   const navigate = useNavigate();
   const handleCardClick = () => {
-    navigate(`/mentor/projects/${id}`)
+    navigate(`/mentor/projects/${toSlug(name)}`)
   };
 
   const handleDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {

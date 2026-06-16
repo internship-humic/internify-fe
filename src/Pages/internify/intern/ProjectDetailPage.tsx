@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { mockProjects } from '../../../lib/mockData';
+import { mockProjects } from '../../../lib/mockProjects';
 import ForumTab from './ForumTab';
 import ParticipantsTab from './ParticipantTab';
 
-// ─── ProjectDetailPage ─────────────────────────────────────────────────────────
+const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
+
 export default function ProjectDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const [activeTab, setActiveTab] = useState<'forum' | 'participants'>('forum');
 
-  const project = mockProjects.find((p) => p.name === slug);
+  const project = mockProjects.find((p) => toSlug(p.name) === slug);
 
   if (!project) {
     return (

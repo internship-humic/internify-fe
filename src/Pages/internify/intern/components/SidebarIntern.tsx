@@ -30,14 +30,9 @@ export default function SidebarIntern({ isOpen, closeSidebar }: SidebarProps) {
   return (
     <aside 
       className={`
-        /* Struktur Dasar Layout */
         bg-white border-r border-gray-300 flex flex-col py-5 px-3 gap-1 overflow-y-auto flex-shrink-0 transition-transform duration-300 ease-in-out
-        
-        /* Kondisi Layar Desktop (>= md) */
-        md:sticky md:top-[73px] md:h-[calc(100vh-73px)] md:w-[250px] md:translate-x-0 md:z-8
-        
-        /* Kondisi Layar Mobile (< md) dan Logika Aktif-nya */
-        fixed top-0 left-0 h-screen w-[270px] z-40 pt-5
+        md:sticky md:top-[50px] md:h-[calc(100vh-73px)] md:w-[250px] md:translate-x-0 md:z-8
+        fixed top-0 left-0 h-[calc(100vh-50px)] w-[270px] z-40 pt-5
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
       `}
     >

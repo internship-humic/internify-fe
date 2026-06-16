@@ -1,23 +1,27 @@
-import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { ChevronRight, Calendar, FileText, Info } from "lucide-react";
+import { useParams, useSearchParams } from "react-router-dom";
+import { FileText, Info } from "lucide-react";
 import TaskFormFile from "./components/TaskForm-file";
 import TaskFormLink from "./components/TaskForm-link";
+import { mockProjects } from "../../../lib/mockProjects";
+
+const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
 
 export default function TaskSubmission() {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  
-  // State untuk menentukan jenis input ("file" atau "link")
-  const [submissionType, setSubmissionType] = useState<"file" | "link">("file");
+  const [searchParams] = useSearchParams();
+  const { slug, taskSlug } = useParams<{ slug: string; taskSlug: string }>();
 
-  const handleFileSubmit = (file: File) => {
-    console.log(`Submitting File for Task ${id}:`, file.name);
-    alert(`File ${file.name} berhasil dikirim!`);
+  const submissionType = (searchParams.get("type") ?? "file") as "file" | "link";
+
+  const project = mockProjects.find((p) => toSlug(p.name) === slug);
+  const task = project?.tasks.find((t) => toSlug(t.title) === taskSlug);
+  const handleFileSubmit = (files: File[]) => {
+    const fileNames = files.map(f => f.name).join(', ');
+    console.log(`Submitting Files for Project ${slug}:`, fileNames);
+    alert(`File ${fileNames} berhasil dikirim!`);
   };
 
   const handleLinkSubmit = (link: string) => {
-    console.log(`Submitting Link for Task ${id}:`, link);
+    console.log(`Submitting Link for Project ${slug}:`, link);
     alert(`Link berhasil dikirim!`);
   };
 
@@ -27,28 +31,17 @@ export default function TaskSubmission() {
       <div className="w-full bg-white rounded-2xl border border-gray-100 p-6 shadow-[0_4px_20px_rgba(0,0,0,0.01)]">
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Laporan Tugas 2</h1>
-            <div className="flex items-center gap-1.5 text-xs text-gray-400 font-semibold mt-1.5">
-              <Calendar className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>Due Oct 25, 2024 at 23:59</span>
-            </div>
+            <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+              {task?.title ?? "Submit Task"}
+            </h1>
           </div>
-          
-          {/* Switcher Demo Sederhana (Bisa kamu hapus jika tipe datang dari database/routing) */}
-          <div className="flex gap-1 bg-gray-100 p-1 rounded-lg text-xs font-bold">
-            <button 
-              onClick={() => setSubmissionType("file")}
-              className={`px-3 py-1 rounded-md transition-colors ${submissionType === "file" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500"}`}
-            >
-              Mode File
-            </button>
-            <button 
-              onClick={() => setSubmissionType("link")}
-              className={`px-3 py-1 rounded-md transition-colors ${submissionType === "link" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500"}`}
-            >
-              Mode Link
-            </button>
-          </div>
+
+          <span className={`text-xs font-bold px-3 py-1.5 rounded-lg ${submissionType === "file"
+            ? "bg-blue-50 text-blue-700 border border-blue-100"
+            : "bg-purple-50 text-purple-700 border border-purple-100"
+            }`}>
+            {submissionType === "file" ? "📄 File Upload" : "🔗 Link Submission"}
+          </span>
         </div>
       </div>
 
@@ -56,9 +49,7 @@ export default function TaskSubmission() {
       <div className="w-full bg-white rounded-2xl border border-gray-100 p-6 shadow-[0_4px_20px_rgba(0,0,0,0.01)] space-y-3">
         <h2 className="text-base font-bold text-gray-800 tracking-tight">Task Description</h2>
         <p className="text-sm text-gray-500 font-medium leading-relaxed">
-          Pada tugas pertama ini, Anda diminta untuk melakukan analisis mendalam terhadap kebutuhan pengguna 
-          untuk sistem "Smart Campus Utility". Analisis ini akan menjadi fondasi bagi perancangan antarmuka pada 
-          fase berikutnya.
+          {task?.description ?? "Kerjakan dan kirimkan tugas sesuai dengan instruksi yang diberikan."}
         </p>
       </div>
 
@@ -69,11 +60,11 @@ export default function TaskSubmission() {
           <h2 className="text-base font-bold text-gray-800 tracking-tight">Submit Task</h2>
         </div>
 
-        {/* Render Komponen secara Kondisional */}
+        {/* Render form sesuai tipe dari query param */}
         {submissionType === "file" ? (
-          <TaskFormFile taskId={id} onSubmitSuccess={handleFileSubmit} />
+          <TaskFormFile taskId={slug} onSubmitSuccess={handleFileSubmit} />
         ) : (
-          <TaskFormLink taskId={id} onSubmitSuccess={handleLinkSubmit} />
+          <TaskFormLink taskId={slug} onSubmitSuccess={handleLinkSubmit} />
         )}
 
         {/* Info Box */}

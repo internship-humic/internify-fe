@@ -1,11 +1,14 @@
-import type { Task } from "../../../../lib/mockData";
+import type { Task } from "../../../../lib/mockProjects";
 import { useNavigate } from "react-router-dom";
 
 const formatDate = (date: Date) =>
   new Date(date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
 
-export default function TaskCard({ task }: { task: Task }) {
+const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
+
+export default function TaskCard({ task, projectName }: { task: Task; projectName: string }) {
   const navigate = useNavigate();
+  const toTaskSlug = (title: string) => title.toLowerCase().replace(/\s+/g, '-');
   return (
     <div className="border border-gray-200 rounded-[10px] px-6 py-4 mb-3 bg-white flex items-start justify-between gap-3">
       <div className="flex-1 min-w-0">
@@ -18,6 +21,9 @@ export default function TaskCard({ task }: { task: Task }) {
         <div className=" text-[13px] text-[#666]">
           {task.description}
         </div>
+        <div className=" text-[13px] text-[#666]">
+          Tipe Submission : {task.type === 'file' ? "File" : "Link"}
+        </div>
       </div>
 
       <div className="shrink-0">
@@ -26,7 +32,7 @@ export default function TaskCard({ task }: { task: Task }) {
             DONE
           </span>
         ) : (
-          <button className=" bg-white text-[#1a1a1a] border-[1.5px] border-[#d0d0d0] font-semibold text-xs px-3.5 py-[5px] rounded-md cursor-pointer whitespace-nowrap transition-colors duration-150 hover:border-[#C0392B] hover:text-[#C0392B]" onClick={() => navigate(`/intern/tasks/${task.id}/submit`)}>
+          <button className=" bg-white text-[#1a1a1a] border-[1.5px] border-[#d0d0d0] font-semibold text-xs px-3.5 py-[5px] rounded-md cursor-pointer whitespace-nowrap transition-colors duration-150 hover:border-[#C0392B] hover:text-[#C0392B]" onClick={() => navigate(`/intern/projects/${toSlug(projectName)}/${toTaskSlug(task.title)}?type=${task.type}`)}>
             Add Submission
           </button>
         )}

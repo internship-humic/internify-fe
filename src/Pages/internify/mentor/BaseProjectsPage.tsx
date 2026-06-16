@@ -1,4 +1,4 @@
-import { mockProjects } from '../../../lib/mockData';
+import { mockProjects } from '../../../lib/mockProjects';
 import MentorProjectCard from './components/MentorProjectCard';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';

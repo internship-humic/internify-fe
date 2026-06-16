@@ -17,7 +17,7 @@ export default function ForumTab({ project }: { project: Project }) {
 
         <div className="w-4/5">
           {project.tasks.map((task, idx) => (
-            <TaskCard key={idx} task={task} />
+            <TaskCard key={idx} task={task} projectName={project.name} />
           ))}
         </div>
       </div>

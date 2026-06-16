@@ -1,26 +1,18 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { mockProjects } from '../../../lib/mockData';
-import { ChevronLeft } from 'lucide-react';
+import { mockProjects } from '../../../lib/mockProjects';
 import MentorForumTab from './ProjectForumTab';
 import InternsTab from './ProjectsInternTab';
 import TaskTab from './TaskTab';
 
 // ─── ProjectDetailPage ─────────────────────────────────────────────────────────
+const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
+
 export default function ProjectDetailPage() {
   const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'forum' | 'participants' | 'Task'>('forum');
 
-  const handleBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate('/intern/projects');
-    }
-  };
-
-  const project = mockProjects.find((p) => p.name === slug);
+  const project = mockProjects.find((p) => toSlug(p.name) === slug);
 
   if (!project) {
     return (
@@ -38,18 +30,7 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <div className="px-24 py-10">
-
-        {/* Back Button */}
-        <button
-          onClick={handleBack}
-          className="flex items-center gap-2 mb-6 text-sm font-medium text-[#666] hover:text-[#C0392B] transition-colors duration-150 group"
-        >
-          <span className='flex flex-row gap-2'>
-            <ChevronLeft width={20} height={20} className="transition-transform duration-150 group-hover:-translate-x-1" />
-            Kembali ke Daftar Project
-          </span>
-        </button>
+      <div className="">
 
         {/* Tabs */}
         <div className="flex mb-4 border-b-1 border-gray-300">

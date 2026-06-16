@@ -3,8 +3,6 @@ import logo from "../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 
-
-// Data user dummy untuk keperluan simulasi navigasi frontend
 const DataUsers = [
     { "Email": "intern@email.com", "Password": "password123", "role": "intern" },
     { "Email": "mentor@email.com", "Password": "password123", "role": "mentor" },

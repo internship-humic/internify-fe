@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom'
-import { mockProjects } from '../../../../lib/mockData'
+import { mockProjects } from '../../../../lib/mockProjects'
+
+const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
 
 const HomeProjectList = () => {
   const navigate = useNavigate();
@@ -11,14 +13,12 @@ const HomeProjectList = () => {
           return (
             <div
               key={index}
-              onClick={() => navigate(`/intern/projects/${project.id}`)}
+              onClick={() => navigate(`/intern/projects/${toSlug(project.name)}`)}
               className="flex items-center gap-4 border border-gray-200 rounded-lg px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors duration-150"
             >
-              <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-gray-300`}>
-              </div>
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-gray-300`}/>
               <div>
                 <p className="text-sm font-semibold text-gray-800">{project.name}</p>
-                {/* <p className="text-xs text-gray-400">{project.role}</p> */}
               </div>
             </div>
           )

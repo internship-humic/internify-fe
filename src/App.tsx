@@ -43,6 +43,7 @@ import FAQPage from "./Pages/internify/FAQpage";
 import NotificationList from "./Pages/internify/NotificationList";
 import SettingsContent from "./Pages/internify/SettingsPage";
 import TaskSubmission from "./Pages/internify/intern/TaskSubmission";
+import SertificateList from "./Pages/internify/intern/SertificateList";
 
 function App() {
   return (
@@ -87,8 +88,9 @@ function App() {
           <Route index element={<HomeInternPage />} />
           <Route path="projects" element={<ProjectsPage />} />
           <Route path="certificates" element={<SertificatePage />} />
+          <Route path="certificates/all" element={<SertificateList />} />
           <Route path="projects/:slug" element={<ProjectDetailPage />} />
-          <Route path="projects/:slug/submit" element={<TaskSubmission />} />
+          <Route path="projects/:slug/:TaskSlug" element={<TaskSubmission />} />
           <Route path="faq" element={<FAQPage />} />
           <Route path="notifications" element={<NotificationList />} />
           <Route path="settings" element={<SettingsContent />} />

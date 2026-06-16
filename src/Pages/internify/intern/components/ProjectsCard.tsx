@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 
+const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
+
 interface ProjectCardProps {
   id: number | string
   name: string
@@ -12,7 +14,6 @@ interface ProjectCardProps {
 }
 
 const ProjectCard = ({
-  id,
   name,
   mentor,
   avatarUrl,
@@ -65,7 +66,7 @@ const ProjectCard = ({
         {/* Button */}
         <div className="flex items-end justify-end px-3 pb-1">
           <button
-            onClick={() => navigate(`/intern/projects/${id}`)}
+            onClick={() => navigate(`/intern/projects/${toSlug(name)}`)}
             className="bg-red-600 hover:bg-red-700 text-white text-xs font-medium py-1.5 px-3 rounded-xl transition-colors"
           >
             View Project
