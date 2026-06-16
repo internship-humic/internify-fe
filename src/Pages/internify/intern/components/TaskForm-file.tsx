@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { FileText, UploadCloud, Trash2, X, FileUp } from "lucide-react";
+import { FileText, UploadCloud, X, FileUp } from "lucide-react";
 import { LuSendHorizontal } from "react-icons/lu";
 
 interface TaskFormFileProps {

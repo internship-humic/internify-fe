@@ -6,15 +6,13 @@ export interface Deadline {
 
 export const DEADLINES: Deadline[] = [
   {
-    date: new Date(2025, 4, 4),
-    label: "Laporan Progress 1 Internify – 4 Juni",
+    date: new Date(2026, 5, 29),
+    label: "Laporan Progress 1 Internify",
     time: "23:59 PM",
   },
   {
-    date: new Date(2026, 5, 5),
-    label: "Laporan Progress 2 Internify - 5 May",
+    date: new Date(2026, 5, 30),
+    label: "Laporan Progress 2 Internify",
     time: "23:59 PM",
   },
 ];
-
-export const deadlineDates: Date[] = DEADLINES.map((d) => d.date);

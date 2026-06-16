@@ -27,7 +27,7 @@ export default function ProjectDetailPage() {
     }`;
 
   return (
-    <div className="">
+    <div>
       <div>
         {/* Tabs */}
         <div className="flex mb-4">

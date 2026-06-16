@@ -36,7 +36,7 @@ export default function MentorProjectsPage(){
 
       <div className="flex flex-wrap gap-4 items-stretch">
         {mockProjects.map(project => (
-          <MentorProjectCard key={project.id} {...project} />
+          <MentorProjectCard key={project.id} {...project} tasks={project.tasks} />
         ))}
       </div>
 

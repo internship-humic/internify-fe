@@ -44,6 +44,7 @@ import NotificationList from "./Pages/internify/NotificationList";
 import SettingsContent from "./Pages/internify/SettingsPage";
 import TaskSubmission from "./Pages/internify/intern/TaskSubmission";
 import SertificateList from "./Pages/internify/intern/SertificateList";
+import MentorProjectsDetailPage from "./Pages/internify/mentor/MentorProjectDetailPage";
 
 function App() {
   return (
@@ -102,6 +103,7 @@ function App() {
           <Route path="certificates" element={<MentorCertificatePage />} />
           <Route path="intern" element={<MentorInternPage />} />
           <Route path="projects/:slug" element={<MentorDetailProject />} />
+          <Route path="projects/:slug/:taskSlug" element={<MentorProjectsDetailPage />} />
           <Route path="faq" element={<FAQPage />} />
           <Route path="notifications" element={<NotificationList />} />
           <Route path="settings" element={<SettingsContent />} />

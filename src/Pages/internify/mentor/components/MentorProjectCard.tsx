@@ -1,11 +1,12 @@
 import { Trash2, UsersRound } from 'lucide-react'
-import type { Intern } from '../../../../lib/mockProjects'
+import type { Intern, Task } from '../../../../lib/mockProjects'
 import { useNavigate } from 'react-router-dom'
 
 interface ProjectCardProps {
   id: number | string
   name: string
   interns: Intern[]
+  tasks: Task[]
   thumbnailUrl?: string
 }
 

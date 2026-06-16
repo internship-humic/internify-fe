@@ -1,16 +1,7 @@
 import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { DEADLINES } from '../../../../lib/mockDeadline'
 
-interface Deadline {
-  date: number
-  month: number
-  year: number
-  label: string
-}
-
-const DEADLINES: Deadline[] = [
-  { date: 30, month: 6, year: 2026, label: 'Tenggat Proyek Internify Internify - 4 May' },
-]
 
 const DAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
 const MONTH_NAMES = [
@@ -19,7 +10,7 @@ const MONTH_NAMES = [
 ]
 
 function getDaysInMonth(year: number, month: number) {
-  return new Date(year, month+1, 0).getDate()
+  return new Date(year, month + 1, 0).getDate()
 }
 
 function getFirstDayOfMonth(year: number, month: number) {
@@ -27,7 +18,7 @@ function getFirstDayOfMonth(year: number, month: number) {
 }
 
 const HomeCalendar = () => {
-const [today, setToday] = useState(new Date())
+  const [today, setToday] = useState(new Date())
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -67,11 +58,18 @@ const [today, setToday] = useState(new Date())
     currentYear === today.getFullYear()
 
   const hasDeadline = (day: number) =>
-    DEADLINES.some(d => d.date === day && d.month - 1 === currentMonth && d.year === currentYear)
+    DEADLINES.some(d =>
+      d.date.getDate() === day &&
+      d.date.getMonth() === currentMonth &&
+      d.date.getFullYear() === currentYear
+    )
 
-  const upcomingDeadlines = DEADLINES.filter(
-    d => d.month === currentMonth && d.year === currentYear
-  )
+  const upcomingDeadlines = DEADLINES.filter(d => {
+    return (
+      d.date.getMonth() === currentMonth &&
+      d.date.getFullYear() === currentYear
+    );
+  }).sort((a, b) => a.date.getTime() - b.date.getTime());
 
   // Previous month trailing days
   const prevMonthDays = getDaysInMonth(currentYear, currentMonth - 1 < 0 ? 11 : currentMonth - 1)
@@ -135,16 +133,16 @@ const [today, setToday] = useState(new Date())
 
         {/* Current month days */}
         {currentDays.map(day => (
-          <div key={day} className="flex justify-center items-center py-1 px-4">
+          <div key={day} className="flex justify-center items-center py-0.5">
             {isToday(day) ? (
               <span className="w-8 h-7 flex items-center justify-center border-b-2 border-red-800 text-xs font-semibold">
                 {day}
               </span>
             ) : (
               <span
-                className={`w-full h-7 flex items-center justify-center text-xs rounded
+                className={`w-full h-7 flex items-center justify-center text-xs
                   ${isBold(day) ? 'font-bold text-gray-800' : 'text-gray-700'}
-                  ${hasDeadline(day) ? 'bg-red-700 text-white' : ''}
+                  ${hasDeadline(day) ? 'bg-red-800 text-white' : ''}
                   transition-colors`}
               >
                 {day}

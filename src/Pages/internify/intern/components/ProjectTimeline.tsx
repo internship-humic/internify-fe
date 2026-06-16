@@ -1,4 +1,4 @@
-import type { Task } from "../../../../lib/mockData";
+import type { Task } from "../../../../lib/mockProjects";
 import { ArrowDownNarrowWide } from "lucide-react";
 
 const formatDate = (date: Date) =>
@@ -11,7 +11,7 @@ export default function ProjectTimeline({ tasks }: { tasks: Task[] }) {
     return (
         <div>
             <div className="flex items-center gap-1.5 mb-4 justify-between">
-                <span className="font-semibold text-sm text-[#1a1a1a]">
+                <span className="font-semibold text-md text-[#1a1a1a]">
                     Timeline
                 </span>
                 <ArrowDownNarrowWide className="w-5 h-5 text-gray-500"/>
@@ -29,7 +29,7 @@ export default function ProjectTimeline({ tasks }: { tasks: Task[] }) {
                         <li key={idx} className="relative mb-6 list-none">
                             {/* Dot */}
                             <div
-                                className={`absolute -left-4 top-0.5 w-2.5 h-2.5 rounded-full border-2 border-white ${active ? 'bg-[#C0392B]' : 'bg-[#ccc]'
+                                className={`absolute -left-5 top-0.5 w-3 h-3 rounded-full border-2 border-white ${active ? 'bg-[#C0392B]' : 'bg-[#ccc]'
                                     } ${isToday ? 'shadow-md' : ''}`}
                             />
                             <div

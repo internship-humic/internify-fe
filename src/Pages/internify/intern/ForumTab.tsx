@@ -1,4 +1,4 @@
-import type { Project } from '../../../lib/mockData';
+import type { Project } from '../../../lib/mockProjects';
 import ProjectTimeline from './components/ProjectTimeline';
 import TaskCard from './components/ProjectTaskCard';
 import HeroProject from './components/Hero-project';

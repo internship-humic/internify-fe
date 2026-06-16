@@ -1,14 +1,21 @@
 import type { Deadline } from "./mockDeadline";
 
+export interface Submission {
+  internEmail: string;
+  submittedAt?: string;
+  status: 'Done' | 'Pending' | 'Overdue';
+}
+
 export interface Task {
   id: number;
   title: string;
   description: string;
   deadline: Deadline;
   type: 'file' | 'link';
-  isSubmitted: boolean;
-  submittedCount: number;
-  totalInterns: number;
+  submissions: Submission[]; 
+  isSubmitted: boolean;    // Kembalikan untuk komponen lain
+  submittedCount: number;  // Kembalikan untuk komponen lain
+  totalInterns: number;    // Kembalikan untuk komponen lain
 }
 
 export interface Intern {
@@ -39,53 +46,49 @@ export const mockProjects: Project[] = [
       "Internify merupakan website Human Capital (HUMC) yang dirancang sebagai platform pendaftaran dan pengelolaan program magang secara digital. Sistem ini dibuat untuk membantu proses rekrutmen peserta magang mulai dari pendaftaran, seleksi, hingga monitoring aktivitas peserta selama program berlangsung.\n\nFokus utama dari pengembangan Internify adalah pembuatan Learning Management System (LMS) yang digunakan untuk mendukung kegiatan pembelajaran dan pengelolaan peserta magang. LMS pada Internify menyediakan fitur seperti akses materi pembelajaran, pengumpulan tugas, monitoring progress peserta, absensi, sertifikat, hingga komunikasi antara mentor dan peserta magang.",
     tasks: [
       {
-        id: 1,
-        title: "Laporan tugas",
-        description: "Berisi design ulux, dan user flow dari aplikasi internify",
-        type: 'link',
-        deadline: { date: new Date(2026, 4, 1), label: "Laporan tugas – 1 Mei", time: "23:59 PM" },
-        submittedCount: 6,
-        totalInterns: 6,
-        isSubmitted: false,
-      },
-      {
         id: 2,
         title: "Laporan tugas 1",
-        description: "Berisi design ulux, dan user flow dari aplikasi internify",
+        description: "Berisi design uiux, dan user flow dari aplikasi internify.",
         type: 'file',
-        deadline: { date: new Date(2026, 4, 14), label: "Laporan tugas 1 – 14 Mei", time: "23:59 PM" },
+        deadline: { date: new Date(2026, 4, 14), label: "May 14, 2026", time: "23:59 PM" },
+        isSubmitted: false,
         submittedCount: 2,
         totalInterns: 6,
-        isSubmitted: false,
+        submissions: [
+          { internEmail: "jonathankristina@gmail.com", submittedAt: "May 12, 2026", status: "Done" },
+          { internEmail: "anisarahmawati@gmail.com", submittedAt: "May 13, 2026", status: "Done" },
+          { internEmail: "budisantoso@gmail.com", submittedAt: "-", status: "Pending" },
+          { internEmail: "cindypermata@gmail.com", submittedAt: "-", status: "Pending" },
+          { internEmail: "dewaaditya@gmail.com", submittedAt: "-", status: "Pending" },
+          { internEmail: "ekapratiwi@gmail.com", submittedAt: "-", status: "Pending" },
+        ]
       },
       {
         id: 3,
         title: "Laporan tugas 2",
-        description: "Berisi design ulux, dan user flow dari aplikasi internify",
+        description: "Berisi design uiux, dan user flow dari aplikasi internify. Pastikan semua link Figma dapat diakses oleh mentor dan mencakup setidaknya 15 screen utama beserta prototype interaktifnya.",
         type: 'link',
-        deadline: { date: new Date(2026, 4, 28), label: "Laporan tugas 2 – 28 Mei", time: "23:59 PM" },
+        deadline: { date: new Date(2026, 4, 28), label: "May 28, 2026", time: "23:59 PM" },
+        isSubmitted: false,
         submittedCount: 3,
         totalInterns: 6,
-        isSubmitted: false,
-      },
-      {
-        id: 4,
-        title: "Laporan tugas 3",
-        description: "Berisi wireframe halaman dashboard aplikasi internify",
-        type: 'file',
-        deadline: { date: new Date(2026, 5, 5), label: "Laporan tugas 3 – 5 Jun", time: "23:59 PM" },
-        submittedCount: 0,
-        totalInterns: 6,
-        isSubmitted: false,
+        submissions: [
+          { internEmail: "jonathankristina@gmail.com", submittedAt: "May 25, 2026", status: "Done" },
+          { internEmail: "anisarahmawati@gmail.com", submittedAt: "May 26, 2026", status: "Pending" },
+          { internEmail: "budisantoso@gmail.com", submittedAt: "May 26, 2026", status: "Done" },
+          { internEmail: "cindypermata@gmail.com", submittedAt: "May 27, 2026", status: "Pending" },
+          { internEmail: "dewaaditya@gmail.com", submittedAt: "-", status: "Overdue" },
+          { internEmail: "ekapratiwi@gmail.com", submittedAt: "May 28, 2026", status: "Done" },
+        ]
       },
     ],
     interns: [
-      { name: "Jonathan Kristina", role: "Backend", email: "jonathankristina@gmail.com" },
-      { name: "Anisa Rahmawati", role: "Backend", email: "jonathankristina@gmail.com" },
-      { name: "Budi Santoso", role: "Frontend", email: "jonathankristina@gmail.com" },
-      { name: "Cindy Permata", role: "Frontend", email: "jonathankristina@gmail.com" },
-      { name: "Dewa Aditya", role: "UI/UX", email: "jonathankristina@gmail.com" },
-      { name: "Eka Pratiwi", role: "UI/UX", email: "jonathankristina@gmail.com" },
+      { name: "Alex Rivera", role: "Backend", email: "jonathankristina@gmail.com" },
+      { name: "Sarah Jenkins", role: "Backend", email: "anisarahmawati@gmail.com" },
+      { name: "Marcus Lee", role: "Frontend", email: "budisantoso@gmail.com" },
+      { name: "Tanya Hudson", role: "Frontend", email: "cindypermata@gmail.com" },
+      { name: "Ben King", role: "UI/UX", email: "dewaaditya@gmail.com" },
+      { name: "Eka Pratiwi", role: "UI/UX", email: "ekapratiwi@gmail.com" },
     ],
     mentor: "jonathankristina@gmail.com",
     progress: 12,
@@ -95,58 +98,24 @@ export const mockProjects: Project[] = [
   {
     id: 2,
     name: "Rekrutmen Digital Platform",
-    description:
-      "Platform digital yang memudahkan proses rekrutmen karyawan baru secara end-to-end. Mulai dari posting lowongan, screening CV otomatis, penjadwalan wawancara, hingga onboarding karyawan baru.\n\nSistem ini mengintegrasikan berbagai modul HR seperti manajemen data kandidat, penilaian kompetensi berbasis AI, dan dashboard analytics untuk tim HR dalam mengambil keputusan rekrutmen yang lebih efektif dan efisien.",
+    description: "Platform digital yang memudahkan proses rekrutmen karyawan baru secara end-to-end.",
     tasks: [
       {
         id: 1,
         title: "Analisis Kebutuhan Sistem",
-        description: "Dokumentasi kebutuhan fungsional dan non-fungsional platform rekrutmen",
+        description: "Dokumentasi kebutuhan platform rekrutmen",
         type: 'file',
-        deadline: { date: new Date(2026, 4, 5), label: "Analisis Kebutuhan – 5 Mei", time: "23:59 PM" },
+        deadline: { date: new Date(2026, 4, 5), label: "May 5, 2026", time: "23:59 PM" },
+        isSubmitted: false,
         submittedCount: 6,
         totalInterns: 6,
-        isSubmitted: false,
-      },
-      {
-        id: 2,
-        title: "Desain Database Schema",
-        description: "Rancangan struktur database untuk kandidat, lowongan, dan proses seleksi",
-        type: 'link',
-        deadline: { date: new Date(2026, 4, 10), label: "Desain Database – 10 Mei", time: "23:59 PM" },
-        submittedCount: 6,
-        totalInterns: 6,
-        isSubmitted: false,
-      },
-      {
-        id: 3,
-        title: "Implementasi Auth Module",
-        description: "Pengembangan sistem autentikasi dan otorisasi multi-role",
-        type: 'file',
-        deadline: { date: new Date(2026, 4, 18), label: "Auth Module – 18 Mei", time: "23:59 PM" },
-        submittedCount: 3,
-        totalInterns: 6,
-        isSubmitted: false,
-      },
-      {
-        id: 4,
-        title: "Modul Posting Lowongan",
-        description: "Fitur buat, edit, dan publish lowongan pekerjaan",
-        type: 'link',
-        deadline: { date: new Date(2026, 4, 25), label: "Posting Lowongan – 25 Mei", time: "23:59 PM" },
-        submittedCount: 0,
-        totalInterns: 6,
-        isSubmitted: false,
-      },
+        submissions: [
+          { internEmail: "fajarnugroho@gmail.com", submittedAt: "May 4, 2026", status: "Done" },
+        ]
+      }
     ],
     interns: [
       { name: "Fajar Nugroho", role: "Backend", email: "fajarnugroho@gmail.com" },
-      { name: "Gita Melinda", role: "Backend", email: "gitamelinda@gmail.com" },
-      { name: "Hendra Wijaya", role: "Frontend", email: "hendrawijaya@gmail.com" },
-      { name: "Indira Sari", role: "Frontend", email: "indirasari@gmail.com" },
-      { name: "Joko Purnomo", role: "UI/UX", email: "jokopurnomo@gmail.com" },
-      { name: "Kartika Dewi", role: "QA", email: "kartikadewi@gmail.com" },
-      { name: "Lukman Hakim", role: "QA", email: "lukmanhakim@gmail.com" },
     ],
     mentor: "seniormHR@company.com",
     progress: 37,
@@ -156,57 +125,24 @@ export const mockProjects: Project[] = [
   {
     id: 3,
     name: "E-Commerce Analytics Dashboard",
-    description:
-      "Dashboard analitik komprehensif untuk platform e-commerce yang menyajikan insight real-time tentang performa penjualan, perilaku pelanggan, dan efektivitas kampanye marketing.\n\nProyek ini mencakup pengembangan pipeline data dari berbagai sumber transaksi, visualisasi interaktif menggunakan chart library modern, serta fitur export laporan dalam berbagai format untuk kebutuhan manajemen bisnis.",
+    description: "Dashboard analitik komprehensif untuk platform e-commerce.",
     tasks: [
       {
         id: 1,
         title: "Setup Pipeline Data",
         description: "Konfigurasi ETL pipeline dari database transaksi ke data warehouse",
         type: 'link',
-        deadline: { date: new Date(2026, 4, 3), label: "Setup Pipeline – 3 Mei", time: "23:59 PM" },
+        deadline: { date: new Date(2026, 4, 3), label: "May 3, 2026", time: "23:59 PM" },
+        isSubmitted: false,
         submittedCount: 6,
         totalInterns: 6,
-        isSubmitted: false,
-      },
-      {
-        id: 2,
-        title: "Desain Komponen Chart",
-        description: "Pembuatan reusable chart component untuk berbagai tipe visualisasi data",
-        type: 'file',
-        deadline: { date: new Date(2026, 4, 12), label: "Komponen Chart – 12 Mei", time: "23:59 PM" },
-        submittedCount: 6,
-        totalInterns: 6,
-        isSubmitted: false,
-      },
-      {
-        id: 3,
-        title: "Dashboard Overview Page",
-        description: "Halaman utama dengan ringkasan KPI dan metric utama bisnis",
-        type: 'link',
-        deadline: { date: new Date(2026, 4, 20), label: "Overview Page – 20 Mei", time: "23:59 PM" },
-        submittedCount: 0,
-        totalInterns: 6,
-        isSubmitted: false,
-      },
-      {
-        id: 4,
-        title: "Laporan Penjualan",
-        description: "Modul analitik penjualan dengan filter periode dan kategori produk",
-        type: 'file',
-        deadline: { date: new Date(2026, 4, 28), label: "Laporan Penjualan – 28 Mei", time: "23:59 PM" },
-        submittedCount: 0,
-        totalInterns: 6,
-        isSubmitted: false,
-      },
+        submissions: [
+          { internEmail: "mayaanggraeni@gmail.com", submittedAt: "May 2, 2026", status: "Done" },
+        ]
+      }
     ],
     interns: [
       { name: "Maya Anggraeni", role: "Backend", email: "mayaanggraeni@gmail.com" },
-      { name: "Nando Pratama", role: "Backend", email: "nandopratama@gmail.com" },
-      { name: "Olivia Susanto", role: "Frontend", email: "oliviasusanto@gmail.com" },
-      { name: "Pandu Kusuma", role: "Frontend", email: "pandukukusuma@gmail.com" },
-      { name: "Qori Ramadhan", role: "Data Analyst", email: "qoriramadhan@gmail.com" },
-      { name: "Rini Handayani", role: "UI/UX", email: "rinihandayani@gmail.com" },
     ],
     mentor: "leadanalyst@company.com",
     progress: 50,

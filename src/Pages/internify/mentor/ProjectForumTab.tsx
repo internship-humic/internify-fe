@@ -1,4 +1,4 @@
-import type { Project } from '../../../lib/mockData';
+import type { Project } from '../../../lib/mockProjects';
 import ProjectTimeline from '../intern/components/ProjectTimeline';
 import HeroProject from '../intern/components/Hero-project';
 import MentorTaskCard from './components/MentorTaskCard';
@@ -17,7 +17,10 @@ export default function MentorForumTab({ project }: { project: Project }) {
 
         <div className="w-4/5">
           {project.tasks.map((task, idx) => (
-            <MentorTaskCard key={idx} task={task} />
+            <MentorTaskCard 
+            key={idx}
+            task={task}
+            projectName={project.name} />
           ))}
         </div>
       </div>

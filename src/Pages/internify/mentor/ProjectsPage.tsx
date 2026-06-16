@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { mockProjects } from '../../../lib/mockProjects';
 import MentorForumTab from './ProjectForumTab';
 import InternsTab from './ProjectsInternTab';
 import TaskTab from './TaskTab';
 
-// ─── ProjectDetailPage ─────────────────────────────────────────────────────────
 const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
 
 export default function ProjectDetailPage() {
@@ -53,7 +52,7 @@ export default function ProjectDetailPage() {
             case 'participants':
               return <InternsTab project={project} />;
             case 'Task':
-              return <TaskTab project={project} />; // Tambahkan komponen TaskTab di sini
+              return <TaskTab project={project} />;
             default:
               return null;
           }
