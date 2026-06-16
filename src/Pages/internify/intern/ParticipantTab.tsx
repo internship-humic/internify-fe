@@ -31,7 +31,7 @@ export default function ParticipantsTab({ project }: { project: Project }) {
           >
             <div className="flex items-center gap-3">
               <span className=" text-sm text-[#333]">
-                {intern.email}
+                {intern.name}
               </span>
             </div>
             <span className=" text-[13px] text-[#555] font-semibold">

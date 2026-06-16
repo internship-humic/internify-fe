@@ -8,7 +8,7 @@ import TaskTab from './TaskTab';
 
 // ─── ProjectDetailPage ─────────────────────────────────────────────────────────
 export default function ProjectDetailPage() {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'forum' | 'participants' | 'Task'>('forum');
 
@@ -20,7 +20,7 @@ export default function ProjectDetailPage() {
     }
   };
 
-  const project = mockProjects.find((p) => p.id === Number(id));
+  const project = mockProjects.find((p) => p.name === slug);
 
   if (!project) {
     return (

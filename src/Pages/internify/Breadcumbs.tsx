@@ -6,19 +6,17 @@ const breadcrumbRoutes = [
   // --- AREA INTERN ---
   { path: '/intern', breadcrumb: 'Home' },
   { path: '/intern/projects', breadcrumb: 'Projects' },
-  { path: '/intern/projects/:id', breadcrumb: 'Detail Project' }, // Otomatis handle ID dinamis
+  { path: '/intern/projects/:id', breadcrumb: 'Forum' },
   { path: '/intern/certificates', breadcrumb: 'Certificates' },
-  { path: '/intern/tasks', breadcrumb: 'Tasks' },
-  { path: '/intern/tasks/:id', breadcrumb: 'Detail Task' },
-  { path: '/intern/tasks/:id/submit', breadcrumb: 'Submit Task' },
+  { path: '/intern/projects/:id/submit', breadcrumb: 'Submit Task' },
   { path: '/intern/faq', breadcrumb: 'FAQ' },
   { path: '/intern/notifications', breadcrumb: 'Notifications' },
   { path: '/intern/settings', breadcrumb: 'Settings' },
 
   // --- AREA MENTOR / ADMIN ---
   { path: '/mentor', breadcrumb: 'Home' },
-  { path: '/mentor/projects', breadcrumb: 'Managed Projects' },
-  { path: '/mentor/projects/:id', breadcrumb: 'Project Overview' },
+  { path: '/mentor/projects', breadcrumb: 'List Projects' },
+  { path: '/mentor/projects/:id', breadcrumb: 'Forum' },
   { path: '/mentor/certificates', breadcrumb: 'Approve Certificates' },
   { path: '/mentor/intern', breadcrumb: 'List Intern' },
   { path: '/mentor/faq', breadcrumb: 'FAQ' },

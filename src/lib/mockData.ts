@@ -101,7 +101,7 @@ export const mockProjects: Project[] = [
       { name: "Dewa Aditya", role: "UI/UX", email: "jonathankristina@gmail.com" },
       { name: "Eka Pratiwi", role: "UI/UX", email: "jonathankristina@gmail.com" },
     ],
-    mentor: "jonathankristina@gmail.com",
+    mentor: "jonathankristina",
     progress: 12,
     tasksDone: 1,
     tasksTotal: 8,

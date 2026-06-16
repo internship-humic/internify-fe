@@ -1,11 +1,11 @@
 import { Bell, Menu } from "lucide-react"
-import humiclogo from "../../../../assets/logo.png";
+import humiclogo from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 
 export default function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
   const nav = useNavigate();
   return (
-    <header className='sticky top-0 flex w-full justify-between items-center py-4 px-12 bg-white border-b border-gray-300 z-10'>
+    <header className='sticky top-0 flex w-full justify-between items-center py-2 px-12 bg-white border-b border-gray-300 z-10'>
       <div className='flex items-center gap-3'>
         {/* Tombol Burger Menu: Hanya muncul di layar < md */}
         <button 
@@ -16,7 +16,7 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
         </button>
 
         <button onClick={()=>nav('/intern')}>
-          <img src={humiclogo} alt="Humic Logo" className="w-[130px] cursor-pointer" />
+          <img src={humiclogo} alt="Humic Logo" className="w-[100px] cursor-pointer" />
         </button>
       </div>
 

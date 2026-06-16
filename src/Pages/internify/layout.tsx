@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { useState } from "react";
-import Header from './mentor/components/Header';
+import Header from '../../Layout/Header-internify';
 import SidebarIntern from './intern/components/SidebarIntern';
 import SidebarMentor from './mentor/components/SidebarMentor';
 import FooterIntern from '../../Layout/Footer-Internify';

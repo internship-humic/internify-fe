@@ -1,25 +1,15 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { mockProjects } from '../../../lib/mockData';
 import ForumTab from './ForumTab';
 import ParticipantsTab from './ParticipantTab';
-import { ChevronLeft } from 'lucide-react';
 
 // ─── ProjectDetailPage ─────────────────────────────────────────────────────────
 export default function ProjectDetailPage() {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const { slug } = useParams<{ slug: string }>();
   const [activeTab, setActiveTab] = useState<'forum' | 'participants'>('forum');
 
-  const handleBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate('/intern/projects');
-    }
-  };
-
-  const project = mockProjects.find((p) => p.id === Number(id));
+  const project = mockProjects.find((p) => p.name === slug);
 
   if (!project) {
     return (

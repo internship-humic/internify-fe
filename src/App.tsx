@@ -83,13 +83,12 @@ function App() {
         </Route>
 
         <Route path="/login-internify" element={<InternifyLogin />} />
-        {/* // Endpoints for intern-specific pages */}
         <Route path="/intern" element={<InternLayout />}>
           <Route index element={<HomeInternPage />} />
           <Route path="projects" element={<ProjectsPage />} />
           <Route path="certificates" element={<SertificatePage />} />
-          <Route path="projects/:id" element={<ProjectDetailPage />} />
-          <Route path="tasks/:id/submit" element={<TaskSubmission />} />
+          <Route path="projects/:slug" element={<ProjectDetailPage />} />
+          <Route path="projects/:slug/submit" element={<TaskSubmission />} />
           <Route path="faq" element={<FAQPage />} />
           <Route path="notifications" element={<NotificationList />} />
           <Route path="settings" element={<SettingsContent />} />
@@ -100,7 +99,7 @@ function App() {
           <Route path="projects" element={<MentorProjectsPage />} />
           <Route path="certificates" element={<MentorCertificatePage />} />
           <Route path="intern" element={<MentorInternPage />} />
-          <Route path="projects/:id" element={<MentorDetailProject />} />
+          <Route path="projects/:slug" element={<MentorDetailProject />} />
           <Route path="faq" element={<FAQPage />} />
           <Route path="notifications" element={<NotificationList />} />
           <Route path="settings" element={<SettingsContent />} />
