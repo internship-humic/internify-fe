@@ -1,34 +1,35 @@
 import { useParams } from "react-router-dom";
+import { useState } from "react";
 import { mockProjects } from "../../../lib/mockProjects";
 import { Calendar, Edit, SlidersHorizontal, Search } from "lucide-react";
+import EditSubmissionModal from "./components/EditSubmissionTask";
 
 const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
 
-// Helper untuk mendapatkan inisial nama avatar
-const getInitials = (name: string) => {
-  return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-};
-
 export default function MentorProjectsDetailPage() {
   const { slug, taskSlug } = useParams<{ slug: string; taskSlug: string }>();
-
   const targetedProject = mockProjects.find((p) => toSlug(p.name) === slug);
+  
   if (!targetedProject) {
     return <div className="p-10 text-[#888]">Project tidak ditemukan.</div>;
   }
-
+  
   const targetedTask = targetedProject.tasks.find((t) => toSlug(t.title) === taskSlug);
   if (!targetedTask) {
     return <div className="p-10 text-[#888]">Tugas tidak ditemukan.</div>;
   }
 
+  const [openModal, setOpenModal] = useState(false);
+
   return (
     <div>
-
       {/* Header Utama */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-[#1a1a1a]">{targetedTask.title}</h1>
-        <button className="flex items-center gap-2 border border-gray-400 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-all">
+        <button
+          className="flex items-center gap-2 border border-gray-400 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-all"
+          onClick={() => setOpenModal(true)}
+        >
           <Edit size={16} />
           Edit Task
         </button>
@@ -93,12 +94,10 @@ export default function MentorProjectsDetailPage() {
                   <tr key={idx} className="hover:bg-gray-50/50 transition-colors">
                     {/* Kolom Nama & Profil */}
                     <td className="px-6 py-4 flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-gray-200 text-gray-500 font-semibold text-xs flex items-center justify-center border border-gray-300">
-                        {getInitials(internProfile.name)}
-                      </div>
+                      <div className="w-9 h-9 rounded-full bg-red-800 text-gray-500 font-semibold text-xs flex items-center justify-center border border-gray-300"/>
                       <span className="font-semibold text-sm text-gray-800">{internProfile.name}</span>
                     </td>
-                    
+
                     {/* Kolom Tanggal Kumpul */}
                     <td className="px-6 py-4 text-sm text-gray-500">
                       {sub.submittedAt || "-"}
@@ -136,6 +135,14 @@ export default function MentorProjectsDetailPage() {
           </table>
         </div>
       </div>
+
+      {/* EditSubmissionModal sekarang berada di dalam induk div utama */}
+      {openModal && (
+        <EditSubmissionModal
+          isOpen={openModal}
+          onClose={() => setOpenModal(false)}
+        />
+      )}
     </div>
   );
 }

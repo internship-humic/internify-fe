@@ -20,7 +20,7 @@
   --color-card: #f3f3f3;
   --color-card-hover: #d5d5d5;
 
-  --color-primary: #6d180d;
+  --color-primary: #ad2b19;
   --color-primary-foreground: #ffffff;
 
   --color-border: #a8a9aa;
@@ -32,6 +32,8 @@
 }
 
 .container {
+  flex: 1;
+  min-width: 0; /* penting! mencegah overflow */
   padding-inline: calc(var(--spacing) * 14);
   padding-block: calc(var(--spacing) * 12);
   background-color: var(--color-gray-50);
@@ -74,13 +76,15 @@ dialog.custom-dialog {
   margin: auto;
   display: flex;
   flex-direction: column;
+
   width: calc(100% - 2rem);
   max-width: 540px;
-  max-height: calc(100vh - 4rem);
+
+  max-height: 90vh;
+
   border-radius: 1rem; /* 16px */
   border: 1px solid #f3f4f6; /* border-gray-100 */
   background-color: #ffffff;
-  padding: 1.5rem; /* 24px */
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* shadow-2xl */
   
   /* Animasi (Masuk) */
@@ -109,13 +113,10 @@ dialog.custom-dialog::backdrop {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  
-  padding-left: 1.5rem;   /* 24px */
-  padding-right: 1.5rem;  /* 24px */
-  padding-top: 1rem;      /* 16px */
-  padding-bottom: 1rem;   /* 16px */
-  
-  border-bottom: 1px solid #f3f4f6; /* border-gray-100 */
+  padding-left: 1rem;
+  padding-right: 1.5rem;
+  padding-top: 1rem;
+  border-bottom: 2px solid #f3f4f6; /* border-gray-100 */
 }
 
 /* Breakpoint Medium (md:) - Aktif saat lebar layar >= 768px */

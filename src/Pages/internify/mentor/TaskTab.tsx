@@ -2,10 +2,12 @@ import type { Project, Task } from '../../../lib/mockData';
 import { ClipboardList, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import CreateTaskModal from './components/CreateTaskDialog';
+import EditTaskModal from './components/EditTaskDialog';
 
 export default function TaskTab({ project }: { project: Project }) {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   const handleEditTask = (taskTitle: string) => {
     console.log('Edit task:', taskTitle);
@@ -51,7 +53,7 @@ export default function TaskTab({ project }: { project: Project }) {
               {/* Action Buttons (Edit & Delete) */}
               <div className="flex items-center gap-4 text-slate-600 shrink-0">
                 <button
-                  onClick={() => handleEditTask(task.title)}
+                  onClick={() => setEditModalOpen(true)}
                   className="hover:text-blue-600 transition-colors p-1"
                   title="Edit Task"
                 >
@@ -77,6 +79,12 @@ export default function TaskTab({ project }: { project: Project }) {
         <CreateTaskModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
+        />
+      }
+      {editModalOpen &&
+        <EditTaskModal
+          isOpen={editModalOpen}
+          onClose={() => setEditModalOpen(false)}
         />
       }
     </div>

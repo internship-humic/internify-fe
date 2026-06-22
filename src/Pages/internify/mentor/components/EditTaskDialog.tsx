@@ -1,12 +1,12 @@
 import { useRef, useEffect, useState } from "react";
 import { X, FileText, Link } from "lucide-react";
 
-interface CreateTaskModalProps {
+interface EditTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export default function CreateTaskModal({ isOpen, onClose }: CreateTaskModalProps) {
+export default function EditTaskModal({ isOpen, onClose }: EditTaskModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   // Form States
@@ -56,7 +56,7 @@ export default function CreateTaskModal({ isOpen, onClose }: CreateTaskModalProp
       {/* Header Modal */}
       <div className="dialog-header">
         <div>
-          <h2 className="text-[26px] font-bold text-[#B30000] tracking-tight">Create New Task</h2>
+          <h2 className="text-[26px] font-bold text-[#B30000] tracking-tight">Edut Task</h2>
           <p className="text-xs text-gray-400 font-medium mt-0.5">
             Fill in the details for the next intern assignment.
           </p>

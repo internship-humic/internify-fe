@@ -1,20 +1,20 @@
 import { useState, useMemo } from "react";
 import { Search, SlidersHorizontal, Plus, Trash2 } from "lucide-react";
-import { mockInternsData } from "../../../lib/mockData"; 
+import { mockInternsData } from "../../../lib/mockData";
+import AddInternsModal from "./components/AddInternsToProjects";
 
-
-export default function InternsManagement() {  
+export default function InternsManagement() {
   // State Filter & Search
   const [searchEmail, setSearchEmail] = useState("");
   const [selectedProject, setSelectedProject] = useState("All Projects");
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   // Handler Aksi Kursor/Tombol
   const handleAddAssignment = (id: number) => {
     alert(`Assign/Add action clicked for intern ID: ${id}`);
   };
 
   const handleDeleteIntern = (id: number) => {
-      alert(`Deleted intern ID: ${id}`);
+    alert(`Deleted intern ID: ${id}`);
   };
 
   // Logic Filtering Data menggunakan useMemo
@@ -42,7 +42,7 @@ export default function InternsManagement() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-center mb-6">
         {/* Left Control Inputs */}
         <div className="lg:col-span-2 flex flex-col sm:flex-row items-center gap-3">
-          
+
           {/* Search Box Input */}
           <div className="relative w-full sm:max-w-xs">
             <span className="absolute inset-y-0 left-3 flex items-center text-gray-400">
@@ -100,9 +100,16 @@ export default function InternsManagement() {
         </div>
       </div>
 
+      <div className="flex justify-end">
+        <button className="inline-flex items-center gap-2 p-3 bg-red-700 text-white rounded-xl shadow-sm hover:bg-red-800 transition-colors focus:outline-none focus:ring-2 focus:ring-red-300" onClick={() => setIsModalOpen(true)}>
+          <Plus className="w-4 h-4" />
+          Add
+        </button>
+      </div>
+
       {/* Main Table Container Block */}
-      <div className="w-full bg-white rounded-xl border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] overflow-hidden">
-        
+      <div className="w-full mt-3 bg-white rounded-xl border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] overflow-hidden">
+
         {/* Red Table Header Block */}
         <div className="bg-[#B30000] text-white px-6 py-3.5 flex items-center text-xs font-bold uppercase tracking-wider">
           <div className="w-1/2">Intern Details</div>
@@ -115,16 +122,16 @@ export default function InternsManagement() {
           {filteredInterns.length > 0 ? (
             filteredInterns.map((intern, index) => {
               const isUnassigned = intern.projectName === "Unassigned";
-              
+
               return (
                 <div key={`${intern.id}-${index}`} className="px-6 py-4 flex items-center hover:bg-gray-50/60 transition-colors">
-                  
+
                   {/* Column 1: Intern Details (Avatar + Name & Email) */}
                   <div className="w-1/2 flex items-center gap-3">
                     {intern.avatar ? (
-                      <img 
-                        src={intern.avatar} 
-                        alt={intern.name} 
+                      <img
+                        src={intern.avatar}
+                        alt={intern.name}
                         className="w-10 h-10 rounded-full object-cover border border-gray-100 shadow-sm"
                       />
                     ) : (
@@ -150,13 +157,13 @@ export default function InternsManagement() {
 
                   {/* Column 3: Action Buttons Block Right aligned */}
                   <div className="w-1/6 flex items-center justify-end gap-3.5 pr-2">
-                    <button 
+                    <button
                       onClick={() => handleAddAssignment(intern.id)}
                       className="p-1.5 bg-[#B30000] hover:bg-[#990000] text-white rounded-lg transition-colors shadow-sm"
                     >
                       <Plus className="w-4 h-4 stroke-[3]" />
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleDeleteIntern(intern.id)}
                       className="p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
                     >
@@ -179,7 +186,7 @@ export default function InternsManagement() {
           <div>
             Showing <span className="font-bold">{filteredInterns.length}</span> of 124 interns
           </div>
-          
+
           <div className="flex items-center gap-2 self-end sm:self-auto">
             <button className="px-3 py-1.5 bg-black/20 hover:bg-black/30 rounded-md font-semibold opacity-50 cursor-not-allowed transition-colors">
               Previous
@@ -189,8 +196,13 @@ export default function InternsManagement() {
             </button>
           </div>
         </div>
-
       </div>
+      {isModalOpen &&
+        <AddInternsModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      }
     </div>
   );
 }

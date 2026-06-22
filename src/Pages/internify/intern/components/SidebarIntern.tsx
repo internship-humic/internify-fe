@@ -31,8 +31,8 @@ export default function SidebarIntern({ isOpen, closeSidebar }: SidebarProps) {
     <aside 
       className={`
         bg-white border-r border-gray-300 flex flex-col py-5 px-3 gap-1 overflow-y-auto flex-shrink-0 transition-transform duration-300 ease-in-out
-        md:sticky md:top-[50px] md:h-[calc(100vh-73px)] md:w-[250px] md:translate-x-0 md:z-8
-        fixed top-0 left-0 h-[calc(100vh-50px)] w-[270px] z-40 pt-5
+        lg:sticky lg:top-[50px] lg:h-[calc(100vh-73px)] lg:w-[250px] lg:translate-x-0 lg:z-8
+        fixed top-0 left-0 h-screen w-[270px] z-40 pt-5
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
       `}
     >
@@ -49,7 +49,7 @@ export default function SidebarIntern({ isOpen, closeSidebar }: SidebarProps) {
         {/* Tombol Close silang (X): Hanya muncul di HP saat sidebar terbuka */}
         <button 
           onClick={closeSidebar} 
-          className="p-1 text-gray-500 hover:bg-gray-100 rounded-md md:hidden"
+          className="p-1 text-gray-500 hover:bg-gray-100 rounded-lg lg:hidden"
         >
           <X className="w-5 h-5" />
         </button>

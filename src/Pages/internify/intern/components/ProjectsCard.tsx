@@ -25,7 +25,7 @@ const ProjectCard = ({
   const navigate = useNavigate()
 
   return (
-    <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 w-[230px] flex flex-col">
+    <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 w-full flex flex-col">
       {/* Thumbnail */}
       <div className="h-[150px] bg-gradient-to-tr from-red-700 to-red-800 overflow-hidden">
         {thumbnailUrl && (
@@ -36,7 +36,7 @@ const ProjectCard = ({
       {/* Content */}
       <div className="min-h-[180px] max-h-[210px] flex-1 flex flex-col justify-between py-3">
         <div className="px-3 flex flex-col gap-2">
-          <p className="text-sm font-semibold text-gray-800 leading-tight">{name}</p>
+          <p className="text-xs lg:text-sm font-semibold text-gray-800 leading-tight">{name}</p>
 
           {/* Mentor */}
           <div className="flex items-center gap-2">

@@ -110,7 +110,7 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
     >
       {/* Header Modal */}
       <div className="dialog-header">
-        <div>
+        <div className="px-3">
           <h2 className="text-xl font-bold text-gray-900 tracking-tight">Create New Project</h2>
           <p className="text-xs text-gray-400 font-medium mt-0.5">
             Launch a new internship assignment or trackable milestone.
@@ -125,7 +125,7 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
       </div>
 
       {/* Body Form Modal */}
-      <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-4 md:space-y-5 overflow-y-auto flex-1">
+      <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-3 md:space-y-4 overflow-y-auto flex-1">
 
         {/* Section: Select Project Icon */}
         <div className="space-y-2">

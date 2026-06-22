@@ -28,23 +28,24 @@ import Dashboard from "./Pages/Dashboard";
 import EditFaq from "./Pages/EditFAQ";
 import EditFeedback from "./Pages/EditFeedback";
 import EditLowongan from "./Pages/EditLowongan";
-import HomeInternPage from "./Pages/internify/intern/HomeInternPage";
-import { InternLayout, MentorLayout } from "./Pages/internify/layout";
-import ProjectsPage from "./Pages/internify/intern/ProjectsPage";
-import SertificatePage from "./Pages/internify/intern/SertificatePage";
-import ProjectDetailPage from "./Pages/internify/intern/ProjectDetailPage";
-import HomeMentorPage from "./Pages/internify/mentor/HomePage";
-import MentorProjectsPage from "./Pages/internify/mentor/BaseProjectsPage";
-import MentorCertificatePage from "./Pages/internify/mentor/CertificatePage";
-import MentorInternPage from "./Pages/internify/mentor/InternsPage";
-import MentorDetailProject from "./Pages/internify/mentor/ProjectsPage";
-import InternifyLogin from "./Pages/internify/page"
-import FAQPage from "./Pages/internify/FAQpage";
-import NotificationList from "./Pages/internify/NotificationList";
-import SettingsContent from "./Pages/internify/SettingsPage";
-import TaskSubmission from "./Pages/internify/intern/TaskSubmission";
-import SertificateList from "./Pages/internify/intern/SertificateList";
-import MentorProjectsDetailPage from "./Pages/internify/mentor/MentorProjectDetailPage";
+import HomeInternPage from "./Pages/Internify/intern/HomeInternPage";
+import { InternLayout, MentorLayout } from "./Pages/Internify/layout";
+import ProjectsPage from "./Pages/Internify/intern/ProjectsPage";
+import SertificatePage from "./Pages/Internify/intern/SertificatePage";
+import ProjectDetailPage from "./Pages/Internify/intern/ProjectDetailPage";
+import HomeMentorPage from "./Pages/Internify/mentor/HomePage";
+import MentorProjectsPage from "./Pages/Internify/mentor/BaseProjectsPage";
+import MentorCertificatePage from "./Pages/Internify/mentor/CertificatePage";
+import MentorInternPage from "./Pages/Internify/mentor/InternsPage";
+import MentorDetailProject from "./Pages/Internify/mentor/ProjectsPage";
+import InternifyLogin from "./Pages/Internify/LoginInternify"
+import FAQPage from "./Pages/Internify/FAQpage";
+import NotificationList from "./Pages/Internify/NotificationList";
+import SettingsContent from "./Pages/Internify/SettingsPage";
+import TaskSubmission from "./Pages/Internify/intern/TaskSubmission";
+import SertificateList from "./Pages/Internify/intern/SertificateList";
+import MentorProjectsDetailPage from "./Pages/Internify/mentor/MentorProjectDetailPage";
+import ProtectedRoutes from "./Pages/utils/ProtectedRoute";
 
 function App() {
   return (
@@ -60,7 +61,6 @@ function App() {
         <Route path="/details-product/:id" element={<DetailsProduct />} />
         <Route path="/login-admin" element={<LoginAdmin />} />
 
-        {/* Endpoint khusus admin login langsung di inject ajah */}
         <Route element={<PrivateRoute />}>
           <Route path="/add-product-admin" element={<AddProduct />} />
           <Route path="/internships-list" element={<InternshipList />} />
@@ -85,29 +85,30 @@ function App() {
         </Route>
 
         <Route path="/login-internify" element={<InternifyLogin />} />
-        <Route path="/intern" element={<InternLayout />}>
-          <Route index element={<HomeInternPage />} />
-          <Route path="projects" element={<ProjectsPage />} />
-          <Route path="certificates" element={<SertificatePage />} />
-          <Route path="certificates/all" element={<SertificateList />} />
-          <Route path="projects/:slug" element={<ProjectDetailPage />} />
-          <Route path="projects/:slug/:TaskSlug" element={<TaskSubmission />} />
-          <Route path="faq" element={<FAQPage />} />
-          <Route path="notifications" element={<NotificationList />} />
-          <Route path="settings" element={<SettingsContent />} />
-        </Route>
 
-        <Route path="/mentor" element={<MentorLayout />}>
-          <Route index element={<HomeMentorPage />} />
-          <Route path="projects" element={<MentorProjectsPage />} />
-          <Route path="certificates" element={<MentorCertificatePage />} />
-          <Route path="intern" element={<MentorInternPage />} />
-          <Route path="projects/:slug" element={<MentorDetailProject />} />
-          <Route path="projects/:slug/:taskSlug" element={<MentorProjectsDetailPage />} />
-          <Route path="faq" element={<FAQPage />} />
-          <Route path="notifications" element={<NotificationList />} />
-          <Route path="settings" element={<SettingsContent />} />
-        </Route>
+          <Route path="/intern" element={<InternLayout />}>
+            <Route index element={<HomeInternPage />} />
+            <Route path="projects" element={<ProjectsPage />} />
+            <Route path="certificates" element={<SertificatePage />} />
+            <Route path="certificates/all" element={<SertificateList />} />
+            <Route path="projects/:slug" element={<ProjectDetailPage />} />
+            <Route path="projects/:slug/:TaskSlug" element={<TaskSubmission />} />
+            <Route path="faq" element={<FAQPage />} />
+            <Route path="notifications" element={<NotificationList />} />
+            <Route path="settings" element={<SettingsContent />} />
+          </Route>
+
+          <Route path="/mentor" element={<MentorLayout />}>
+            <Route index element={<HomeMentorPage />} />
+            <Route path="projects" element={<MentorProjectsPage />} />
+            <Route path="certificates" element={<MentorCertificatePage />} />
+            <Route path="intern" element={<MentorInternPage />} />
+            <Route path="projects/:slug" element={<MentorDetailProject />} />
+            <Route path="projects/:slug/:taskSlug" element={<MentorProjectsDetailPage />} />
+            <Route path="faq" element={<FAQPage />} />
+            <Route path="notifications" element={<NotificationList />} />
+            <Route path="settings" element={<SettingsContent />} />
+          </Route>
       </Routes>
     </Router>
   );
