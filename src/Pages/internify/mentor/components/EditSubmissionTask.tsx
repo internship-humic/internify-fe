@@ -50,7 +50,7 @@ export default function EditSubmissionModal({ isOpen, onClose }: EditTaskModalPr
   };
 
   return (
-    <dialog ref={dialogRef} className="custom-dialog p-[1.5rem]">
+    <dialog ref={dialogRef} className="custom-dialog">
 
       {/* Header */}
       <div className="dialog-header">
@@ -64,7 +64,7 @@ export default function EditSubmissionModal({ isOpen, onClose }: EditTaskModalPr
       </div>
 
       {/* Form Body */}
-      <form onSubmit={handleSubmit} className="px-6 pb-6 space-y-4 overflow-y-auto flex-1">
+      <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto flex-1">
 
         {/* Title */}
         <div className="space-y-1.5">
@@ -103,11 +103,8 @@ export default function EditSubmissionModal({ isOpen, onClose }: EditTaskModalPr
                 required
                 value={deadlineDate}
                 onChange={(e) => setDeadlineDate(e.target.value)}
-                className="w-full pl-3 pr-9 py-2.5 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-800 focus:outline-none focus:border-[#B30000] focus:ring-1 focus:ring-[#B30000] appearance-none"
+                className="w-full p-3  py-2.5 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-800 focus:outline-none focus:border-[#B30000] focus:ring-1 focus:ring-[#B30000] appearance-none"
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-                <LuCalendar className="w-4 h-4" />
-              </span>
             </div>
           </div>
 

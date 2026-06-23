@@ -14,11 +14,15 @@
 
 @theme {
   /* Dasar Warna Gelap */
-  --color-background: #e9e3e3;
+  --color-background: #fdfdfd;
   --color-foreground: #1e282c;
 
   --color-card: #f3f3f3;
   --color-card-hover: #d5d5d5;
+
+  --color-box-primary: #ebebeb;
+  --color-box-secondary: #f3f4f6 ;
+  --color-box-border: #d8d9db;
 
   --color-primary: #ad2b19;
   --color-primary-foreground: #ffffff;
@@ -36,7 +40,7 @@
   min-width: 0; /* penting! mencegah overflow */
   padding-inline: calc(var(--spacing) * 14);
   padding-block: calc(var(--spacing) * 12);
-  background-color: var(--color-gray-50);
+  background-color: var(--color-background);
   display: flex;
   flex-direction: column;
   gap: 13px;
@@ -116,15 +120,11 @@ dialog.custom-dialog::backdrop {
   padding-left: 1rem;
   padding-right: 1.5rem;
   padding-top: 1rem;
-  border-bottom: 2px solid #f3f4f6; /* border-gray-100 */
+  border-bottom: 2px solid #b3b8c0; /* border-gray-100 */
 }
 
 /* Breakpoint Medium (md:) - Aktif saat lebar layar >= 768px */
 @media (min-width: 768px) {
-  .box {
-    
-  }
-  
   .dialog-header {
     /* Perubahan padding untuk layar desktop (md:px-8 md:py-5) */
     padding-left: 2rem;     /* 32px */

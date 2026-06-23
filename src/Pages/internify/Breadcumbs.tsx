@@ -35,7 +35,7 @@ const breadcrumbRoutes = [
   { path: '/mentor/projects', breadcrumb: 'List Projects' },
   { path: '/mentor/projects/:slug', breadcrumb: ProjectNameBreadcrumb },
   { path: '/mentor/projects/:slug/:taskSlug', breadcrumb: TaskNameBreadcrumb },
-  { path: '/mentor/certificates', breadcrumb: 'Approve Certificates' },
+  { path: '/mentor/certificates', breadcrumb: 'Certificates' },
   { path: '/mentor/intern', breadcrumb: 'List Intern' },
   { path: '/mentor/faq', breadcrumb: 'FAQ' },
   { path: '/mentor/notifications', breadcrumb: 'Notifications' },

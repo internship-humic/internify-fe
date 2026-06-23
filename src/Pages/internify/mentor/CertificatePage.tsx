@@ -58,10 +58,9 @@ const MentorCertificatePage = () => {
       </div>
 
       {/* Main Grid Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         {/* Kiri: Form Issue New Certificate (4 Kolom) */}
-        <div className="lg:col-span-5 xl:col-span-4 bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-sm">
+        <div className="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
             <PlusCircle className="w-6 h-6 text-[#B30000]" />
             <h2 className="text-xl font-bold text-gray-900 tracking-tight">Issue New Certificate</h2>
@@ -143,7 +142,7 @@ const MentorCertificatePage = () => {
         </div>
 
         {/* Kanan: Issued Certificates History (8 Kolom) */}
-        <div className="lg:col-span-7 lg:col-span-8 bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden flex flex-col justify-between">
+        <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden flex flex-col justify-between h-full">
           <div>
             {/* Header Table */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-gray-50">

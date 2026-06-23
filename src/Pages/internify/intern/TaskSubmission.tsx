@@ -8,12 +8,12 @@ const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
 
 export default function TaskSubmission() {
   const [searchParams] = useSearchParams();
-  const { slug, taskSlug } = useParams<{ slug: string; taskSlug: string }>();
+  const { slug, TaskSlug } = useParams<{ slug: string; TaskSlug: string }>();
 
   const submissionType = (searchParams.get("type") ?? "file") as "file" | "link";
 
   const project = mockProjects.find((p) => toSlug(p.name) === slug);
-  const task = project?.tasks.find((t) => toSlug(t.title) === taskSlug);
+  const task = project?.tasks.find((t) => toSlug(t.title) === TaskSlug);
   const handleFileSubmit = (files: File[]) => {
     const fileNames = files.map(f => f.name).join(', ');
     console.log(`Submitting Files for Project ${slug}:`, fileNames);
@@ -28,47 +28,43 @@ export default function TaskSubmission() {
   return (
     <div className="space-y-4">
       {/* Header Card */}
-      <div className="w-full bg-white rounded-2xl border border-gray-100 p-6 shadow-[0_4px_20px_rgba(0,0,0,0.01)]">
+      <div className="w-full bg-box-secondary  rounded-2xl border border-box-border p-6 ">
         <div className="flex justify-between items-start">
-          <div>
+          <div className="space-y-2">
             <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
-              {task?.title ?? "Submit Task"}
+              {task?.title}
             </h1>
+            <span className="text-sm font-bold text-gray-600">
+              Due {task?.deadline.label} at {task?.deadline.time}
+            </span>
           </div>
-
-          <span className={`text-xs font-bold px-3 py-1.5 rounded-lg ${submissionType === "file"
-            ? "bg-blue-50 text-blue-700 border border-blue-100"
-            : "bg-purple-50 text-purple-700 border border-purple-100"
-            }`}>
-            {submissionType === "file" ? "📄 File Upload" : "🔗 Link Submission"}
-          </span>
         </div>
       </div>
 
       {/* Task Description Card */}
-      <div className="w-full bg-white rounded-2xl border border-gray-100 p-6 shadow-[0_4px_20px_rgba(0,0,0,0.01)] space-y-3">
-        <h2 className="text-base font-bold text-gray-800 tracking-tight">Task Description</h2>
-        <p className="text-sm text-gray-500 font-medium leading-relaxed">
-          {task?.description ?? "Kerjakan dan kirimkan tugas sesuai dengan instruksi yang diberikan."}
+      <div className="w-full bg-box-secondary rounded-2xl border border-box-border p-6 space-y-3">
+        <h2 className="text-xl  text-gray-800 tracking-tight">Task Description</h2>
+        <p className="text-sm text-foreground font-light leading-relaxed">
+          {task?.description}
         </p>
       </div>
 
       {/* Submit Area Card */}
-      <div className="w-full bg-white rounded-2xl border border-gray-100 p-6 shadow-[0_4px_20px_rgba(0,0,0,0.01)] space-y-5">
-        <div className="flex items-center gap-2 border-b border-gray-50 pb-2">
+      <div className="w-full bg-box-secondary rounded-2xl border border-box-border p-6 space-y-5">
+        <div className="flex items-center gap-2  pb-2">
           <FileText className="w-4 h-4 text-[#B30000] stroke-[2.5]" />
-          <h2 className="text-base font-bold text-gray-800 tracking-tight">Submit Task</h2>
+          <h2 className="text-base font-bold text-secondary tracking-tight">Save Changes</h2>
         </div>
 
         {/* Render form sesuai tipe dari query param */}
         {submissionType === "file" ? (
-          <TaskFormFile taskId={slug} onSubmitSuccess={handleFileSubmit} />
+          <TaskFormFile onSubmitSuccess={handleFileSubmit} deadline={task?.deadline.date}/>
         ) : (
-          <TaskFormLink taskId={slug} onSubmitSuccess={handleLinkSubmit} />
+          <TaskFormLink onSubmitSuccess={handleLinkSubmit} deadline={task?.deadline.date}/>
         )}
 
         {/* Info Box */}
-        <div className="w-full bg-gray-50 border border-gray-100 rounded-lg p-3 flex items-start gap-2.5">
+        <div className="w-full border border-box-border rounded-lg p-3 flex items-start gap-2.5">
           <Info className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
           <p className="text-[11px] text-gray-400 font-medium leading-relaxed">
             Once submitted, your work will be locked for mentor review. You can request a re-submission if needed.

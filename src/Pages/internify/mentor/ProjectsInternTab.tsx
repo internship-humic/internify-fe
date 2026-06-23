@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Project, Intern } from '../../../lib/mockData';
+import type { Project, Intern } from '../../../lib/mockProjects';
 import { Plus } from 'lucide-react';
 import ManageInternsModal from './components/AddInternsDialog';
 
@@ -51,6 +51,11 @@ export default function InternsTab({ project }: { project: Project }) {
             <span className=" text-[13px] text-[#555] font-semibold">
               {intern.role}
             </span>
+            <div>
+              <button className='flex items-center gap-1 text-[14px] bg-red-600 text-white p-1 rounded-xl'>
+                <Plus className='w-4 h-4'/>Delete
+              </button>
+            </div>
           </div>
         ))}
       </div>

@@ -41,8 +41,7 @@ export default function InternsManagement() {
       {/* Filter Row & Stats Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-center mb-6">
         {/* Left Control Inputs */}
-        <div className="lg:col-span-2 flex flex-col sm:flex-row items-center gap-3">
-
+        <div className="lg:col-span-2 flex flex-col sm:flex-row items-center gap-3 border border-gray-300 p-4 rounded-xl">
           {/* Search Box Input */}
           <div className="relative w-full sm:max-w-xs">
             <span className="absolute inset-y-0 left-3 flex items-center text-gray-400">
@@ -101,7 +100,7 @@ export default function InternsManagement() {
       </div>
 
       <div className="flex justify-end">
-        <button className="inline-flex items-center gap-2 p-3 bg-red-700 text-white rounded-xl shadow-sm hover:bg-red-800 transition-colors focus:outline-none focus:ring-2 focus:ring-red-300" onClick={() => setIsModalOpen(true)}>
+        <button className="inline-flex items-center gap-5 px-3 py-1 bg-red-700 text-white rounded-xl shadow-sm hover:bg-red-800 transition-colors focus:outline-none focus:ring-2 focus:ring-red-300" onClick={() => setIsModalOpen(true)}>
           <Plus className="w-4 h-4" />
           Add
         </button>

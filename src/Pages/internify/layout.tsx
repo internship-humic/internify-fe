@@ -11,7 +11,7 @@ export const InternLayout = () => {
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const closeSidebar = () => setIsSidebarOpen(false);
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col relative">
+    <div className="min-h-screen flex flex-col relative">
       <Header toggleSidebar={toggleSidebar}/>
       <div className="flex flex-1 relative">
         <SidebarIntern isOpen={isSidebarOpen} closeSidebar={closeSidebar} />
@@ -36,7 +36,7 @@ export const MentorLayout = () => {
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const closeSidebar = () => setIsSidebarOpen(false);
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screenflex flex-col">
       <Header toggleSidebar={toggleSidebar}/>
       <div className="flex flex-1">
         <SidebarMentor isOpen={isSidebarOpen} closeSidebar={closeSidebar} />

@@ -1,19 +1,21 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { mockProjects } from "../../../lib/mockProjects";
 import { Calendar, Edit, SlidersHorizontal, Search } from "lucide-react";
 import EditSubmissionModal from "./components/EditSubmissionTask";
 
+
 const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
 
 export default function MentorProjectsDetailPage() {
+  const navigate = useNavigate();
   const { slug, taskSlug } = useParams<{ slug: string; taskSlug: string }>();
   const targetedProject = mockProjects.find((p) => toSlug(p.name) === slug);
-  
+
   if (!targetedProject) {
     return <div className="p-10 text-[#888]">Project tidak ditemukan.</div>;
   }
-  
+
   const targetedTask = targetedProject.tasks.find((t) => toSlug(t.title) === taskSlug);
   if (!targetedTask) {
     return <div className="p-10 text-[#888]">Tugas tidak ditemukan.</div>;
@@ -36,7 +38,7 @@ export default function MentorProjectsDetailPage() {
       </div>
 
       {/* Kotak Informasi Detail & Deadline */}
-      <div className="border border-gray-300 rounded-xl p-6 bg-white flex flex-col md:flex-row gap-6 mb-8 shadow-sm">
+      <div className="border border-gray-300 rounded-xl p-6 bg-white flex flex-col lg:flex-row gap-6 mb-8 shadow-sm">
         <div className="flex-1 md:border-r border-gray-200 md:pr-6">
           <h2 className="text-xs font-sans text-gray-400 tracking-wider uppercase mb-2">Description</h2>
           <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
@@ -94,7 +96,7 @@ export default function MentorProjectsDetailPage() {
                   <tr key={idx} className="hover:bg-gray-50/50 transition-colors">
                     {/* Kolom Nama & Profil */}
                     <td className="px-6 py-4 flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-red-800 text-gray-500 font-semibold text-xs flex items-center justify-center border border-gray-300"/>
+                      <div className="w-9 h-9 rounded-full bg-red-800 text-gray-500 font-semibold text-xs flex items-center justify-center border border-gray-300" />
                       <span className="font-semibold text-sm text-gray-800">{internProfile.name}</span>
                     </td>
 
@@ -124,7 +126,15 @@ export default function MentorProjectsDetailPage() {
 
                     {/* Kolom Tombol Aksi */}
                     <td className="px-6 py-4 text-right">
-                      <button className="text-sm font-bold text-red-800 hover:text-red-900 transition-colors inline-flex items-center gap-1">
+                      <button
+                        className="text-sm font-bold text-red-800 hover:text-red-900 transition-colors inline-flex items-center gap-1"
+                        onClick={() =>
+                          navigate(
+                            `/mentor/projects/${toSlug(targetedProject.name)}/${toSlug(targetedTask.title)}/${sub.internEmail.split("@")[0]}`,
+                            { state: { status: sub.status === "Done" ? "submitted" : sub.status === "Overdue" ? "overdue" : "pending" } }
+                          )
+                        }
+                      >
                         View Submission <span className="text-xs">&rarr;</span>
                       </button>
                     </td>

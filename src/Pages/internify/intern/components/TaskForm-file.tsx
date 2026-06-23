@@ -1,13 +1,14 @@
 import { useState, useRef } from "react";
-import { FileText, UploadCloud, X, FileUp } from "lucide-react";
+import { FileText, UploadCloud, X } from "lucide-react";
 import { LuSendHorizontal } from "react-icons/lu";
+import SubmitStatusTable from "./SubmissionStatusTable";
 
 interface TaskFormFileProps {
-  taskId: string | undefined;
   onSubmitSuccess: (files: File[]) => void;
+  deadline?: Date;
 }
 
-export default function TaskFormFile({ taskId, onSubmitSuccess }: TaskFormFileProps) {
+export default function TaskFormFile({ onSubmitSuccess, deadline }: TaskFormFileProps) {
   const [files, setFiles] = useState<File[]>([]);
   const [isDragActive, setIsDragActive] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -88,77 +89,19 @@ export default function TaskFormFile({ taskId, onSubmitSuccess }: TaskFormFilePr
     }
   };
 
-  if (isSubmitted) {
-    return (
-      <div className="border border-gray-200 rounded-xl bg-white shadow-sm overflow-hidden">
-        {/* Header Action */}
-        <div className="flex flex-col sm:flex-row justify-between items-center bg-gray-50/50 p-4 border-b border-gray-200 gap-4 sm:gap-0">
-          <div className="flex items-center gap-2">
-            <FileUp className="w-5 h-5 text-red-700 stroke-[2]" />
-            <h3 className="font-bold text-gray-800 tracking-tight">Submit Status</h3>
-          </div>
-          <div className="flex gap-2 w-full sm:w-auto">
-            <button
-              onClick={handleEditSubmission}
-              className="flex-1 sm:flex-none bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold text-xs py-2 px-4 rounded-lg transition-colors"
-            >
-              Edit Submission
-            </button>
-            <button
-              onClick={handleDeleteSubmission}
-              className="flex-1 sm:flex-none bg-gray-200 hover:bg-red-100 text-gray-800 hover:text-red-700 font-bold text-xs py-2 px-4 rounded-lg transition-colors"
-            >
-              Delete Submission
-            </button>
-          </div>
-        </div>
-
-        {/* Status Table */}
-        <div className="grid grid-cols-1 divide-y divide-gray-100">
-          <div className="grid grid-cols-1 sm:grid-cols-[1fr_2fr] hover:bg-gray-50/30 transition-colors">
-            <div className="p-4 text-sm font-medium text-gray-500 bg-gray-50 sm:bg-transparent sm:border-r border-gray-100">
-              Submission status
-            </div>
-            <div className="p-4 text-sm font-medium text-gray-800">
-              Submitted for grading
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-[1fr_2fr] hover:bg-gray-50/30 transition-colors">
-            <div className="p-4 text-sm font-medium text-gray-500 bg-gray-50 sm:bg-transparent sm:border-r border-gray-100">
-              Grading status
-            </div>
-            <div className="p-4 text-sm font-medium text-gray-800">
-              Not graded
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-[1fr_2fr] hover:bg-gray-50/30 transition-colors">
-            <div className="p-4 text-sm font-medium text-gray-500 bg-gray-50 sm:bg-transparent sm:border-r border-gray-100">
-              Time Remaining
-            </div>
-            <div className="p-4 text-sm font-medium text-gray-800">
-              Assignment was submitted [waktu submitted]
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-[1fr_2fr] hover:bg-gray-50/30 transition-colors">
-            <div className="p-4 text-sm font-medium text-gray-500 bg-gray-50 sm:bg-transparent sm:border-r border-gray-100">
-              File submission
-            </div>
-            <div className="p-4 flex flex-col gap-2">
-              {files.map((f, i) => (
-                <div key={i} className="flex items-center gap-2 text-sm font-medium text-gray-800">
-                  <FileText className="w-4 h-4 text-red-700 stroke-[2.5]" />
-                  {f.name}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+// ganti if (isSubmitted) { return (...) }
+if (isSubmitted) {
+  return (
+    <SubmitStatusTable
+      type="file"
+      files={files}
+      submittedAt={new Date()}
+      deadline={deadline} // opsional, kirim dari parent kalau ada
+      onEdit={handleEditSubmission}
+      onDelete={handleDeleteSubmission}
+    />
+  );
+}
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -177,7 +120,7 @@ export default function TaskFormFile({ taskId, onSubmitSuccess }: TaskFormFilePr
         onDragLeave={handleDrag}
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
-        className={`w-full min-h-[120px] border border-dashed rounded-xl p-4 bg-white cursor-pointer transition-all ${isDragActive ? "border-[#B30000] bg-red-50/40" : "border-gray-200 hover:border-gray-300"
+        className={`w-full min-h-[120px] border border-dashed rounded-xl p-4 bg-box-secondary cursor-pointer transition-all ${isDragActive ? "border-[#B30000] bg-red-50/40" : "border-foreground hover:border-gray-500"
           }`}
       >
         {files.length > 0 ? (
