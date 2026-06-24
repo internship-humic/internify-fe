@@ -16,16 +16,23 @@
   /* Dasar Warna Gelap */
   --color-background: #fdfdfd;
   --color-foreground: #1e282c;
+  --color-font: #6a7282;
+  --color-font-shade: #393b40;
 
   --color-card: #f3f3f3;
+  --color-card-outline: #a9afbb;
   --color-card-hover: #d5d5d5;
 
-  --color-box-primary: #ebebeb;
+  --color-box-primary: #FFFFFF;
   --color-box-secondary: #f3f4f6 ;
-  --color-box-border: #d8d9db;
+  --color-box-border: #a9afbb;
 
   --color-primary: #ad2b19;
   --color-primary-foreground: #ffffff;
+  --color-primary-hover: #84281c;
+
+  --color-base: #e82222;
+  --color-base-foreground: #fef2f2;
 
   --color-border: #a8a9aa;
 

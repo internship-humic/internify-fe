@@ -1,29 +1,71 @@
-import { useState } from "react";
-
-// Mock Data Profile awal
-const mockProfileData = {
-  fullName: "JonathanKristina",
-  email: "JonathanKristina@gmail.com",
-  bio: "UIUX holic"
-};
+import { useState, useEffect } from "react";
+import api from "../../lib/api";
 
 export default function SettingsContent() {
-  const [formData, setFormData] = useState(mockProfileData);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    bio: ""
+  });
+
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.patch("/auth-api/update-profile");
+        const data = response.data.data;
+        setFormData({
+          fullName: data.full_name || "",
+          email: data.email || "",
+          bio: data.professional_bio || "",
+        });
+      } catch (err) {
+        console.error("Failed to fetch profile:", err)
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSaveChanges = (e: React.FormEvent) => {
+  const handleSaveChanges = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulasi penyimpanan data sukses
-    alert("Changes saved successfully!");
-    console.log("Saved Data:", formData);
+    setSuccessMsg("");
+    setErrorMsg("");
+    setSaving(true);
+
+    try {
+      await api.patch("/auth-api/update-profile", {
+        full_name: formData.fullName,
+        email: formData.email,
+        professional_bio: formData.bio,
+      });
+      setSuccessMsg("Profile updated successfully!");
+    } catch (err: any) {
+      setErrorMsg(err?.response?.data?.message || "Failed to save changes.");
+    } finally {
+      setSaving(false);
+    }
   };
 
-  // Mendapatkan inisial huruf pertama untuk avatar profile gambar
   const initialLetter = formData.fullName ? formData.fullName.charAt(1).toUpperCase() : "U";
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-40 text-sm text-gray-400">
+        Loading profile...
+      </div>
+    );
+  }
 
   return (
     <div className="">
@@ -38,7 +80,7 @@ export default function SettingsContent() {
 
       {/* White Card Container */}
       <div className="w-full bg-white rounded-xl border border-gray-100 shadow-lg overflow-hidden">
-        
+
         {/* Card Header */}
         <div className="p-6 border-b border-gray-100">
           <h2 className="text-base font-bold text-gray-900">Profile Information</h2>
@@ -49,7 +91,7 @@ export default function SettingsContent() {
 
         {/* Card Body & Form */}
         <form onSubmit={handleSaveChanges} className="p-6 space-y-6">
-          
+
           {/* Profile Photo Display Row */}
           <div className="flex items-center gap-4 py-2">
             <div className="w-16 h-16 bg-gray-100 border border-gray-200 rounded-xl flex items-center justify-center shadow-sm">
@@ -67,7 +109,7 @@ export default function SettingsContent() {
 
           {/* Grid Inputs (Full Name & Email Address) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
+
             {/* Field: Full Name */}
             <div className="space-y-1">
               <label className="text-[10px] font-bold tracking-wider text-gray-700 uppercase block">
@@ -114,13 +156,25 @@ export default function SettingsContent() {
             </p>
           </div>
 
+          {successMsg && (
+            <p className="text-xs text-green-600 bg-green-50 p-2 rounded-md font-medium">
+              {successMsg}
+            </p>
+          )}
+          {errorMsg && (
+            <p className="text-xs text-red-600 bg-red-50 p-2 rounded-md font-medium">
+              {errorMsg}
+            </p>
+          )}
+
           {/* Form Action Footer Row */}
           <div className="flex justify-end pt-2">
             <button
               type="submit"
+              disabled={saving}
               className="px-6 py-2 bg-[#B30000] hover:bg-[#990000] text-white font-bold text-xs rounded-lg shadow-sm transition-colors uppercase tracking-wider"
             >
-              Save Changes
+              {saving ? "Saving..." : "Save Changes"}
             </button>
           </div>
 

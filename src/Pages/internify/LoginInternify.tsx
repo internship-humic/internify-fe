@@ -2,11 +2,17 @@ import { useState } from "react";
 import logo from "../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import api from "../../lib/api";
 
-const DataUsers = [
-    { "Email": "intern@email.com", "Password": "password123", "role": "intern" },
-    { "Email": "mentor@email.com", "Password": "password123", "role": "mentor" },
-];
+const decodeJWT = (token: string) => {
+  try {
+    const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+    const padded = base64.padEnd(base64.length + (4 - base64.length % 4) % 4, "=");
+    return JSON.parse(atob(padded));
+  } catch {
+    return null;
+  }
+};
 
 export default function InternifyLogin() {
     const navigate = useNavigate();
@@ -14,8 +20,9 @@ export default function InternifyLogin() {
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const handleSignIn = (e: React.FormEvent) => {
+    const handleSignIn = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
 
@@ -24,20 +31,30 @@ export default function InternifyLogin() {
             return;
         }
 
-        const user = DataUsers.find(
-            (u) => u.Email.toLowerCase() === email.toLowerCase() && u.Password === password
-        );
+        try {
+            setLoading(true);
+            const response = await api.post("/auth-api/login", { email, password });
 
-        if (user) {
-            if (user.role === "intern") {
+            const { token } = response.data.data;
+            document.cookie = `token=${token}; path=/; SameSite=Strict`;
+            
+            const decoded = decodeJWT(token);
+            const role = decoded?.role;
+            if (role === "intern") {
                 navigate("/intern");
-            } else if (user.role === "mentor") {
+            } else if (role === "admin") {
                 navigate("/mentor");
             } else {
                 setError("Role user tidak dikenali.");
             }
-        } else {
-            setError("Email atau password salah.");
+        } catch (err: any) {
+            if (err.response?.status === 401 || err.response?.status === 400) {
+                setError("Email atau password salah.");
+            } else {
+                setError("Terjadi kesalahan. Coba beberapa saat lagi.");
+            }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -48,7 +65,7 @@ export default function InternifyLogin() {
             <div className="w-full max-w-[440px] flex flex-col items-center">
                 <div className="text-center mb-6">
                     <div className="flex items-center justify-center gap-2 font-bold text-2xl tracking-tight text-black">
-                        <img src={logo} alt="Logo" className="w-32 h-20" />
+                        <img src={logo} alt="Logo" />
                     </div>
                     <p className="text-[10px] tracking-widest text-yellow-950 font-semibold mt-1 uppercase">
                         HUMIC LMS PORTAL
@@ -112,6 +129,7 @@ export default function InternifyLogin() {
 
                         <button
                             type="submit"
+                            disabled={loading}
                             className="w-full bg-[#B30000] hover:bg-[#990000] text-white font-medium text-sm py-2.5 rounded-lg transition-colors shadow-sm mt-2"
                         >
                             Sign In

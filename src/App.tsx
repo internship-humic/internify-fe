@@ -33,7 +33,7 @@ import { InternLayout, MentorLayout } from "./Pages/Internify/layout";
 import ProjectsPage from "./Pages/Internify/intern/ProjectsPage";
 import SertificatePage from "./Pages/Internify/intern/SertificatePage";
 import ProjectDetailPage from "./Pages/Internify/intern/ProjectDetailPage";
-import HomeMentorPage from "./Pages/Internify/mentor/HomePage";
+import HomeMentorPage from "./Pages/Internify/mentor/HomeMentorPage";
 import MentorProjectsPage from "./Pages/Internify/mentor/BaseProjectsPage";
 import MentorCertificatePage from "./Pages/Internify/mentor/CertificatePage";
 import MentorInternPage from "./Pages/Internify/mentor/InternsPage";
@@ -88,30 +88,37 @@ function App() {
 
         <Route path="/login-internify" element={<InternifyLogin />} />
 
-        <Route path="/intern" element={<InternLayout />}>
-          <Route index element={<HomeInternPage />} />
-          <Route path="projects" element={<ProjectsPage />} />
-          <Route path="certificates" element={<SertificatePage />} />
-          <Route path="certificates/all" element={<SertificateList />} />
-          <Route path="projects/:slug" element={<ProjectDetailPage />} />
-          <Route path="projects/:slug/:TaskSlug" element={<TaskSubmission />} />
-          <Route path="faq" element={<FAQPage />} />
-          <Route path="notifications" element={<NotificationList />} />
-          <Route path="settings" element={<SettingsContent />} />
+        {/* Intern only */}
+        <Route element={<ProtectedRoutes allowedRoles={["intern"]} />}>
+          <Route path="/intern" element={<InternLayout />}>
+            <Route index element={<HomeInternPage />} />
+            <Route path="projects" element={<ProjectsPage />} />
+            <Route path="certificates" element={<SertificatePage />} />
+            <Route path="certificates/all" element={<SertificateList />} />
+            <Route path="projects/:id" element={<ProjectDetailPage />} />
+            <Route path="projects/:id/tasks/:taskId" element={<TaskSubmission />} />
+            <Route path="faq" element={<FAQPage />} />
+            <Route path="notifications" element={<NotificationList />} />
+            <Route path="settings" element={<SettingsContent />} />
+          </Route>
         </Route>
 
-        <Route path="/mentor" element={<MentorLayout />}>
-          <Route index element={<HomeMentorPage />} />
-          <Route path="projects" element={<MentorProjectsPage />} />
-          <Route path="certificates" element={<MentorCertificatePage />} />
-          <Route path="intern" element={<MentorInternPage />} />
-          <Route path="projects/:slug" element={<MentorDetailProject />} />
-          <Route path="projects/:slug/:taskSlug" element={<MentorProjectsDetailPage />} />
-          <Route path="projects/:slug/:taskSlug/:nameIntern" element={<ViewInternSubmission />}/>
-          <Route path="faq" element={<FAQPage />} />
-          <Route path="notifications" element={<NotificationList />} />
-          <Route path="settings" element={<SettingsPage />} />
+        {/* Mentor only */}
+        <Route element={<ProtectedRoutes allowedRoles={["admin"]} />}>
+          <Route path="/mentor" element={<MentorLayout />}>
+            <Route index element={<HomeMentorPage />} />
+            <Route path="projects" element={<MentorProjectsPage />} />
+            <Route path="certificates" element={<MentorCertificatePage />} />
+            <Route path="intern" element={<MentorInternPage />} />
+            <Route path="projects/:slug" element={<MentorDetailProject />} />
+            <Route path="projects/:slug/:taskSlug" element={<MentorProjectsDetailPage />} />
+            <Route path="projects/:slug/:taskSlug/:nameIntern" element={<ViewInternSubmission />} />
+            <Route path="faq" element={<FAQPage />} />
+            <Route path="notifications" element={<NotificationList />} />
+            <Route path="settings" element={<SettingsPage />} />
+          </Route>
         </Route>
+
       </Routes>
     </Router>
   );

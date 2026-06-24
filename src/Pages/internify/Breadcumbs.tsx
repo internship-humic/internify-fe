@@ -54,7 +54,7 @@ export default function Breadcrumbs(){
     return true;
   });
   return (
-    <nav className="text-[12px] mb-3">
+    <nav className="text-[15px] mb-3">
       {fixbreadcumbs.map(({ match, breadcrumb }) => {
         const isLast = match.pathname === location.pathname;
 
@@ -63,13 +63,13 @@ export default function Breadcrumbs(){
             {isLast ? (
               <span className="font-bold text-red-800">
                 {breadcrumb}
+                
               </span>
             ) : (
               <>
                 <Link to={match.pathname} className="text-gray-800">
                   {breadcrumb}
                 </Link>
-                {/* Karakter pemisah antar breadcrumb */}
                 <ChevronRight className="w-4 h-4 mx-1.5"/>
               </>
             )}
