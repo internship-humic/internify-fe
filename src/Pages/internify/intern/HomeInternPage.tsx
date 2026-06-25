@@ -9,14 +9,14 @@ export default function HomeInternPage()  {
       <HomeHeader />
       <div className="flex flex-col gap-5">
         <div className="grid grid-cols-2 gap-5">
-          <div className="bg-white border border-gray-200 rounded-xl p-6">
+          <div className="bg-box-primary border border-box-border rounded-xl p-6">
             <HomeProjectList />
           </div>
-          <div className="bg-white border border-gray-200 rounded-xl p-6">
+          <div className="bg-box-primary border border-box-border rounded-xl p-6">
             <TaskTimeline />
           </div>
         </div>
-        <div className="bg-white  rounded-xl">
+        <div className="bg-box-primary  rounded-xl">
           <HomeCalendar />
         </div>
       </div>

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { DEADLINES } from '../../../../lib/mockDeadline'
-
+import { useMyTasks } from '../../../../hooks/useProjects';
 
 const DAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
 const MONTH_NAMES = [
@@ -18,7 +17,13 @@ function getFirstDayOfMonth(year: number, month: number) {
 }
 
 const HomeCalendar = () => {
-  const [today, setToday] = useState(new Date())
+  const [today, setToday] = useState(new Date());
+  const { tasks } = useMyTasks();
+
+  const DEADLINES = tasks.map(task => ({
+    date: new Date(task.deadline_at),
+    label: task.title,
+  }));
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -89,13 +94,13 @@ const HomeCalendar = () => {
   }
 
   return (
-    <div className=" px-13 py-5 border border-gray-200 rounded-2xl">
+    <div className=" px-13 py-5 border border-card-outline rounded-2xl">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-base font-semibold text-gray-800">
+        <h2 className="font-bold text-font">
           {MONTH_NAMES[currentMonth]} {currentYear}
         </h2>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center">
           <button
             onClick={prevMonth}
             className="p-1 rounded hover:bg-gray-100 transition-colors"
@@ -160,11 +165,11 @@ const HomeCalendar = () => {
       </div>
 
       {/* Divider */}
-      <hr className="my-3 border-gray-100" />
+      <hr className="my-3 border-gray-400" />
 
       {/* Upcoming Deadlines */}
       <div>
-        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2">
+        <p className="text-[10px] font-semibold text-font uppercase tracking-widest mb-2">
           Upcoming Deadlines
         </p>
         {upcomingDeadlines.length > 0 ? (
@@ -172,12 +177,12 @@ const HomeCalendar = () => {
             {upcomingDeadlines.map((d, i) => (
               <li key={i} className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-red-600 flex-shrink-0" />
-                <span className="text-xs text-gray-600">{d.label}</span>
+                <span className="text-xs text-font-shade">{d.label}</span>
               </li>
             ))}
           </ul>
         ) : (
-          <p className="text-[11px] text-gray-400">No upcoming deadlines this month.</p>
+          <p className="text-[11px] text-font-shade">No upcoming deadlines this month.</p>
         )}
       </div>
     </div>

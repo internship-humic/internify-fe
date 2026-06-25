@@ -35,18 +35,10 @@ export default function CertificateAvailable({ data }: { data: CertificateData }
                 { label: "Nama Program", value: certificate.programName },
                 { label: "Durasi", value: certificate.duration },
                 {
-                  label: "Nilai Akhir",
-                  value: (
-                    <span className="text-red-600 font-bold">
-                      {certificate.finalScore}/100 ({certificate.grade})
-                    </span>
-                  ),
-                },
-                {
                   label: "Status",
                   value: (
                     <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full">
-                      {certificate.status}
+                      VERIFIED
                     </span>
                   ),
                 },

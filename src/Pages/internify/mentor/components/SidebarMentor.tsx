@@ -12,7 +12,7 @@ const navItems = [
 const prefItems = [
   { label: "Settings", icon: Settings, path: "/mentor/settings" },
   { label: "FAQ", icon: HelpCircle, path: "/mentor/faq" },
-  { label: "Logout", icon: LogOut, path: "/login-internify", danger: true },
+  { label: "Logout", icon: LogOut, path: "/login-internify", danger: true, isLogout: true },
 ];
 
 interface SidebarProps {
@@ -29,6 +29,13 @@ export default function SidebarMentor({ isOpen, closeSidebar }: SidebarProps) {
     closeSidebar();
   };
 
+  const handleLogout = () => {
+    document.cookie = "token=; path=/; max-age=86400; SameSite=Strict";
+
+    closeSidebar();
+    navigate("/login-internify", { replace: true });
+  };
+
   return (
     <aside
       className={`
@@ -39,7 +46,7 @@ export default function SidebarMentor({ isOpen, closeSidebar }: SidebarProps) {
       `}
     >
       {/* Brand & Tombol Close untuk Mobile */}
-      <div className="flex items-center justify-between px-2 pb-4">
+      <div className="flex items-center justify-between px-2 pb-10">
         <div className="flex items-center gap-2.5">
           <div className="w-9 h-9 rounded-[10px] bg-red-600 flex items-center justify-center flex-shrink-0"></div>
           <div>
@@ -56,8 +63,6 @@ export default function SidebarMentor({ isOpen, closeSidebar }: SidebarProps) {
         </button>
       </div>
 
-      <div className="h-px bg-gray-300 my-1" />
-
       {/* Main nav */}
       <nav className="flex flex-col gap-0.5">
         {navItems.map(({ label, icon: Icon, path }) => {
@@ -67,14 +72,13 @@ export default function SidebarMentor({ isOpen, closeSidebar }: SidebarProps) {
               key={path}
               onClick={() => handleNav(path)}
               className={`flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-[13.5px] font-medium text-left transition-colors
-                      ${isActive
-                  ? "bg-red-50 text-red-600 font-semibold border-l-4 border-red-600"
-                  : "text-gray-500 hover:bg-red-50 hover:text-red-600"
+                ${isActive
+                  ? "bg-base-foreground text-base font-semibold border-l-4 border-base"
+                  : "text-font hover:bg-base-foreground hover:text-base"
                 }`}
             >
               <Icon className="w-[18px] h-[18px] flex-shrink-0" />
               <span>{label}</span>
-              {isActive && <ChevronRight className="w-3.5 h-3.5 ml-auto opacity-60" />}
             </button>
           );
         })}
@@ -87,18 +91,18 @@ export default function SidebarMentor({ isOpen, closeSidebar }: SidebarProps) {
         PREFERENCES
       </p>
       <nav className="flex flex-col gap-0.5">
-        {prefItems.map(({ label, icon: Icon, path, danger }) => {
+        {prefItems.map(({ label, icon: Icon, path, danger, isLogout }) => {
           const isActive = location.pathname === path;
           return (
             <button
               key={path}
-              onClick={() => handleNav(path)}
+              onClick={() => isLogout ? handleLogout() : handleNav(path)}
               className={`flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-[13.5px] font-medium text-left transition-colors
                 ${isActive
                   ? "bg-red-50 text-red-600 font-semibold"
                   : danger
-                    ? "text-gray-400 hover:bg-red-50 hover:text-red-600"
-                    : "text-gray-500 hover:bg-red-50 hover:text-red-600"
+                    ? "text-font hover:bg-base-foreground hover:text-base"
+                    : "text-font hover:bg-base-foreground hover:text-base"
                 }`}
             >
               <Icon className="w-[18px] h-[18px] flex-shrink-0" />

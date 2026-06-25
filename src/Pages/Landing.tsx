@@ -227,7 +227,7 @@ const Landing = () => {
                   loading="eager"
                   decoding="async"
                   // @ts-ignore
-                  fetchPriority="high"
+                  fetchpriority="high"
                   className="w-full h-full object-contain rounded-lg"
                 />
               </div>

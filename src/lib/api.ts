@@ -4,7 +4,6 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
 });
 
-// Otomatis tempel Token Bearer di setiap request ke BE
 api.interceptors.request.use((config) => {
   const token = document.cookie
     .split("; ")

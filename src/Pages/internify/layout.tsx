@@ -17,7 +17,7 @@ export const InternLayout = () => {
         <SidebarIntern isOpen={isSidebarOpen} closeSidebar={closeSidebar} />
         {isSidebarOpen && (
           <div 
-            className="fixed inset-0 bg-black/20 z-20 md:hidden min-h-screen" 
+            className="fixed inset-0 bg-black/20 z-20 lg:hidden min-h-screen" 
             onClick={closeSidebar}
           />
         )}
@@ -47,7 +47,7 @@ export const MentorLayout = () => {
           />
         )}
         <main className="container">
-          <Breadcrumbs/>
+          {/* <Breadcrumbs/> */}
           <Outlet />
         </main>
       </div>

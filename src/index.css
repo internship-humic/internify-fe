@@ -16,16 +16,23 @@
   /* Dasar Warna Gelap */
   --color-background: #fdfdfd;
   --color-foreground: #1e282c;
+  --color-font: #6a7282;
+  --color-font-shade: #393b40;
 
   --color-card: #f3f3f3;
+  --color-card-outline: #a9afbb;
   --color-card-hover: #d5d5d5;
 
-  --color-box-primary: #ebebeb;
+  --color-box-primary: #FFFFFF;
   --color-box-secondary: #f3f4f6 ;
-  --color-box-border: #d8d9db;
+  --color-box-border: #a9afbb;
 
   --color-primary: #ad2b19;
   --color-primary-foreground: #ffffff;
+  --color-primary-hover: #84281c;
+
+  --color-red: #e82222;
+  --color-red-foreground: #fef2f2;
 
   --color-border: #a8a9aa;
 
@@ -36,14 +43,11 @@
 }
 
 .container {
-  flex: 1;
-  min-width: 0; /* penting! mencegah overflow */
+  min-width: 0;
   padding-inline: calc(var(--spacing) * 14);
   padding-block: calc(var(--spacing) * 12);
   background-color: var(--color-background);
-  display: flex;
   flex-direction: column;
-  gap: 13px;
   min-height: 100vh;
 }
 
@@ -123,6 +127,12 @@ dialog.custom-dialog::backdrop {
   border-bottom: 2px solid #b3b8c0; /* border-gray-100 */
 }
 
+@media (max-width: 1024px) {
+  .container {
+    padding-inline: calc(var(--spacing) * 16);
+  }
+}
+
 /* Breakpoint Medium (md:) - Aktif saat lebar layar >= 768px */
 @media (min-width: 768px) {
   .dialog-header {
@@ -131,5 +141,10 @@ dialog.custom-dialog::backdrop {
     padding-right: 2rem;    /* 32px */
     padding-top: 1.25rem;   /* 20px */
     padding-bottom: 1.25rem;/* 20px */
+  }
+
+  .container {
+    padding-inline: calc(var(--spacing) * 14);
+    padding-block: calc(var(--spacing) * 10);
   }
 }
