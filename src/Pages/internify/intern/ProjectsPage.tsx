@@ -1,8 +1,8 @@
 import ProjectCard from './components/ProjectsCard'
-import { useProjects } from '../../../hooks/useProjects';
+import { useMyProjects } from '../../../hooks/useProjects';
 
 export default function ProjectsPage() {
-  const { projects, loading, error } = useProjects();
+  const { projects, loading, error } = useMyProjects();
 
   if (loading) return (
     <div className="flex flex-col gap-3">
@@ -22,7 +22,7 @@ export default function ProjectsPage() {
       </div>
 
       {/* Grid card */}
-      <div className="grid grid-cols-1 gap-6 md:gap-3 md:grid-cols-4 lg:grid-cols-5">
+      <div className="grid grid-cols-1 gap-4 md:gap-3 md:grid-cols-3 lg:grid-cols-5">
         {projects.map(project => (
           <ProjectCard key={project.id} {...project} />
         ))}

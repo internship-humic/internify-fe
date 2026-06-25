@@ -95,8 +95,8 @@ function App() {
             <Route path="projects" element={<ProjectsPage />} />
             <Route path="certificates" element={<SertificatePage />} />
             <Route path="certificates/all" element={<SertificateList />} />
-            <Route path="projects/:id" element={<ProjectDetailPage />} />
-            <Route path="projects/:id/tasks/:taskId" element={<TaskSubmission />} />
+            <Route path="projects/:slug" element={<ProjectDetailPage />} />
+            <Route path="projects/:slug/:taskSlug" element={<TaskSubmission />} />
             <Route path="faq" element={<FAQPage />} />
             <Route path="notifications" element={<NotificationList />} />
             <Route path="settings" element={<SettingsContent />} />

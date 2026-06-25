@@ -1,8 +1,8 @@
-import { useInternTasks } from "../../../../hooks/useProjects";
-import type { InternTask } from "../../../../types/project.types";
+import { useMyTasks } from "../../../../hooks/useProjects";
+import type { InternTaskItem } from "../../../../types/project.types";
 
 const TaskTimeline = () => {
-  const { tasks, loading, error } = useInternTasks();
+  const { tasks, loading, error } = useMyTasks();
   const today = new Date();
 
   const isOverdue = (dateStr: string) => new Date(dateStr) < today;
@@ -23,7 +23,7 @@ const TaskTimeline = () => {
       <div className="relative">
         <div className="absolute left-1 top-2 bottom-2 w-px bg-gray-300" />
         <ul className="flex flex-col gap-5">
-          {tasks.map((item: InternTask) => {
+          {tasks.map((item: InternTaskItem) => {
             const overdue = isOverdue(item.deadline_at);
             const deadlineDate = new Date(item.deadline_at);
             return (

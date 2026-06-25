@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useProjectDetail } from '../../../hooks/useProjectDetail';
+// import { useProjectDetail } from '../../../hooks/useProjectDetail';
+import { useProjectDetail } from '../../../hooks/useProjects';
 import ForumTab from './ForumTab';
 import ParticipantsTab from './ParticipantTab';
 
-const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
-
 export default function ProjectDetailPage() {
-  const { id } = useParams<{ id: string }>(); 
-  const { project, loading, error } = useProjectDetail(id ?? "");
+  const { slug } = useParams<{ slug: string }>(); 
+  const { project, loading, error } = useProjectDetail(slug ?? "");
   const [activeTab, setActiveTab] = useState<'forum' | 'participants'>('forum');
 
   // Fallback sederhana
@@ -26,7 +25,7 @@ export default function ProjectDetailPage() {
     <div>
       <div>
         {/* Tabs */}
-        <div className="flex mb-4">
+        <div className="flex mb-4 border-b border-card-outline">
           <button className={tabClass('forum')} onClick={() => setActiveTab('forum')}>
             Forum
           </button>

@@ -54,8 +54,6 @@ export default function SidebarIntern({ isOpen, closeSidebar }: SidebarProps) {
             <p className="text-[11px] text-gray-400">LMS Portal</p>
           </div>
         </div>
-
-        {/* Tombol Close silang (X): Hanya muncul di HP saat sidebar terbuka */}
         <button
           onClick={closeSidebar}
           className="p-1 text-gray-500 hover:bg-gray-100 rounded-lg lg:hidden"
@@ -74,8 +72,8 @@ export default function SidebarIntern({ isOpen, closeSidebar }: SidebarProps) {
               onClick={() => handleNav(path)}
               className={`flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-[13.5px] font-medium text-left transition-colors
                 ${isActive
-                  ? "bg-base-foreground text-base font-semibold border-l-4 border-base"
-                  : "text-font hover:bg-base-foreground hover:text-base"
+                  ? "bg-red-foreground text-red font-semibold border-l-4 border-base"
+                  : "text-font hover:bg-red-foreground"
                 }`}
             >
               <Icon className="w-[18px] h-[18px] flex-shrink-0" />
@@ -102,8 +100,8 @@ export default function SidebarIntern({ isOpen, closeSidebar }: SidebarProps) {
                 ${isActive
                   ? "bg-red-50 text-red-600 font-semibold"
                   : danger
-                    ? "text-font hover:bg-base-foreground hover:text-base"
-                    : "text-font hover:bg-base-foreground hover:text-base"
+                    ? "text-font hover:bg-base-foreground"
+                    : "text-font hover:bg-red-foreground"
                 }`}
             >
               <Icon className="w-[18px] h-[18px] flex-shrink-0" />

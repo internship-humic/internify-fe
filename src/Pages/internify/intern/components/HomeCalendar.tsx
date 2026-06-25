@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { DEADLINES } from '../../../../lib/mockDeadline'
-
+import { useMyTasks } from '../../../../hooks/useProjects';
 
 const DAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
 const MONTH_NAMES = [
@@ -18,7 +17,13 @@ function getFirstDayOfMonth(year: number, month: number) {
 }
 
 const HomeCalendar = () => {
-  const [today, setToday] = useState(new Date())
+  const [today, setToday] = useState(new Date());
+  const { tasks } = useMyTasks();
+
+  const DEADLINES = tasks.map(task => ({
+    date: new Date(task.deadline_at),
+    label: task.title,
+  }));
 
   useEffect(() => {
     const interval = setInterval(() => {

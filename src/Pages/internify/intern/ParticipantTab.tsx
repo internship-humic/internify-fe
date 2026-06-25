@@ -1,17 +1,17 @@
 import { useParams } from 'react-router-dom';
-import { useProjectInterns } from '../../../hooks/useProjectDetail';
+import {  } from '../../../hooks/useProjects';
 import type { Project } from '../../../types/project.types';
 
 export default function ParticipantsTab({ project }: { project: Project }) {
-  const { id } = useParams<{ id: string }>();
-  const { interns, loading, error } = useProjectInterns(id ?? "");
+  const { slug } = useParams<{ slug: string }>();
+  const { interns, loading, error } = useProjectInterns(slug ?? "");
 
   return (
     <div>
       {/* Mentor */}
       <div className="mb-8">
         <h3 className="font-bold text-font-shade mb-3.5">Mentor</h3>
-        <div className="border-b border-[#eee] pb-4">
+        <div className="border-b border-box-border pb-4">
           <div className="flex items-center gap-3">
             {project.admin.profile_picture ? (
               <img
@@ -22,7 +22,7 @@ export default function ParticipantsTab({ project }: { project: Project }) {
             ) : (
               <div className="w-8 h-8 rounded-full bg-gray-200" />
             )}
-            <span className="text-sm text-font">{project.admin.full_name}</span>
+            <span className="text-md text-font">{project.admin.full_name}</span>
           </div>
         </div>
       </div>
@@ -45,25 +45,25 @@ export default function ParticipantsTab({ project }: { project: Project }) {
           <div
             key={intern.id}
             className={`flex items-center justify-between py-3 ${
-              idx < interns.length - 1 ? 'border-b border-[#f0f0f0]' : ''
+              idx < interns.length - 1 ? 'border-b border-box-border' : ''
             }`}
           >
             <div className="flex items-center gap-3">
               {intern.avatar ? (
                 <img
                   src={intern.avatar}
-                  alt={intern.name}
+                  alt={intern.full_name}
                   className="w-7 h-7 rounded-full object-cover"
                 />
               ) : (
                 <div className="w-7 h-7 rounded-full bg-gray-200 flex-shrink-0" />
               )}
               <div className="flex flex-col">
-                <span className="text-sm text-[#333]">{intern.name}</span>
+                <span className="text-sm text-[#333]">{intern.full_name}</span>
                 <span className="text-[11px] text-gray-400">{intern.email}</span>
               </div>
             </div>
-            <span className="text-[13px] text-[#555] font-semibold">{intern.role}</span>
+            <span className="text-[13px] text-[#555] font-semibold">{intern.kelompok_peminatan}</span>
           </div>
         ))}
 

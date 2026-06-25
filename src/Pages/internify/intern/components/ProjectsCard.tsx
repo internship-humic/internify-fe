@@ -3,8 +3,6 @@ import * as LucideIcons from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
 import type { Project } from '../../../../types/project.types';
 
-const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
-
 const getDynamicIcon = (iconName: string) => {
   const formatted = iconName.charAt(0).toUpperCase() + iconName.slice(1);
   const Icon = (LucideIcons as unknown as Record<string, React.ComponentType<LucideProps>>)[formatted];
@@ -21,7 +19,7 @@ const ProjectCard = (project: Project) => {
 
   return (
     <div
-      onClick={() => navigate(`/intern/projects/${project.id}`)}
+      onClick={() => navigate(`/intern/projects/${project.slug}`)}
       className=" rounded-xl overflow-hidden shadow-sm border border-gray-100 w-full flex flex-col cursor-pointer hover:shadow-md transition-shadow duration-200"
     >
       {/* Thumbnail */}
@@ -61,7 +59,7 @@ const ProjectCard = (project: Project) => {
                 style={{ width: tasksTotal > 0 ? `${(tasksDone / tasksTotal) * 100}%` : '0%' }}
               />
             </div>
-            <span className="text-[10px] text-gray-400 text-right">
+            <span className="text-font text-[12px] font-bold text-right">
               {tasksDone}/{tasksTotal}
             </span>
           </div>
@@ -70,10 +68,6 @@ const ProjectCard = (project: Project) => {
         {/* Button */}
         <div className="flex items-end justify-end px-3 pb-1">
           <button
-            onClick={(e) => {
-              e.stopPropagation(); // ← cegah trigger onClick card dua kali
-              navigate(`/intern/projects/${toSlug(project.project_name)}`);
-            }}
             className="bg-red-600 hover:bg-red-700 text-white text-xs font-medium py-1.5 px-3 rounded-xl transition-colors"
           >
             View Project
