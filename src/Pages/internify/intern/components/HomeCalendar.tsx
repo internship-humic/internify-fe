@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useMyTasks } from '../../../../hooks/useProjects';
+//SEMENTARA USERSERVICES BELUM KUBUAT
+import api from '../../../../lib/api';
 
 const DAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
 const MONTH_NAMES = [
@@ -16,19 +18,29 @@ function getFirstDayOfMonth(year: number, month: number) {
   return new Date(year, month, 1).getDay()
 }
 
-const HomeCalendar = () => {
+interface roleUser {
+  role: "mentor" | "intern" | "admin";
+}
+
+export default function HomeCalendar() {
   const [today, setToday] = useState(new Date());
+  const [role, setRole] = useState<"mentor" | "intern" | "admin" | null>(null);
   const { tasks } = useMyTasks();
 
-  const DEADLINES = tasks.map(task => ({
-    date: new Date(task.deadline_at),
-    label: task.title,
-  }));
+  useEffect(() => {
+    api.get("/auth-api/me")
+      .then((res) => setRole(res.data.data.role))
+      .catch((err) => console.error("Failed to fetch user:", err));
+  }, []);
+
+  const DEADLINES = role === "intern"
+    ? tasks.map(task => ({ date: new Date(task.deadline_at), label: task.title, }))
+    : [];
 
   useEffect(() => {
     const interval = setInterval(() => {
       setToday(new Date())
-    }, 60 * 1000) // update tiap 1 menit
+    }, 60 * 1000)
 
     return () => clearInterval(interval)
   }, [])
@@ -188,5 +200,3 @@ const HomeCalendar = () => {
     </div>
   )
 }
-
-export default HomeCalendar

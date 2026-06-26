@@ -20,7 +20,7 @@ export const useProjectTasks = (projectId: string) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const refetch = useCallback(() => {
     if (!projectId) return;
     setLoading(true);
     getProjectTasks(projectId)
@@ -29,7 +29,9 @@ export const useProjectTasks = (projectId: string) => {
       .finally(() => setLoading(false));
   }, [projectId]);
 
-  return { tasks, loading, error };
+  useEffect(() => { refetch(); }, [refetch]);
+
+  return { tasks, loading, error, refetch }; // tambah refetch
 };
 
 // GET /task-api/tasks/{id}

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 export default function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
   const nav = useNavigate();
   return (
-    <header className='sticky top-0 flex w-full justify-between items-center py-2 px-12 bg-white border-b border-gray-300 z-10'>
+    <header className='sticky top-0 flex w-full justify-between items-center py-4 px-12 bg-white border-b border-gray-300 z-10'>
       <div className='flex items-center gap-3'>
         <button 
           onClick={toggleSidebar} 
@@ -21,9 +21,9 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
 
       <div className="flex flex-row gap-6 items-center">
         <button onClick={()=>nav("notifications")}>
-          <Bell className="w-6 h-6 hover:text-red-800"/>
+          <Bell className="w-5 h-5 hover:text-red-800"/>
         </button>
-        <div className="bg-blue-500 rounded-xl w-9 h-9">
+        <div className="bg-red rounded-full w-9 h-9">
 
         </div>
       </div>

@@ -14,7 +14,7 @@ const ProjectCard = (project: Project) => {
   const Icon = getDynamicIcon(project.project_icon);
 
 
-  const tasksDone = -1; 
+  const tasksDone = 1; 
   const tasksTotal = project.total_tasks;
 
   return (

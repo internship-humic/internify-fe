@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-// import { useProjectDetail } from '../../../hooks/useProjectDetail';
 import { useProjectDetail } from '../../../hooks/useProjects';
 import ForumTab from './ForumTab';
 import ParticipantsTab from './ParticipantTab';

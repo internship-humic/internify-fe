@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import type { Project, Intern } from '../../../lib/mockProjects';
 import { Plus } from 'lucide-react';
 import ManageInternsModal from './components/AddInternsDialog';
+import type { ProjectDetail, ProjectMember } from '../../../types/project.types';
 
-export default function InternsTab({ project }: { project: Project }) {
+export default function InternsTab({ project }: { project: ProjectDetail }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -15,8 +15,17 @@ export default function InternsTab({ project }: { project: Project }) {
         </h3>
         <div className="border-b border-gray-300 pb-4">
           <div className="flex items-center gap-3">
+            {project.admin.profile_picture ? (
+              <img
+                src={project.admin.profile_picture}
+                alt={project.admin.full_name}
+                className="w-8 h-8 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-gray-200" />
+            )}
             <span className=" text-sm text-[#333]">
-              {project.mentor}
+              {project.admin.full_name}
             </span>
           </div>
         </div>
@@ -37,19 +46,19 @@ export default function InternsTab({ project }: { project: Project }) {
             </span>
           </button>
         </div>
-        {project.interns.map((intern: Intern, idx: number) => (
+        {project.members.map((member: ProjectMember, idx) => (
           <div
             key={idx}
-            className={`flex items-center justify-between py-3 ${idx < project.interns.length - 1 ? 'border-b border-gray-300' : ''
+            className={`flex items-center justify-between py-3 ${idx < project.members.length - 1 ? 'border-b border-gray-300' : ''
               }`}
           >
             <div className="flex items-center gap-3">
               <span className=" text-sm text-[#333]">
-                {intern.name}
+                {member.full_name}
               </span>
             </div>
             <span className=" text-[13px] text-[#555] font-semibold">
-              {intern.role}
+              {member.position}
             </span>
             <div>
               <button className='flex items-center gap-1 text-[14px] bg-red-600 text-white p-1 rounded-xl'>
@@ -61,7 +70,9 @@ export default function InternsTab({ project }: { project: Project }) {
       </div>
       {isModalOpen && <ManageInternsModal 
         isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+        onClose={() => setIsModalOpen(false)}
+        projectId={project.id}
+        initialMembers={project.members}
       />}
     </div>
   );

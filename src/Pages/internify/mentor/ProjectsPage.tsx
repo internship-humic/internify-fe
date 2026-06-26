@@ -1,17 +1,18 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { mockProjects } from '../../../lib/mockProjects';
+import { useProjectDetail } from '../../../hooks/useProjects';
 import MentorForumTab from './ProjectForumTab';
 import InternsTab from './ProjectsInternTab';
 import TaskTab from './TaskTab';
 
-const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
-
 export default function ProjectDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const [activeTab, setActiveTab] = useState<'forum' | 'participants' | 'Task'>('forum');
+  const { project, loading, error } = useProjectDetail(slug ?? "");
 
-  const project = mockProjects.find((p) => toSlug(p.name) === slug);
+  if (loading) return <p className="p-10 text-gray-400">Memuat project...</p>;
+  if (error)   return <p className="p-10 text-red-500">{error}</p>;
+  if (!project) return <p className="p-10 text-gray-400">Project tidak ditemukan.</p>
 
   if (!project) {
     return (

@@ -1,48 +1,40 @@
 import { Trash2, UsersRound } from 'lucide-react'
-import type { Intern, Task } from '../../../../lib/mockProjects'
 import { useNavigate } from 'react-router-dom'
+import * as LucideIcons from 'lucide-react';
+import type { LucideProps } from 'lucide-react';
+import type { Project } from '../../../../types/project.types';
 
-interface ProjectCardProps {
-  id: number | string
-  name: string
-  interns: Intern[]
-  tasks: Task[]
-  thumbnailUrl?: string
-}
+const getDynamicIcon = (iconName: string) => {
+  const formatted = iconName.charAt(0).toUpperCase() + iconName.slice(1);
+  const Icon = (LucideIcons as unknown as Record<string, React.ComponentType<LucideProps>>)[formatted];
+  return Icon ?? LucideIcons.FolderOpen;
+};
 
 const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
 
-export default function MentorProjectCard({
-  id,
-  name,
-  interns,
-  thumbnailUrl
-}: ProjectCardProps) {
+export default function MentorProjectCard(project: Project) {
   const navigate = useNavigate();
   const handleCardClick = () => {
-    navigate(`/mentor/projects/${toSlug(name)}`)
+    navigate(`/mentor/projects/${toSlug(project.slug)}`)
   };
+  const Icon = getDynamicIcon(project.project_icon);
 
   const handleDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation()
-    console.log('Delete project dengan id:', id)
   }
   return (
     <div
       onClick={handleCardClick}
       className="flex flex-col bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 w-[180px] min-h-[270px]hover:bg-gray-50 transition-colors">
       {/* Thumbnail */}
-      <div className="h-[150px] bg-gradient-to-tr from-red-700 to-red-800 overflow-hidden shrink-0">
-        {thumbnailUrl && (
-          <img src={thumbnailUrl} alt={name} className="w-full h-full object-cover" />
-        )}
+      <div className="h-[150px] bg-gradient-to-tr from-red-700 to-red-800 overflow-hidden shrink-0 flex items-center justify-center">
+        <Icon className="w-12 h-12 text-white opacity-80" />
       </div>
 
       {/* Content*/}
       <div className="p-3 flex flex-col gap-2 flex-1 justify-between">
         <div className="flex flex-col gap-1">
           <p className="text-sm font-semibold text-gray-800 leading-tight line-clamp-2">
-            {name}
+            {project.project_name}
           </p>
         </div>
 
@@ -50,7 +42,7 @@ export default function MentorProjectCard({
         <div className="flex items-center gap-2 mt-auto">
           <UsersRound className='text-gray-400 w-4 h-4' />
           <span className="text-xs text-gray-500 truncate">
-            {interns.length}/{interns.length}
+            {project.total_members}/{project.total_members}
           </span>
         </div>
       </div>

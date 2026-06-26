@@ -20,7 +20,6 @@ const initialHistoryData = [
 ];
 
 const MentorCertificatePage = () => {
-  // State Form Management
   const [selectedIntern, setSelectedIntern] = useState("JonathanKristina@gmail.com");
   const [selectedProject, setSelectedProject] = useState("Internify Project (Web Development)");
   const [issueDate, setIssueDate] = useState("2024-10-24");

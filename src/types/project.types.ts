@@ -12,6 +12,7 @@ export interface ProjectAdmin {
 }
 
 export interface ProjectMember {
+  avatar: string;
   id: number;
   id_user: number;
   status?: MemberStatus;
@@ -117,4 +118,23 @@ export interface ProjectMember {
   professional_bio: string | null;
   position: string;
   kelompok_peminatan: string;
+}
+
+export interface Mahasiswa {
+  id: number;
+  nama_depan: string;
+  nama_belakang: string;
+  email: string;
+  kontak: string;
+  jurusan: string;
+  role: string;
+  cv_path: string;
+  portofolio_path: string;
+  motivasi: string;
+  relevant_skills: string;
+}
+
+export interface MahasiswaResponse {
+  message: string;
+  data: Mahasiswa[];
 }
