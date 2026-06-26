@@ -51,19 +51,33 @@ export interface AdminTaskDetail extends ProjectTask {
   submissions: Array<{
     id_user: number;
     full_name: string;
+    email: string;
     file_path: string | null;
-    url_link: string | null;
+    profile_picture: string | null;
     submitted_at: string | null;
     updated_at: string | null;
+    display_status: DisplayStatus;
+    submission: TaskSubmissionData | null;
   }>;
 }
 
 export interface CreateTaskPayload {
   title: string;
   description: string;
-  deadline_date: string; // "YYYY-MM-DD"
-  specific_time: string; // "HH:mm"
+  deadline_date: string;
+  specific_time: string;
   submission_type: SubmissionType;
 }
 
 export interface UpdateTaskPayload extends Partial<CreateTaskPayload> {}
+
+export interface MentorTaskItem {
+  id: number;
+  slug: string;
+  title: string;
+  description: string;
+  deadline_at: string;
+  submission_type: "file_upload" | "url_link";
+  project_name: string;
+  project_slug: string;
+}

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import ManageInternsModal from './components/AddInternsDialog';
 import type { ProjectDetail, ProjectMember } from '../../../types/project.types';
+import { useProjectInterns } from '../../../hooks/useProjects';
 
 export default function InternsTab({ project }: { project: ProjectDetail }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -54,7 +55,7 @@ export default function InternsTab({ project }: { project: ProjectDetail }) {
           >
             <div className="flex items-center gap-3">
               <span className=" text-sm text-[#333]">
-                {member.full_name}
+                {member.email}
               </span>
             </div>
             <span className=" text-[13px] text-[#555] font-semibold">

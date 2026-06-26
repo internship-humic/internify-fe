@@ -124,7 +124,7 @@ dialog.custom-dialog::backdrop {
   padding-left: 1rem;
   padding-right: 1.5rem;
   padding-top: 1rem;
-  border-bottom: 2px solid #b3b8c0; /* border-gray-100 */
+  border-bottom: 1px solid #b3b8c0; /* border-gray-100 */
 }
 
 @media (max-width: 1024px) {

@@ -65,7 +65,7 @@ export const useProjectDetail = (id: string) => {
 
 //Khusus Ambil Intern dari Project/{id}
 export const useProjectInterns = (projectId: string) => {
-  const [interns, setInterns] = useState<ProjectMember[]>([]);
+  const [interns, setInterns] = useState<ProjectMember[]>([] );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

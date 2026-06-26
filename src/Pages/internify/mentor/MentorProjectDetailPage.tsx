@@ -1,33 +1,41 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { mockProjects } from "../../../lib/mockProjects";
-import { Calendar, Edit, SlidersHorizontal, Search } from "lucide-react";
+import { Calendar, Edit } from "lucide-react";
 import EditSubmissionModal from "./components/EditSubmissionTask";
-
+import { useTaskSubmissions } from "../../../hooks/useTasks";
 
 const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
 
 export default function MentorProjectsDetailPage() {
   const navigate = useNavigate();
   const { slug, taskSlug } = useParams<{ slug: string; taskSlug: string }>();
-  const targetedProject = mockProjects.find((p) => toSlug(p.name) === slug);
-
-  if (!targetedProject) {
-    return <div className="p-10 text-[#888]">Project tidak ditemukan.</div>;
-  }
-
-  const targetedTask = targetedProject.tasks.find((t) => toSlug(t.title) === taskSlug);
-  if (!targetedTask) {
-    return <div className="p-10 text-[#888]">Tugas tidak ditemukan.</div>;
-  }
-
+  const { task, loading, error } = useTaskSubmissions(taskSlug!, slug);
   const [openModal, setOpenModal] = useState(false);
+  if (loading) return (
+    <div className="space-y-4">
+      {[...Array(3)].map((_, i) => (
+        <div key={i} className="h-32 bg-box-secondary rounded-2xl animate-pulse" />
+      ))}
+    </div>
+  );
+  if (error) return <p className="text-red-500 text-sm">{error}</p>;
+  if (!task) return null;
+
+  const formatDeadline = (isoString: string) => {
+    const date = new Date(isoString);
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const yy = String(date.getFullYear()).slice(-2);
+    const hh = String(date.getHours()).padStart(2, '0');
+    const min = String(date.getMinutes()).padStart(2, '0');
+    return `${dd}/${mm}/${yy} pada jam ${hh}:${min}`;
+  };
 
   return (
     <div>
       {/* Header Utama */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-[#1a1a1a]">{targetedTask.title}</h1>
+        <h1 className="text-3xl font-bold text-[#1a1a1a]">{task.title}</h1>
         <button
           className="flex items-center gap-2 border border-gray-400 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-all"
           onClick={() => setOpenModal(true)}
@@ -42,7 +50,7 @@ export default function MentorProjectsDetailPage() {
         <div className="flex-1 md:border-r border-gray-200 md:pr-6">
           <h2 className="text-xs font-sans text-gray-400 tracking-wider uppercase mb-2">Description</h2>
           <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
-            {targetedTask.description}
+            {task.description}
           </p>
         </div>
         <div className="w-full md:w-120 flex flex-col justify-start">
@@ -52,8 +60,7 @@ export default function MentorProjectsDetailPage() {
               <Calendar size={20} />
             </div>
             <div>
-              <div className="text-base font-bold text-gray-900">{targetedTask.deadline.label}</div>
-              <div className="text-xs text-gray-400">at {targetedTask.deadline.time}</div>
+              <div className="text-base font-bold text-gray-900">{formatDeadline(task.deadline_at)}</div>
             </div>
           </div>
         </div>
@@ -66,12 +73,8 @@ export default function MentorProjectsDetailPage() {
           <div className="flex items-center gap-3">
             <h2 className="text-xl font-bold text-gray-900">Intern Submissions</h2>
             <span className="bg-gray-100 text-gray-500 font-semibold text-xs px-2.5 py-0.5 rounded-md border border-gray-200">
-              {targetedTask.submissions?.length || 0} total
+              {task.submissions?.length || 0} total
             </span>
-          </div>
-          <div className="flex items-center gap-4 text-gray-500">
-            <button className="hover:text-gray-800"><SlidersHorizontal size={18} /></button>
-            <button className="hover:text-gray-800"><Search size={18} /></button>
           </div>
         </div>
 
@@ -87,37 +90,37 @@ export default function MentorProjectsDetailPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {targetedTask.submissions?.map((sub, idx) => {
-                // Cari relasi profil lengkap intern lewat email
-                const internProfile = targetedProject.interns.find(i => i.email === sub.internEmail);
-                if (!internProfile) return null;
-
+              {task.submissions.map((sub, idx) => {
                 return (
                   <tr key={idx} className="hover:bg-gray-50/50 transition-colors">
-                    {/* Kolom Nama & Profil */}
                     <td className="px-6 py-4 flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-red-800 text-gray-500 font-semibold text-xs flex items-center justify-center border border-gray-300" />
-                      <span className="font-semibold text-sm text-gray-800">{internProfile.name}</span>
+                      {sub.profile_picture
+                        ? <img src={sub.profile_picture} className="w-9 h-9 rounded-full object-cover" />
+                        : <div className="w-9 h-9 rounded-full bg-red-800 flex-shrink-0" />
+                      }
+                      <span className="font-semibold text-sm text-gray-800">{sub.full_name}</span>
                     </td>
 
                     {/* Kolom Tanggal Kumpul */}
                     <td className="px-6 py-4 text-sm text-gray-500">
-                      {sub.submittedAt || "-"}
+                      {sub.submitted_at
+                        ? new Date(sub.submitted_at).toLocaleDateString("id-ID")
+                        : "-"}
                     </td>
 
                     {/* Kolom Badge Status */}
                     <td className="px-6 py-4">
-                      {sub.status === "Done" && (
+                      {sub.display_status === "done" && (
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-green-50 text-green-700 border border-green-200">
                           <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Done
                         </span>
                       )}
-                      {sub.status === "Pending" && (
+                      {sub.display_status === "pending" && (
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-amber-50 text-amber-700 border border-amber-200">
                           <span className="w-1.5 h-1.5 bg-amber-500 rounded-full"></span> Pending
                         </span>
                       )}
-                      {sub.status === "Overdue" && (
+                      {sub.display_status === "overdue" && (
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-red-700 text-white border">
                           <span className="w-1.5 h-1.5 bg-white rounded-full"></span> Overdue
                         </span>
@@ -130,8 +133,8 @@ export default function MentorProjectsDetailPage() {
                         className="text-sm font-bold text-red-800 hover:text-red-900 transition-colors inline-flex items-center gap-1"
                         onClick={() =>
                           navigate(
-                            `/mentor/projects/${toSlug(targetedProject.name)}/${toSlug(targetedTask.title)}/${sub.internEmail.split("@")[0]}`,
-                            { state: { status: sub.status === "Done" ? "submitted" : sub.status === "Overdue" ? "overdue" : "pending" } }
+                            `/mentor/projects/${slug}/${taskSlug}/${toSlug(sub.full_name)}`,
+                            { state: { status: sub.display_status === "done" ? "submitted" : sub.display_status === "overdue" ? "overdue" : "pending" } }
                           )
                         }
                       >
@@ -145,8 +148,6 @@ export default function MentorProjectsDetailPage() {
           </table>
         </div>
       </div>
-
-      {/* EditSubmissionModal sekarang berada di dalam induk div utama */}
       {openModal && (
         <EditSubmissionModal
           isOpen={openModal}

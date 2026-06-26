@@ -11,15 +11,6 @@ export interface ProjectAdmin {
   professional_bio: string | null;
 }
 
-export interface ProjectMember {
-  avatar: string;
-  id: number;
-  id_user: number;
-  status?: MemberStatus;
-  created_at?: string;
-  updated_at?: string;
-}
-
 // Response GET /project-api/get dan GET /project-api/get/{id}
 export interface Project {
   id: number;
@@ -112,6 +103,7 @@ export interface MemberAssignment {
 }
 
 export interface ProjectMember {
+  avatar: string
   id: number;
   full_name: string;
   email: string;

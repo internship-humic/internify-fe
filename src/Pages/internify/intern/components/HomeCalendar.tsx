@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useMyTasks } from '../../../../hooks/useProjects';
-//SEMENTARA USERSERVICES BELUM KUBUAT
 import api from '../../../../lib/api';
+import { useCurrentUser } from '../../../../hooks/useUser';
+import { useAllMentorTasks } from '../../../../hooks/useTasks';
 
 const DAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
 const MONTH_NAMES = [
@@ -18,24 +19,23 @@ function getFirstDayOfMonth(year: number, month: number) {
   return new Date(year, month, 1).getDay()
 }
 
-interface roleUser {
-  role: "mentor" | "intern" | "admin";
-}
-
 export default function HomeCalendar() {
   const [today, setToday] = useState(new Date());
-  const [role, setRole] = useState<"mentor" | "intern" | "admin" | null>(null);
-  const { tasks } = useMyTasks();
+  const { user } = useCurrentUser();
 
-  useEffect(() => {
-    api.get("/auth-api/me")
-      .then((res) => setRole(res.data.data.role))
-      .catch((err) => console.error("Failed to fetch user:", err));
-  }, []);
+  const isIntern = user?.role === "intern";
+  const { tasks: internTasks } = useMyTasks();
+  const { tasks: mentorTasks } = useAllMentorTasks(!isIntern && user !== null);
 
-  const DEADLINES = role === "intern"
-    ? tasks.map(task => ({ date: new Date(task.deadline_at), label: task.title, }))
-    : [];
+   const DEADLINES = isIntern
+    ? internTasks.map(task => ({
+        date: new Date(task.deadline_at),
+        label: task.title,
+      }))
+    : mentorTasks.map(task => ({
+        date: new Date(task.deadline_at),
+        label: `[${task.project_name}] ${task.title}`,
+      }));
 
   useEffect(() => {
     const interval = setInterval(() => {

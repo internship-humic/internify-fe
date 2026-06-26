@@ -41,8 +41,6 @@ export default function CreateTaskModal({ isOpen, onClose, projectId, onSuccess 
     });
     if (result) onSuccess();
   };
-
-  // JSX sama persis, hanya ganti handleSubmit dan tambah disabled pada button submit:
   return (
     <dialog ref={dialogRef} className="custom-dialog p-[1.5rem]">
       <div className="dialog-header">
@@ -54,28 +52,43 @@ export default function CreateTaskModal({ isOpen, onClose, projectId, onSuccess 
           <X className="w-5 h-5 stroke-[2.5]" />
         </button>
       </div>
-      <form onSubmit={handleSubmit} className="px-6 space-y-4 overflow-y-auto flex-1">
+      <form onSubmit={handleSubmit} className="px-6 space-y-2 overflow-y-auto flex-1">
         <div>
           <label className="text-xs font-bold text-gray-700 tracking-wide">Task Title</label>
-          <input type="text" required placeholder="e.g., Design High-Fidelity Prototypes" value={taskTitle}
+          <input
+            type="text"
+            required
+            placeholder="e.g., Design High-Fidelity Prototypes"
+            value={taskTitle}
             onChange={(e) => setTaskTitle(e.target.value)}
             className="w-full px-3 py-4 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-800 focus:outline-none focus:border-[#B30000] focus:ring-1 focus:ring-[#B30000]" />
         </div>
         <div className="space-y-1.5">
           <label className="text-xs font-bold text-gray-700 tracking-wide">Description</label>
-          <textarea rows={4} placeholder="Outline the requirements and objectives..." value={description}
+          <textarea
+            rows={4}
+            placeholder="Outline the requirements and objectives..."
+            value={description}
             onChange={(e) => setDescription(e.target.value)}
             className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-800 focus:outline-none focus:border-[#B30000] focus:ring-1 focus:ring-[#B30000] resize-none leading-relaxed" />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-gray-700 tracking-wide">Deadline Date</label>
-            <input type="date" required value={deadlineDate} onChange={(e) => setDeadlineDate(e.target.value)}
+            <input
+              type="date"
+              required
+              value={deadlineDate}
+              onChange={(e) => setDeadlineDate(e.target.value)}
               className="w-full pl-3 pr-9 py-3 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-800 focus:outline-none focus:border-[#B30000] focus:ring-1 focus:ring-[#B30000]" />
           </div>
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-gray-700 tracking-wide">Specific Time</label>
-            <input type="time" required value={specificTime} onChange={(e) => setSpecificTime(e.target.value)}
+            <input
+              type="time"
+              required
+              value={specificTime}
+              onChange={(e) => setSpecificTime(e.target.value)}
               className="w-full pl-3 pr-9 py-3 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-800 focus:outline-none focus:border-[#B30000] focus:ring-1 focus:ring-[#B30000]" />
           </div>
         </div>
@@ -84,9 +97,8 @@ export default function CreateTaskModal({ isOpen, onClose, projectId, onSuccess 
           <div className="grid grid-cols-2 gap-3">
             {(["file_upload", "url_link"] as SubmissionType[]).map((type) => (
               <div key={type} onClick={() => setSubmissionType(type)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all ${
-                  submissionType === type ? "border-[#B30000] bg-[#B30000] text-white font-semibold" : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
-                }`}>
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all ${submissionType === type ? "border-[#B30000] bg-[#B30000] text-white font-semibold" : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                  }`}>
                 <div className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${submissionType === type ? "border-white bg-white" : "border-gray-300"}`}>
                   {submissionType === type && <div className="w-1.5 h-1.5 bg-[#B30000] rounded-full" />}
                 </div>

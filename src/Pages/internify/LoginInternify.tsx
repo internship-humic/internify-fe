@@ -71,8 +71,8 @@ export default function InternifyLogin() {
                         HUMIC LMS PORTAL
                     </p>
                 </div>
-
-                <div className="max-w-md bg-white rounded-2xl border border-box-border p-8 md:p-12">
+                {/* MAIN CONTENT */}
+                <div className="max-w-md bg-box-primary rounded-2xl border border-box-border p-8 md:p-12 shadow-sm">
                     <h2 className="text-xl font-bold text-gray-900 mb-1">Welcome back</h2>
                     <p className="text-sm text-gray-500 mb-6">Access your dashboard with your credentials.</p>
 

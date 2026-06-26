@@ -35,7 +35,16 @@ export const getProjectMembers = async (
   id: string | number
 ): Promise<ProjectMember[]> => {
   const res = await api.get(`/project-api/get/${id}`);
-  return res.data.data.members;
+  console.log(res.data.data.member);
+  return res.data.data.members.map((m: any) => ({
+    id: m.id_user,
+    avatar: m.user.profile_picture ?? null,
+    full_name: m.user.full_name,
+    email: m.user.email,
+    professional_bio: m.user.professional_bio,
+    position: m.user.position,
+    kelompok_peminatan: m.user.kelompok_peminatan,
+  }));
 };
 
 // GET /project-api/get/{id}
@@ -43,7 +52,20 @@ export const getProjectById = async (
   id: string | number
 ): Promise<ProjectDetail> => {
   const res = await api.get(`/project-api/get/${id}`);
-  return res.data.data;
+  const raw = res.data.data;
+
+  return {
+    ...raw,
+    members: raw.members.map((m: any) => ({
+      id: m.id_user,
+      avatar: m.user?.profile_picture ?? null,
+      full_name: m.user?.full_name,
+      email: m.user?.email,
+      professional_bio: m.user?.professional_bio ?? null,
+      position: m.user?.position,
+      kelompok_peminatan: m.user?.kelompok_peminatan,
+    })),
+  };
 };
 
 // PATCH /project-api/update/{id}

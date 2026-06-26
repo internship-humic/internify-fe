@@ -1,4 +1,3 @@
-import type { Task } from "../../../../lib/mockProjects";
 import { useNavigate, useParams } from "react-router-dom";
 import type { ProjectTask } from "../../../../types/task.types";
 
@@ -8,14 +7,12 @@ const formatDate = (date: string) =>
 const formatTime = (dateStr: string) =>
   new Date(dateStr).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
-const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
-
 export default function MentorTaskCard({ task }: {task: ProjectTask}) {
   const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
 
   const handleCardClick = () => {
-    navigate(`/intern/projects/${slug}/${task.slug}?type=${task.submission_type}`)
+    navigate(`/mentor/projects/${slug}/${task.slug}?type=${task.submission_type}`)
   };
 
   return (

@@ -1,6 +1,6 @@
 // hooks/useTasks.ts
 import { useState, useEffect, useCallback } from "react";
-import type { ProjectTask, ProjectTaskDetail, CreateTaskPayload, UpdateTaskPayload, TaskSubmissionData } from "../types/task.types";
+import type { ProjectTask, ProjectTaskDetail, CreateTaskPayload, UpdateTaskPayload, TaskSubmissionData, AdminTaskDetail } from "../types/task.types";
 import {
   getProjectTasks,
   getTaskById,
@@ -12,7 +12,10 @@ import {
   updateSubmissionFile,
   updateSubmissionLink,
   deleteSubmission,
+  getAllMentorTasks,
+  getTaskSubmissions,
 } from "../services/TaskService";
+import type { MentorTaskItem } from "../types/task.types";
 
 // GET /task-api/projects/{id_project}/tasks
 export const useProjectTasks = (projectId: string) => {
@@ -46,6 +49,25 @@ export const useTaskDetail = (taskId: string, projectId?: string) => {
     getTaskById(taskId, projectId)
       .then(setTask)
       .catch(() => setError("Gagal memuat detail task."))
+      .finally(() => setLoading(false));
+  }, [taskId, projectId]);
+
+  useEffect(() => { refetch(); }, [refetch]);
+
+  return { task, loading, error, refetch };
+};
+
+export const useTaskSubmissions = (taskId: string, projectId?: string) => {
+  const [task, setTask] = useState<AdminTaskDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const refetch = useCallback(() => {
+    if (!taskId) return;
+    setLoading(true);
+    getTaskSubmissions(taskId, projectId)
+      .then(setTask)
+      .catch(() => setError("Gagal memuat submissions."))
       .finally(() => setLoading(false));
   }, [taskId, projectId]);
 
@@ -179,4 +201,22 @@ export const useSubmission = (taskId: string, initialSubmission?: TaskSubmission
   };
 
   return { submission, submitFile, submitLink, updateFile, updateLink, remove, loading, error };
+};
+
+// hooks/useAllMentorTasks.ts
+export const useAllMentorTasks = (enabled: boolean) => {
+  const [tasks, setTasks] = useState<MentorTaskItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!enabled) return; // tidak fetch kalau intern
+    setLoading(true);
+    getAllMentorTasks()
+      .then(setTasks)
+      .catch(() => setError("Gagal memuat tasks mentor."))
+      .finally(() => setLoading(false));
+  }, [enabled]);
+
+  return { tasks, loading, error };
 };
