@@ -60,8 +60,6 @@ export default function InternifyLogin() {
 
     return (
         <div className="min-h-screen bg-background flex flex-col justify-between items-center py-8 px-4 font-sans selection:bg-red-foreground">
-            <div className="hidden md:block"></div>
-
             <div className="w-full max-w-[440px] flex flex-col items-center">
                 <div className="text-center mb-6">
                     <div className="flex items-center justify-center gap-2 font-bold text-2xl tracking-tight text-black">

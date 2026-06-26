@@ -2,10 +2,21 @@ import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import ManageInternsModal from './components/AddInternsDialog';
 import type { ProjectDetail, ProjectMember } from '../../../types/project.types';
-import { useProjectInterns } from '../../../hooks/useProjects';
+import { useRemoveMember } from '../../../hooks/useProjects';
 
 export default function InternsTab({ project }: { project: ProjectDetail }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { remove, loading } = useRemoveMember();
+
+  const handleRemove = async (id_user: number) => {
+    if (window.confirm('Are you sure you want to remove this member?')) {
+      const res = await remove({ id_project: project.id, id_user });
+      if (res !== null) {
+        alert('Member removed successfully');
+        window.location.reload();
+      }
+    }
+  };
 
   return (
     <div>
@@ -62,7 +73,11 @@ export default function InternsTab({ project }: { project: ProjectDetail }) {
               {member.position}
             </span>
             <div>
-              <button className='flex items-center gap-1 text-[14px] bg-red-600 text-white p-1 rounded-xl'>
+              <button 
+                onClick={() => handleRemove(member.id)}
+                disabled={loading}
+                className='flex items-center gap-1 text-[14px] bg-red-600 text-white p-1 rounded-xl disabled:opacity-50 hover:bg-red-700 transition-colors'
+              >
                 <Plus className='w-4 h-4'/>Delete
               </button>
             </div>

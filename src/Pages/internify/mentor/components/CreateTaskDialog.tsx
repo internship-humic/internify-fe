@@ -80,7 +80,7 @@ export default function CreateTaskModal({ isOpen, onClose, projectId, onSuccess 
               required
               value={deadlineDate}
               onChange={(e) => setDeadlineDate(e.target.value)}
-              className="w-full pl-3 pr-9 py-3 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-800 focus:outline-none focus:border-[#B30000] focus:ring-1 focus:ring-[#B30000]" />
+              className="w-full px-3 py-3 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-800 focus:outline-none focus:border-[#B30000] focus:ring-1 focus:ring-[#B30000]" />
           </div>
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-gray-700 tracking-wide">Specific Time</label>
@@ -89,7 +89,7 @@ export default function CreateTaskModal({ isOpen, onClose, projectId, onSuccess 
               required
               value={specificTime}
               onChange={(e) => setSpecificTime(e.target.value)}
-              className="w-full pl-3 pr-9 py-3 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-800 focus:outline-none focus:border-[#B30000] focus:ring-1 focus:ring-[#B30000]" />
+              className="w-full px-3 py-3 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-800 focus:outline-none focus:border-[#B30000] focus:ring-1 focus:ring-[#B30000]" />
           </div>
         </div>
         <div className="space-y-1.5">

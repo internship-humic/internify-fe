@@ -16,6 +16,7 @@ export interface Project {
   id: number;
   slug: string;
   project_icon: string;
+  background_color: string;
   project_name: string;
   description: string;
   start_date: string;

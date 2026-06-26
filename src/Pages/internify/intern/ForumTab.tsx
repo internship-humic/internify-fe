@@ -10,7 +10,6 @@ export default function ForumTab({ project }: { project: Project }) {
   const { tasks, loading, error } = useProjectTasks(slug ?? "");
   return (
     <div>
-      {/* Hero banner */}
       <HeroProject title={project.project_name} description={project.description} />
 
       {/* Loading */}

@@ -35,7 +35,7 @@ import SertificatePage from "./Pages/Internify/intern/SertificatePage";
 import ProjectDetailPage from "./Pages/Internify/intern/ProjectDetailPage";
 import HomeMentorPage from "./Pages/Internify/mentor/HomeMentorPage";
 import MentorProjectsPage from "./Pages/Internify/mentor/BaseProjectsPage";
-import MentorCertificatePage from "./Pages/Internify/mentor/CertificatePage";
+import MentorCertificatePage from "./Pages/Internify/mentor/CertificateListPage";
 import MentorInternPage from "./Pages/Internify/mentor/InternsPage";
 import MentorDetailProject from "./Pages/Internify/mentor/ProjectsPage";
 import InternifyLogin from "./Pages/Internify/LoginInternify"
@@ -48,6 +48,8 @@ import MentorProjectsDetailPage from "./Pages/Internify/mentor/MentorProjectDeta
 import ViewInternSubmission from "./Pages/Internify/mentor/ViewInternSubmission";
 import SettingsPage from "./Pages/Internify/mentor/MentorSettingsPage";
 import ProtectedRoutes from "./Pages/utils/ProtectedRoute";
+import CertificateDetail from "./Pages/Internify/mentor/CertificateDetail";
+import CertificateResult from "./Pages/Internify/mentor/CertificateGenerate";
 
 function App() {
   return (
@@ -109,6 +111,8 @@ function App() {
             <Route index element={<HomeMentorPage />} />
             <Route path="projects" element={<MentorProjectsPage />} />
             <Route path="certificates" element={<MentorCertificatePage />} />
+            <Route path="certificates/:id" element={<CertificateDetail />} />
+            <Route path="certificates/result" element={<CertificateResult />} />
             <Route path="intern" element={<MentorInternPage />} />
             <Route path="projects/:slug" element={<MentorDetailProject />} />
             <Route path="projects/:slug/:taskSlug" element={<MentorProjectsDetailPage />} />

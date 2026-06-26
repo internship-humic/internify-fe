@@ -11,7 +11,6 @@ import {
 } from 'lucide-react';
 import { LuHistory, LuSendHorizontal } from 'react-icons/lu';
 
-// Mock Data untuk Tabel Riwayat Sertifikat
 const initialHistoryData = [
   { id: 1, name: "Jonathan Kristina", email: "JonathanKristina@gmail.com", project: "Internify Project", date: "24 Oct 2024", initials: "JK" },
   { id: 2, name: "Ahmad Faisal", email: "ahmad.faisal@gmail.com", project: "Web Dev Fundamentals", date: "15 Sep 2024", initials: "AF" },

@@ -20,13 +20,14 @@ export default function MentorProjectCard(project: Project) {
   const Icon = getDynamicIcon(project.project_icon);
 
   const handleDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
   }
   return (
     <div
       onClick={handleCardClick}
       className="flex flex-col bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 w-[180px] min-h-[270px]hover:bg-gray-50 transition-colors">
       {/* Thumbnail */}
-      <div className="h-[150px] bg-gradient-to-tr from-red-700 to-red-800 overflow-hidden shrink-0 flex items-center justify-center">
+      <div style={{ backgroundColor: project.background_color ?? '#dc2626' }} className="h-[150px] overflow-hidden shrink-0 flex items-center justify-center">
         <Icon className="w-12 h-12 text-white opacity-80" />
       </div>
 

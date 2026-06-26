@@ -15,7 +15,7 @@ import type {
 // POST /project-api/add
 export const createProject = async (
   payload: CreateProjectPayload
-): Promise<ProjectDetail> => {
+): Promise<Project> => {
   const res = await api.post("/project-api/add", payload);
   return res.data.data;
 };
@@ -23,7 +23,7 @@ export const createProject = async (
 // GET /project-api/get
 export const getProjects = async (
   status?: "active" | "completed" | "archived"
-): Promise<Project[]> => {
+): Promise<ProjectDetail[]> => {
   const res = await api.get("/project-api/get", {
     params: status ? { status } : undefined,
   });
@@ -114,5 +114,15 @@ export const assignMember = async (
   payload: AssignMemberPayload
 ): Promise<MemberAssignment> => {
   const res = await api.post("/project-api/assign-member", payload);
+  return res.data.data;
+};
+
+export const removeMember = async (
+  payload: {
+    id_project: string | number;
+    id_user: number;
+  }
+): Promise<MemberAssignment> => {
+  const res = await api.post("/project-api/remove-member", { id_project: payload.id_project, id_user: payload.id_user });
   return res.data.data;
 };

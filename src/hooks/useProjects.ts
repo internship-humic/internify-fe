@@ -21,7 +21,8 @@ import {
   updateProject,
   archiveProject,
   assignMember,
-  getProjectMembers
+  getProjectMembers,
+  removeMember
 } from "../services/ProjectService";
 
 // GET /project-api/get
@@ -227,4 +228,24 @@ export const useAssignMember = () => {
   };
 
   return { assign, loading, error };
+};
+
+export const useRemoveMember = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const remove = async (payload: { id_project: string | number, id_user: number }) => {
+    setLoading(true);
+    setError(null);
+    try {
+      return await removeMember(payload);
+    } catch {
+      setError("Gagal remove member.");
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { remove, loading, error };
 };

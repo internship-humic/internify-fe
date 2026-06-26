@@ -11,16 +11,11 @@ interface CreateProjectModalProps {
 
 export default function CreateProjectModal({ isOpen, onClose }: CreateProjectModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-
-  // State Form Management
   const [selectedIcon, setSelectedIcon] = useState(PROJECT_ICON_CODES[0]);
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [emailInput, setEmailInput] = useState("");
-  const [invitedEmails, setInvitedEmails] = useState<string[]>([
-    "alex.dev@gmail.com",
-    "sarah.engineer@gmail.com"
-  ]);
+  const [invitedEmails, setInvitedEmails] = useState<string[]>([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const { create, loading, error } = useCreateProject();
@@ -54,7 +49,6 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
     };
   }, [isOpen, onClose]);
 
-  // Fungsi menambah email undangan baru
   const handleAddEmail = (e: React.FormEvent) => {
     e.preventDefault();
     if (emailInput.trim() && !invitedEmails.includes(emailInput.trim())) {
@@ -63,7 +57,6 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
     }
   };
 
-  // Fungsi menghapus email undangan
   const handleRemoveEmail = (emailToRemove: string) => {
     setInvitedEmails(invitedEmails.filter(email => email !== emailToRemove));
   };
@@ -71,14 +64,19 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
   // Handler Submit Utama
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = await create({
+    const payload: any = {
       project_icon: selectedIcon,
       project_name: projectName,
       description: projectDescription,
-      member_emails: invitedEmails,
       start_date: startDate,
       end_date: endDate,
-    });
+    };
+    
+    if (invitedEmails.length > 0) {
+      payload.member_emails = invitedEmails;
+    }
+
+    const result = await create(payload);
     if (result) {
       onClose();
     }
@@ -226,7 +224,7 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
                 required
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full pl-4 pr-10 py-2.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium appearance-none"
+                className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium appearance-none"
               />
               <span className="absolute right-3.5 top-3 text-gray-400 pointer-events-none">
               </span>
@@ -244,7 +242,7 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
                 required
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full pl-4 pr-10 py-2.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium appearance-none"
+                className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium appearance-none"
               />
               <span className="absolute right-3.5 top-3 text-gray-400 pointer-events-none">
               </span>

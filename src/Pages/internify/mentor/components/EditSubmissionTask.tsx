@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import { X } from "lucide-react";
-import { LuSave, LuCalendar } from "react-icons/lu";
+import { LuSave } from "react-icons/lu";
 
 interface EditTaskModalProps {
   isOpen: boolean;
