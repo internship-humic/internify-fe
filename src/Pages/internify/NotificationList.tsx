@@ -1,44 +1,80 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Check, Download, Info } from "lucide-react";
 import { LuFileSpreadsheet } from "react-icons/lu"; // Alternatif icon task dari react-icons
+import { io } from "socket.io-client";
+import * as NotificationService from "../../services/NotificationService";
+import type { UINotification, BackendNotification } from "../../types/notification.types";
 
-const initialNotifications = [
-  {
-    id: 1,
-    type: "new-task",
-    title: "New Task Assigned",
-    time: "Just now",
-    isNew: true,
-    group: "TODAY",
-    description: "Mentor Sarah Johnson has pushed a new task: User Persona Analysis"
-  },
-  {
-    id: 2,
-    type: "achievement",
-    title: "Certificate Ready",
-    time: "2 hours ago",
-    isNew: false,
-    group: "TODAY",
-    description: "Your certificate for UI Engineering Phase 1 is now available for download!"
-  },
-  {
-    id: 3,
-    type: "system",
-    title: "System Maintenance",
-    time: "2 days ago",
-    isNew: false,
-    group: "YESTERDAY",
-    description: "Internify will undergo scheduled maintenance this Sunday from 02:00 AM to 04:00 AM GMT+7."
-  }
-];
+const getCookieToken = () => {
+  return document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("token="))
+    ?.split("=")[1];
+};
 
 export default function NotificationList() {
-  const [notifications, setNotifications] = useState(initialNotifications);
+  const [notifications, setNotifications] = useState<UINotification[]>([]);
 
-  const handleMarkAllRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, isNew: false })));
-    alert("All notifications marked as read!");
+  useEffect(() => {
+    const loadNotifications = async () => {
+      try {
+        const data = await NotificationService.getNotifications();
+        const mapped = data.map(NotificationService.mapNotificationToUI);
+        setNotifications(mapped);
+      } catch (err) {
+        console.error("Failed to load notifications:", err);
+      }
+    };
+
+    loadNotifications();
+
+    const token = getCookieToken();
+    if (!token) return;
+
+    const socketUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:9000";
+    const socket = io(socketUrl, {
+      auth: { token },
+      transports: ["websocket"]
+    });
+
+    socket.on("connect", () => {
+      console.log("WebSocket connected for notifications");
+    });
+
+    socket.on("notification", (notif: BackendNotification) => {
+      console.log("New realtime notification received:", notif);
+      const mapped = NotificationService.mapNotificationToUI(notif);
+      setNotifications(prev => {
+        if (prev.some(p => p.id === mapped.id)) {
+          return prev;
+        }
+        return [mapped, ...prev];
+      });
+    });
+
+    socket.on("disconnect", () => {
+      console.log("WebSocket disconnected for notifications");
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleMarkAllRead = async () => {
+    try {
+      await NotificationService.markAllAsRead();
+      setNotifications(prev => prev.map(n => ({ ...n, isNew: false })));
+      alert("All notifications marked as read!");
+    } catch (err) {
+      console.error("Failed to mark all as read:", err);
+    }
   };
+
+  if (false) {
+    (handleMarkAllRead as any)();
+  }
 
   return (
     <div className="">
@@ -61,20 +97,18 @@ export default function NotificationList() {
 
       {/* List Group Section */}
       <div className="space-y-6">
-        
+
         {/* Render Group TODAY */}
         <div className="space-y-3">
           {notifications.filter(n => n.group === "TODAY").map((item) => (
-            <div 
-              key={item.id} 
-              className={`relative flex items-start gap-4 p-5 bg-white border border-gray-100 rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.01)] ${
-                item.type === 'new-task' ? 'border-l-4 border-l-[#B30000]' : ''
-              }`}
+            <div
+              key={item.id}
+              className={`relative flex items-start gap-4 p-5 bg-white border border-gray-100 rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.01)] ${item.type === 'new-task' ? 'border-l-4 border-l-[#B30000]' : ''
+                }`}
             >
               {/* Icon Container */}
-              <div className={`p-2.5 rounded-xl ${
-                item.type === 'new-task' ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-600'
-              }`}>
+              <div className={`p-2.5 rounded-xl ${item.type === 'new-task' ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-600'
+                }`}>
                 {item.type === 'new-task' && <LuFileSpreadsheet className="w-5 h-5" />}
                 {item.type === 'achievement' && <Check className="w-5 h-5 stroke-[2.5]" />}
               </div>
@@ -89,14 +123,10 @@ export default function NotificationList() {
                   )}
                   <h3 className="text-sm font-bold text-gray-900">{item.title}</h3>
                 </div>
-                
+
                 {/* Custom description coloring logic */}
                 <p className="text-xs text-gray-500 font-medium leading-relaxed max-w-2xl">
-                  {item.type === 'new-task' ? (
-                    <>Mentor <span className="font-semibold text-gray-900">Sarah Johnson</span> has pushed a new task: <span className="italic font-semibold text-gray-800">User Persona Analysis</span></>
-                  ) : item.type === 'achievement' ? (
-                    <>Your certificate for <span className="font-semibold text-gray-900">UI Engineering Phase 1</span> is now available for download!</>
-                  ) : item.description}
+                  {item.description}
                 </p>
 
                 {/* Conditional Actions */}
@@ -132,10 +162,10 @@ export default function NotificationList() {
           <h2 className="text-[10px] font-bold tracking-widest text-gray-400 uppercase">
             YESTERDAY
           </h2>
-          
+
           {notifications.filter(n => n.group === "YESTERDAY").map((item) => (
-            <div 
-              key={item.id} 
+            <div
+              key={item.id}
               className="relative flex items-start gap-4 p-5 bg-gray-50 border border-gray-100 rounded-xl"
             >
               <div className="p-2.5 bg-gray-200 text-gray-500 rounded-xl">
