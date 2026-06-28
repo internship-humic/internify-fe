@@ -18,8 +18,10 @@ export interface Certificate {
   id_user: number;
   certificate_no: string;
   issued_at: string;
+  uuid: string;
   user: CertificateUser;
   project: CertificateProject;
+  certificate_status: string;
 }
 
 export interface CertificateVerifyResult {

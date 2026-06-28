@@ -7,12 +7,13 @@ import type { TaskSubmissionData } from "../../../../types/task.types";
 
 interface TaskFormFileProps {
   taskId: string;
+  projectId?: string;
   deadline?: Date;
   initialSubmission?: TaskSubmissionData | null;
 }
 
-export default function TaskFormFile({ taskId, deadline, initialSubmission }: TaskFormFileProps) {
-  const { submission, loading, submitFile, updateFile, remove } = useSubmission(taskId, initialSubmission);
+export default function TaskFormFile({ taskId, projectId, deadline, initialSubmission }: TaskFormFileProps) {
+  const { submission, loading, submitFile, updateFile, remove } = useSubmission(taskId, initialSubmission, projectId);
   const [files, setFiles] = useState<File[]>([]);
   const [isDragActive, setIsDragActive] = useState(false);
   const [isEditing, setIsEditing] = useState(false);

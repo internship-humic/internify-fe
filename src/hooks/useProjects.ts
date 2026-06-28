@@ -24,6 +24,7 @@ import {
   getProjectMembers,
   removeMember
 } from "../services/ProjectService";
+import { useMemo } from "react";
 
 // GET /project-api/get
 export const useProjects = (status?: "active" | "completed" | "archived") => {
@@ -136,14 +137,17 @@ export const useAllInterns = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const refetch = useCallback(() => {
+    setLoading(true);
     getAllInterns()
       .then(setInterns)
       .catch(() => setError("Gagal memuat data interns."))
       .finally(() => setLoading(false));
   }, []);
 
-  return { interns, loading, error };
+  useEffect(() => { refetch(); }, [refetch]);
+
+  return { interns, loading, error, refetch };
 };
 
 // POST /project-api/add
@@ -165,6 +169,17 @@ export const useCreateProject = () => {
   };
 
   return { create, loading, error };
+};
+
+export const useProjectMyTasks = (projectId: number) => {
+  const { tasks, loading, error } = useMyTasks();
+
+  const projectTasks = useMemo<InternTaskItem[]>(() => {
+    if (!projectId || !tasks.length) return [];
+    return tasks.filter(task => task.id_project === projectId);
+  }, [tasks, projectId]);
+
+  return { tasks: projectTasks, loading, error };
 };
 
 // PATCH /project-api/update/{id}

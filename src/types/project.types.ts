@@ -24,6 +24,7 @@ export interface Project {
   status: ProjectStatus;
   admin: ProjectAdmin;
   total_members: number;
+  task_done: number;
   total_tasks: number;
   created_at: string;
   updated_at: string;

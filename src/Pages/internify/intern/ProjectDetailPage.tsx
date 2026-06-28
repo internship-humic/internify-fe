@@ -8,8 +8,10 @@ export default function ProjectDetailPage() {
   const { slug } = useParams<{ slug: string }>(); 
   const { project, loading, error } = useProjectDetail(slug ?? "");
   const [activeTab, setActiveTab] = useState<'forum' | 'participants'>('forum');
+
   if (loading) return <p className="p-10 text-gray-400">Memuat project...</p>;
   if (error)   return <p className="p-10 text-red-500">{error}</p>;
+  
   if (!project) return <p className="p-10 text-gray-400">Project tidak ditemukan.</p>;
 
   const tabClass = (tab: string) =>

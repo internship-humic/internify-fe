@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import { X } from "lucide-react";
-import { PROJECT_ICON_MAP, PROJECT_ICON_CODES } from "../../..//../lib/ProjectIcons";
+import { PROJECT_ICON_MAP, PROJECT_ICON_CODES } from "../../../../lib/ProjectIcons";
 import { LuSendHorizontal, LuMail } from "react-icons/lu";
 import { useCreateProject } from "../../../../hooks/useProjects";
 

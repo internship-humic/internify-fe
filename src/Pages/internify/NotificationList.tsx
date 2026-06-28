@@ -90,7 +90,8 @@ export default function NotificationList() {
           {/* Actions */}
           {type === "new-task" && !isOld && (
             <div className="flex items-center gap-2 pt-3">
-              <button className="px-4 py-1.5 bg-[#B30000] hover:bg-[#990000] text-white text-xs font-bold rounded-lg shadow-sm transition-colors">
+              <button 
+                className="px-4 py-1.5 bg-[#B30000] hover:bg-[#990000] text-white text-xs font-bold rounded-lg shadow-sm transition-colors">
                 View Task
               </button>
               <button className="px-4 py-1.5 border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 text-xs font-semibold rounded-lg transition-colors">

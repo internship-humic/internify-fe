@@ -1,8 +1,11 @@
-import { Award } from "lucide-react";
-import { history, type CertificateHistory } from "../../../lib/mockSertificates";
+import { Award, Loader2, AlertCircle } from "lucide-react";
+import { useMyCertificates } from "../../../hooks/useSertificates";
+import type { Certificate } from "../../../types/certificate.types";
 import certificateImg from "../../../assets/certificate.png";
 
 export default function SertificateList() {
+    const { certificates, loading, error } = useMyCertificates();
+
     return (
         <div>
             {/* Header */}
@@ -11,15 +14,33 @@ export default function SertificateList() {
                 <p className="page-title-desc">All your earned internship certificates</p>
             </div>
 
-            {/* Grid */}
-            {history.length === 0 ? (
+            {/* Loading */}
+            {loading && (
+                <div className="flex items-center justify-center py-20 text-gray-400 gap-2">
+                    <Loader2 className="w-6 h-6 animate-spin" />
+                    <span className="text-sm">Loading certificates...</span>
+                </div>
+            )}
+
+            {/* Error */}
+            {error && !loading && (
+                <div className="flex items-center justify-center py-20 text-red-500 gap-2">
+                    <AlertCircle className="w-6 h-6" />
+                    <span className="text-sm">{error}</span>
+                </div>
+            )}
+
+            {/* Empty */}
+            {!loading && !error && certificates.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-                    <Award className="w-12 h-12 mb-3 opacity-40" />
                     <p className="text-sm">No certificates yet.</p>
                 </div>
-            ) : (
+            )}
+
+            {/* Grid */}
+            {!loading && !error && certificates.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {history.map((item: CertificateHistory) => (
+                    {certificates.map((item: Certificate) => (
                         <div
                             key={item.id}
                             className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer group"
@@ -29,7 +50,7 @@ export default function SertificateList() {
                                 <div className="rounded-lg overflow-hidden">
                                     <img
                                         src={certificateImg}
-                                        alt={item.title}
+                                        alt={item.project.project_name}
                                         className="w-full h-[160px] object-cover"
                                     />
                                 </div>
@@ -37,9 +58,18 @@ export default function SertificateList() {
 
                             {/* Info */}
                             <div className="px-4 py-3">
-                                <p className="text-xs text-gray-400 mb-0.5">{item.month}</p>
-                                <p className="text-sm font-semibold text-gray-800 leading-snug">{item.title}</p>
-                                <p className="text-xs text-gray-500 mt-1">Grade: <span className="font-bold text-red-600">{item.grade}</span></p>
+                                <p className="text-xs text-gray-400 mb-0.5">
+                                    {new Date(item.issued_at).toLocaleDateString("id-ID", {
+                                        year: "numeric",
+                                        month: "long",
+                                    })}
+                                </p>
+                                <p className="text-sm font-semibold text-gray-800 leading-snug">
+                                    {item.project.project_name}
+                                </p>
+                                <p className="text-xs text-gray-500 mt-1">
+                                    No: <span className="font-bold text-red-600">{item.certificate_no}</span>
+                                </p>
                             </div>
                         </div>
                     ))}

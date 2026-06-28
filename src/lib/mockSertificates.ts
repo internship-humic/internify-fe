@@ -24,7 +24,7 @@ export interface CertificateData {
 }
 
 export const certificateData: CertificateData = {
-  isReceived: true,
+  isReceived: false,
   projectProgress: 90,
   remainingTasks: 0,
   certificate: {

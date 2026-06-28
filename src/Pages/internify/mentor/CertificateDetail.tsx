@@ -9,7 +9,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
-  ArrowLeft,
 } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -67,7 +66,6 @@ function Avatar({ initials }: { initials: string }) {
   );
 }
 
-// ─── Progress Bar ─────────────────────────────────────────────────────────────
 function ProgressBar({ value, total }: { value: number; total: number }) {
   const pct = Math.round((value / total) * 100);
   const isComplete = value === total;
@@ -86,7 +84,6 @@ function ProgressBar({ value, total }: { value: number; total: number }) {
   );
 }
 
-// ─── Status Badge ─────────────────────────────────────────────────────────────
 function StatusBadge({ status }: { status: InternStatus }) {
   const isEligible = status === "ELIGIBLE";
   return (
@@ -99,7 +96,6 @@ function StatusBadge({ status }: { status: InternStatus }) {
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
 export default function CertificateDetail() {
   const navigate = useNavigate();
 
@@ -135,26 +131,14 @@ export default function CertificateDetail() {
 
   return (
     <div>
-      {/* Breadcrumb */}
-      <div
-        className="mb-1 text-xs font-medium text-[#B30000] cursor-pointer w-fit"
-        onClick={() => navigate("/mentor/certificates/all")}
-      >
-        Certificates &rsaquo;
-      </div>
-
-      {/* Page Header */}
       <div className="mb-6">
         <h1 className="page-title">Certificates</h1>
         <p className="page-title-desc">
           Administrate, issue, and track professional certifications for all interns.
         </p>
       </div>
-
-      {/* ── Two-column layout ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
 
-        {/* ── LEFT: Project Info ── */}
         <div className="space-y-5">
           {/* Status badge */}
           <div className="flex items-center gap-1.5 text-xs font-extrabold text-green-600 tracking-wide">
@@ -162,18 +146,15 @@ export default function CertificateDetail() {
             COMPLETED
           </div>
 
-          {/* Title */}
           <h2 className="text-3xl font-extrabold text-gray-900 leading-tight">
             {mockProject.title}
           </h2>
 
-          {/* Period */}
           <div className="flex items-center gap-2 text-sm text-gray-400 font-medium">
             <CalendarDays className="w-4 h-4 flex-shrink-0" />
             {mockProject.period}
           </div>
 
-          {/* Project Scope */}
           <div className="border border-gray-200 rounded-xl p-5">
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">
               Project Scope
@@ -183,7 +164,6 @@ export default function CertificateDetail() {
             </p>
           </div>
 
-          {/* Stats: Total & Eligible */}
           <div className="grid grid-cols-2 gap-4">
             <div className="border border-gray-200 rounded-xl p-4">
               <p className="text-2xl font-extrabold text-[#B30000]">{mockProject.totalInterns}</p>
@@ -196,10 +176,8 @@ export default function CertificateDetail() {
           </div>
         </div>
 
-        {/* ── RIGHT: Intern Roster ── */}
         <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white shadow-sm">
 
-          {/* Roster Header */}
           <div className="flex items-start justify-between px-5 py-4 border-b border-gray-100">
             <div>
               <h3 className="text-base font-bold text-gray-900">Intern Roster</h3>
@@ -207,7 +185,6 @@ export default function CertificateDetail() {
                 Confirm completion status before final certificate generation.
               </p>
             </div>
-            {/* Select All button */}
             <button
               onClick={toggleSelectAll}
               className="flex items-center gap-2 border border-gray-200 rounded-xl px-4 py-2.5 bg-white hover:bg-gray-50 transition-colors flex-shrink-0 ml-4"
@@ -340,14 +317,7 @@ export default function CertificateDetail() {
       </div>
 
       {/* ── Bottom Action Bar ── */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t border-gray-100">
-        <button
-          onClick={() => navigate("/mentor/certificates/all")}
-          className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-gray-700 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Project Selection
-        </button>
+      <div className="flex flex-col sm:flex-row items-center justify-end gap-4 mt-6 pt-4">
         <button
           onClick={() => navigate("/mentor/certificates/result")}
           className="flex items-center gap-2 px-8 py-3.5 bg-[#B30000] hover:bg-[#990000] text-white font-bold text-sm rounded-xl shadow-md transition-colors"

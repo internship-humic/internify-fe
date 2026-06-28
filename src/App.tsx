@@ -50,6 +50,7 @@ import SettingsPage from "./Pages/Internify/mentor/MentorSettingsPage";
 import ProtectedRoutes from "./Pages/utils/ProtectedRoute";
 import CertificateDetail from "./Pages/Internify/mentor/CertificateDetail";
 import CertificateResult from "./Pages/Internify/mentor/CertificateGenerate";
+import NotFoundPage from "./Pages/NotFoundPage";
 
 function App() {
   return (
@@ -111,7 +112,7 @@ function App() {
             <Route index element={<HomeMentorPage />} />
             <Route path="projects" element={<MentorProjectsPage />} />
             <Route path="certificates" element={<MentorCertificatePage />} />
-            <Route path="certificates/:id" element={<CertificateDetail />} />
+            <Route path="certificates/:name" element={<CertificateDetail />} />
             <Route path="certificates/result" element={<CertificateResult />} />
             <Route path="intern" element={<MentorInternPage />} />
             <Route path="projects/:slug" element={<MentorDetailProject />} />
@@ -122,6 +123,9 @@ function App() {
             <Route path="settings" element={<SettingsPage />} />
           </Route>
         </Route>
+
+        {/* 404 catch-all */}
+        <Route path="*" element={<NotFoundPage />} />
 
       </Routes>
     </Router>
