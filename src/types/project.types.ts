@@ -1,4 +1,4 @@
-// types/project.types.ts
+import type { ProjectTask } from "./task.types";
 
 export type ProjectStatus = "active" | "completed" | "archived";
 export type MemberStatus = "active" | "inactive";
@@ -33,6 +33,7 @@ export interface Project {
 // Detail project (includes members array)
 export interface ProjectDetail extends Project {
   members: ProjectMember[];
+  tasks: ProjectTask[];
 }
 
 // Response GET /project-api/my-tasks

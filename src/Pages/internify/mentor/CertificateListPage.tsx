@@ -23,7 +23,7 @@ export default function CertificateList() {
 
       {/* Section: List Projects */}
       <div>
-        <h2 className="text-base font-bold text-gray-900 mb-4">List Projects</h2>
+        <h2 className="text-base font-bold text-font-shade mb-4">List Projects</h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {projects.map((project) => (

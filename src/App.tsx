@@ -31,7 +31,7 @@ import EditLowongan from "./Pages/EditLowongan";
 import HomeInternPage from "./Pages/Internify/intern/HomeInternPage";
 import { InternLayout, MentorLayout } from "./Pages/Internify/layout";
 import ProjectsPage from "./Pages/Internify/intern/ProjectsPage";
-import SertificatePage from "./Pages/Internify/intern/SertificatePage";
+import SertificatePage from "./Pages/Internify/intern/InternClaimCert";
 import ProjectDetailPage from "./Pages/Internify/intern/ProjectDetailPage";
 import HomeMentorPage from "./Pages/Internify/mentor/HomeMentorPage";
 import MentorProjectsPage from "./Pages/Internify/mentor/BaseProjectsPage";
@@ -44,12 +44,12 @@ import NotificationList from "./Pages/Internify/NotificationList";
 import SettingsContent from "./Pages/Internify/SettingsPage";
 import MentorSettingsPage from "./Pages/Internify/mentor/MentorSettingsPage";
 import TaskSubmission from "./Pages/Internify/intern/TaskSubmission";
-import SertificateList from "./Pages/Internify/intern/SertificateList";
+import SertificateList from "./Pages/Internify/intern/InternCertList";
 import MentorProjectsDetailPage from "./Pages/Internify/mentor/MentorProjectDetailPage";
 import ViewInternSubmission from "./Pages/Internify/mentor/ViewInternSubmission";
 import ProtectedRoutes from "./Pages/utils/ProtectedRoute";
-import CertificateDetail from "./Pages/Internify/mentor/CertificateDetail";
-import CertificateResult from "./Pages/Internify/mentor/CertificateGenerate";
+import CertificateDetail from "./Pages/Internify/mentor/CertificateForm";
+import CertificateResult from "./Pages/Internify/mentor/CertificateResult";
 import NotFoundPage from "./Pages/NotFoundPage";
 
 function App() {
@@ -112,7 +112,7 @@ function App() {
             <Route index element={<HomeMentorPage />} />
             <Route path="projects" element={<MentorProjectsPage />} />
             <Route path="certificates" element={<MentorCertificatePage />} />
-            <Route path="certificates/:name" element={<CertificateDetail />} />
+            <Route path="certificates/:slug" element={<CertificateDetail />} />
             <Route path="certificates/result" element={<CertificateResult />} />
             <Route path="intern" element={<MentorInternPage />} />
             <Route path="projects/:slug" element={<MentorDetailProject />} />

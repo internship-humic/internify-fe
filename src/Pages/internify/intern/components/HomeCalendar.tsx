@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useMyTasks } from '../../../../hooks/useProjects';
-import api from '../../../../lib/api';
 import { useCurrentUser } from '../../../../hooks/useUser';
 import { useAllMentorTasks } from '../../../../hooks/useTasks';
 

@@ -1,15 +1,29 @@
 import { useMemo } from "react";
 import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import CertificateAvailable from "./components/CertificateAvailabe";
 import CertificateNotAvailable from "./components/CertificateNotAvailable";
 import SertificateHistory from "./components/CertificateHistory";
 import { useMyCertificates } from "../../../hooks/useSertificates";
 import { useProjectDetail } from "../../../hooks/useProjects";
+import type { Project } from "../../../types/project.types";
 
 const SertificatePage = () => {
   const { slug } = useParams<{ slug: string }>();
-  const { project, loading: projectLoading } = useProjectDetail(slug ?? "");
+  const location = useLocation();
+  const projectFromList = location.state?.project as Project | undefined;
+
+  const { project: projectDetail, loading: projectLoading } = useProjectDetail(slug ?? "");
   const { certificates, loading: certLoading } = useMyCertificates();
+
+  const project = useMemo(() => {
+    if (!projectDetail) return null;
+    return {
+      ...projectDetail,
+      task_done: projectFromList?.task_done ?? 0,
+      total_tasks: projectFromList?.total_tasks ?? projectDetail.total_tasks,
+    };
+  }, [projectDetail, projectFromList]);
 
   const allTasksDone = !projectLoading && !!project && project.task_done >= project.total_tasks;
 
@@ -35,7 +49,7 @@ const SertificatePage = () => {
       </div>
     );
   }
-
+  
   return (
     <div>
       <div className="mb-4 flex flex-col gap-1">

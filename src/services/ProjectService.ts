@@ -53,7 +53,8 @@ export const getProjectById = async (
 ): Promise<ProjectDetail> => {
   const res = await api.get(`/project-api/get/${id}`);
   const raw = res.data.data;
-
+  console.log("raw fields:", Object.keys(raw));
+console.log("raw full:", raw);
   return {
     ...raw,
     members: raw.members.map((m: any) => ({

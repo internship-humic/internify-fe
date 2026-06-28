@@ -4,7 +4,11 @@ import * as LucideIcons from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
 import type { Project } from '../../../../types/project.types';
 
-
+const getDynamicIcon = (iconName: string) => {
+        const formatted = iconName.charAt(0).toUpperCase() + iconName.slice(1);
+        const Icon = (LucideIcons as unknown as Record<string, React.ComponentType<LucideProps>>)[formatted];
+        return Icon ?? LucideIcons.FolderOpen;
+    };
 
 const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
 

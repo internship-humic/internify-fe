@@ -7,7 +7,8 @@ import { useCurrentUser } from "../hooks/useUser";
  *  "Andi Mahesa"        → "AM"
  *  "Andi Bayu Cendika"  → "AC"  (huruf pertama + huruf pertama kata terakhir)
  */
-function getInitials(fullName: string): string {
+function getInitials(fullName: string | undefined | null): string {
+  if (!fullName) return "U";
   const parts = fullName.trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) return "U";
   if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
@@ -22,7 +23,7 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
   const settingsPath =
     user?.role === "intern" ? "/intern/settings" : "/mentor/settings";
 
-  const initials = user ? getInitials(user.full_name) : "U";
+  const initials = user?.full_name ? getInitials(user.full_name) : "U";
   const hasPhoto = !!user?.profile_picture;
 
   return (

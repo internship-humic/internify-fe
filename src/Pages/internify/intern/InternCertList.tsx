@@ -2,10 +2,19 @@ import { Loader2, AlertCircle } from "lucide-react";
 import { useMyProjects } from "../../../hooks/useProjects";
 import type { Project } from "../../../types/project.types";
 import { useNavigate } from "react-router-dom";
+import * as LucideIcons from 'lucide-react';
+import type { LucideProps } from 'lucide-react';
+
 
 export default function SertificateList() {
     const { projects, loading, error } = useMyProjects();
     const navigate = useNavigate();
+
+    const getDynamicIcon = (iconName: string) => {
+        const formatted = iconName.charAt(0).toUpperCase() + iconName.slice(1);
+        const Icon = (LucideIcons as unknown as Record<string, React.ComponentType<LucideProps>>)[formatted];
+        return Icon ?? LucideIcons.FolderOpen;
+    };
     return (
         <div>
             {/* Header */}
@@ -44,17 +53,16 @@ export default function SertificateList() {
                         <div
                             key={item.id}
                             className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer group"
-                            onClick={() => navigate(`/intern/certificates/${item.slug}`)}
+                            onClick={() => navigate(`/intern/certificates/${item.slug}`, { state: { project: item } })}
                         >
                             {/* Thumbnail */}
                             <div className="p-6 pb-0">
                                 <div className="rounded-lg overflow-hidden">
                                     <div className="w-full h-32 bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center">
-                                        <img
-                                            src={item.project_icon}
-                                            alt={item.project_name}
-                                            className="w-16 h-16 object-contain"
-                                        />
+                                        {(() => {
+                                            const Icon = getDynamicIcon(item.project_icon);
+                                            return <Icon className="w-10 h-10 text-white" />;
+                                        })()}
                                     </div>
                                 </div>
                             </div>
@@ -65,15 +73,13 @@ export default function SertificateList() {
                                     {new Date(item.start_date).toLocaleDateString("id-ID", {
                                         year: "numeric",
                                         month: "long",
-                                    })}
-                                    until
-                                    {new Date(item.start_date).toLocaleDateString("id-ID", {
+                                    })} until  {new Date(item.end_date).toLocaleDateString("id-ID", {
                                         year: "numeric",
                                         month: "long",
                                     })}
                                 </p>
                                 <p className="text-sm font-semibold text-gray-800 leading-snug">
-                                    {item.end_date}
+                                    {item.project_name}
                                 </p>
                                 <p className="text-xs text-gray-500 mt-1">
                                     No: <span className="font-bold text-red-600">{item.status}</span>
