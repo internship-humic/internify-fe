@@ -1,11 +1,11 @@
-import { Award, Loader2, AlertCircle } from "lucide-react";
-import { useMyCertificates } from "../../../hooks/useSertificates";
-import type { Certificate } from "../../../types/certificate.types";
-import certificateImg from "../../../assets/certificate.png";
+import { Loader2, AlertCircle } from "lucide-react";
+import { useMyProjects } from "../../../hooks/useProjects";
+import type { Project } from "../../../types/project.types";
+import { useNavigate } from "react-router-dom";
 
 export default function SertificateList() {
-    const { certificates, loading, error } = useMyCertificates();
-
+    const { projects, loading, error } = useMyProjects();
+    const navigate = useNavigate();
     return (
         <div>
             {/* Header */}
@@ -31,44 +31,52 @@ export default function SertificateList() {
             )}
 
             {/* Empty */}
-            {!loading && !error && certificates.length === 0 && (
+            {!loading && !error && projects.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-                    <p className="text-sm">No certificates yet.</p>
+                    <p className="text-sm">No ongoing projects yet.</p>
                 </div>
             )}
 
             {/* Grid */}
-            {!loading && !error && certificates.length > 0 && (
+            {!loading && !error && projects.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {certificates.map((item: Certificate) => (
+                    {projects.map((item: Project) => (
                         <div
                             key={item.id}
                             className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer group"
+                            onClick={() => navigate(`/intern/certificates/${item.slug}`)}
                         >
                             {/* Thumbnail */}
                             <div className="p-6 pb-0">
                                 <div className="rounded-lg overflow-hidden">
-                                    <img
-                                        src={certificateImg}
-                                        alt={item.project.project_name}
-                                        className="w-full h-[160px] object-cover"
-                                    />
+                                    <div className="w-full h-32 bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center">
+                                        <img
+                                            src={item.project_icon}
+                                            alt={item.project_name}
+                                            className="w-16 h-16 object-contain"
+                                        />
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Info */}
                             <div className="px-4 py-3">
                                 <p className="text-xs text-gray-400 mb-0.5">
-                                    {new Date(item.issued_at).toLocaleDateString("id-ID", {
+                                    {new Date(item.start_date).toLocaleDateString("id-ID", {
+                                        year: "numeric",
+                                        month: "long",
+                                    })}
+                                    until
+                                    {new Date(item.start_date).toLocaleDateString("id-ID", {
                                         year: "numeric",
                                         month: "long",
                                     })}
                                 </p>
                                 <p className="text-sm font-semibold text-gray-800 leading-snug">
-                                    {item.project.project_name}
+                                    {item.end_date}
                                 </p>
                                 <p className="text-xs text-gray-500 mt-1">
-                                    No: <span className="font-bold text-red-600">{item.certificate_no}</span>
+                                    No: <span className="font-bold text-red-600">{item.status}</span>
                                 </p>
                             </div>
                         </div>

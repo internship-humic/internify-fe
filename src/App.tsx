@@ -42,11 +42,11 @@ import InternifyLogin from "./Pages/Internify/LoginInternify"
 import FAQPage from "./Pages/Internify/FAQpage";
 import NotificationList from "./Pages/Internify/NotificationList";
 import SettingsContent from "./Pages/Internify/SettingsPage";
+import MentorSettingsPage from "./Pages/Internify/mentor/MentorSettingsPage";
 import TaskSubmission from "./Pages/Internify/intern/TaskSubmission";
 import SertificateList from "./Pages/Internify/intern/SertificateList";
 import MentorProjectsDetailPage from "./Pages/Internify/mentor/MentorProjectDetailPage";
 import ViewInternSubmission from "./Pages/Internify/mentor/ViewInternSubmission";
-import SettingsPage from "./Pages/Internify/mentor/MentorSettingsPage";
 import ProtectedRoutes from "./Pages/utils/ProtectedRoute";
 import CertificateDetail from "./Pages/Internify/mentor/CertificateDetail";
 import CertificateResult from "./Pages/Internify/mentor/CertificateGenerate";
@@ -96,8 +96,8 @@ function App() {
           <Route path="/intern" element={<InternLayout />}>
             <Route index element={<HomeInternPage />} />
             <Route path="projects" element={<ProjectsPage />} />
-            <Route path="certificates" element={<SertificatePage />} />
-            <Route path="certificates/all" element={<SertificateList />} />
+            <Route path="certificates" element={<SertificateList />} />
+            <Route path="certificates/:slug" element={<SertificatePage />} />
             <Route path="projects/:slug" element={<ProjectDetailPage />} />
             <Route path="projects/:slug/:taskSlug" element={<TaskSubmission />} />
             <Route path="faq" element={<FAQPage />} />
@@ -106,8 +106,8 @@ function App() {
           </Route>
         </Route>
 
-        {/* Mentor only */}
-        <Route element={<ProtectedRoutes allowedRoles={["admin"]} />}>
+        {/* Mentor/Admin only */}
+        <Route element={<ProtectedRoutes allowedRoles={["admin", "mentor"]} />}>
           <Route path="/mentor" element={<MentorLayout />}>
             <Route index element={<HomeMentorPage />} />
             <Route path="projects" element={<MentorProjectsPage />} />
@@ -120,7 +120,7 @@ function App() {
             <Route path="projects/:slug/:taskSlug/:nameIntern" element={<ViewInternSubmission />} />
             <Route path="faq" element={<FAQPage />} />
             <Route path="notifications" element={<NotificationList />} />
-            <Route path="settings" element={<SettingsPage />} />
+            <Route path="settings" element={<MentorSettingsPage />} />
           </Route>
         </Route>
 

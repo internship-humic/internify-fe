@@ -1,36 +1,26 @@
 import { useState, useEffect } from "react";
-import api from "../../lib/api";
+import { useCurrentUser, useUpdateProfile } from "../../hooks/useUser";
 
 export default function SettingsContent() {
+  const { user, loading } = useCurrentUser();
+  const { save, loading: saving, error: errorMsg, successMsg } = useUpdateProfile();
+
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
-    bio: ""
+    bio: "",
   });
 
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [successMsg, setSuccessMsg] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
-
+  // Sync form data when user is loaded
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await api.patch("/auth-api/update-profile");
-        const data = response.data.data;
-        setFormData({
-          fullName: data.full_name || "",
-          email: data.email || "",
-          bio: data.professional_bio || "",
-        });
-      } catch (err) {
-        console.error("Failed to fetch profile:", err)
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+    if (user) {
+      setFormData({
+        fullName: user.full_name || "",
+        email: user.email || "",
+        bio: user.professional_bio || "",
+      });
+    }
+  }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -39,25 +29,14 @@ export default function SettingsContent() {
 
   const handleSaveChanges = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSuccessMsg("");
-    setErrorMsg("");
-    setSaving(true);
-
-    try {
-      await api.patch("/auth-api/update-profile", {
-        full_name: formData.fullName,
-        email: formData.email,
-        professional_bio: formData.bio,
-      });
-      setSuccessMsg("Profile updated successfully!");
-    } catch (err: any) {
-      setErrorMsg(err?.response?.data?.message || "Failed to save changes.");
-    } finally {
-      setSaving(false);
-    }
+    await save({
+      full_name: formData.fullName,
+      email: formData.email,
+      professional_bio: formData.bio,
+    });
   };
 
-  const initialLetter = formData.fullName ? formData.fullName.charAt(1).toUpperCase() : "U";
+  const initialLetter = formData.fullName ? formData.fullName.charAt(0).toUpperCase() : "U";
 
   if (loading) {
     return (

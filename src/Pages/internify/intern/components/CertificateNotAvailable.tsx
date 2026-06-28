@@ -1,19 +1,15 @@
-import { Lock, Award, Loader2 } from "lucide-react";
+import { Clock, Lock, Award } from "lucide-react";
 
 interface CertificateNotAvailableProps {
   progress: number;
   remainingTasks: number;
   allTasksDone?: boolean;
-  onClaim?: () => void;
-  claiming?: boolean;
 }
 
 export default function CertificateNotAvailable({
   progress,
   remainingTasks,
   allTasksDone = false,
-  onClaim,
-  claiming = false,
 }: CertificateNotAvailableProps) {
   return (
     <div className="bg-box-primary w-full h-full rounded-2xl border border-box-border shadow-sm px-24 py-12 flex flex-col items-center justify-center">
@@ -27,9 +23,9 @@ export default function CertificateNotAvailable({
               <Lock className="w-12 h-12 text-red-700" />
             )}
           </div>
-          {/* <div className="absolute -bottom-2 -right-2 w-7 h-7 bg-amber-500 rounded- flex items-center justify-center shadow-md">
+          <div className="absolute -bottom-2 -right-2 w-7 h-7 bg-amber-500 rounded- flex items-center justify-center shadow-md">
             <Clock className="w-4 h-4 text-yellow-800" />
-          </div> */}
+          </div>
         </div>
       </div>
 
@@ -50,27 +46,8 @@ export default function CertificateNotAvailable({
             <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
               <div className="h-full bg-green-500 rounded-full transition-all duration-700 w-full" />
             </div>
-            <p className="text-xs text-gray-400 mt-2 text-left">Semua tugas telah diselesaikan!</p>
+            <p className="text-xs text-gray-400 mt-2 text-left">Semua tugas telah diselesaikan! Silahkan tunggu untuk mendapatkan sertifikat</p>
           </div>
-
-          {/* Tombol Claim */}
-          <button
-            onClick={onClaim}
-            disabled={claiming}
-            className="flex items-center justify-center gap-2 px-8 py-3 bg-red-700 hover:bg-red-800 disabled:opacity-60 active:scale-95 transition-all text-white font-semibold rounded-xl text-sm"
-          >
-            {claiming ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Mengklaim...
-              </>
-            ) : (
-              <>
-                <Award className="w-4 h-4" />
-                Claim Certificate
-              </>
-            )}
-          </button>
         </>
       ) : (
         <>

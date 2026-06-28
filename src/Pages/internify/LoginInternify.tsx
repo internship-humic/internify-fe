@@ -2,7 +2,7 @@ import { useState } from "react";
 import logo from "../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import api from "../../lib/api";
+import { useLogin } from "../../hooks/useUser";
 
 const decodeJWT = (token: string) => {
   try {
@@ -19,42 +19,32 @@ export default function InternifyLogin() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
+
+    const { login, loading, error, setError } = useLogin();
 
     const handleSignIn = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError("");
+        setError(null);
 
         if (!email || !password) {
             setError("Email dan password wajib diisi.");
             return;
         }
 
-        try {
-            setLoading(true);
-            const response = await api.post("/auth-api/login", { email, password });
-            console.log(response.data.data)
-            const { token } = response.data.data;
-            document.cookie = `token=${token}; path=/; SameSite=Strict`;
-            
-            const decoded = decodeJWT(token);
-            const role = decoded?.role;
-            if (role === "intern") {
-                navigate("/intern");
-            } else if (role === "mentor" || role === "admin") {
-                navigate("/mentor");
-            } else {
-                setError("Role user tidak dikenali.");
-            }
-        } catch (err: any) {
-            if (err.response?.status === 401 || err.response?.status === 400) {
-                setError("Email atau password salah.");
-            } else {
-                setError("Terjadi kesalahan. Coba beberapa saat lagi.");
-            }
-        } finally {
-            setLoading(false);
+        const data = await login(email, password);
+        if (!data) return;
+
+        const { token } = data;
+        document.cookie = `token=${token}; path=/; SameSite=Strict`;
+
+        const decoded = decodeJWT(token);
+        const role = decoded?.role;
+        if (role === "intern") {
+            navigate("/intern");
+        } else if (role === "mentor" || role === "admin") {
+            navigate("/mentor");
+        } else {
+            setError("Role user tidak dikenali.");
         }
     };
 
@@ -130,7 +120,7 @@ export default function InternifyLogin() {
                             disabled={loading}
                             className="w-full bg-[#B30000] hover:bg-[#990000] text-white font-medium text-sm py-2.5 rounded-lg transition-colors shadow-sm mt-2"
                         >
-                            Sign In
+                            {loading ? "Signing in..." : "Sign In"}
                         </button>
                     </form>
 

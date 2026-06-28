@@ -67,7 +67,7 @@ export const useProjectDetail = (id: string) => {
 
 //Khusus Ambil Intern dari Project/{id}
 export const useProjectInterns = (projectId: string) => {
-  const [interns, setInterns] = useState<ProjectMember[]>([] );
+  const [interns, setInterns] = useState<ProjectMember[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -89,30 +89,35 @@ export const useMyProjects = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const refetch = useCallback(() => {
+    setLoading(true);
     getMyProjects()
       .then(setProjects)
       .catch(() => setError("Gagal memuat my projects."))
       .finally(() => setLoading(false));
   }, []);
 
-  return { projects, loading, error };
-};
+  useEffect(() => { refetch(); }, [refetch]);
 
+  return { projects, loading, error, refetch };
+};
 // GET /project-api/my-tasks
 export const useMyTasks = () => {
   const [tasks, setTasks] = useState<InternTaskItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const refetch = useCallback(() => {
+    setLoading(true);
     getMyTasks()
       .then(setTasks)
       .catch(() => setError("Gagal memuat tasks."))
       .finally(() => setLoading(false));
   }, []);
 
-  return { tasks, loading, error };
+  useEffect(() => { refetch(); }, [refetch]);
+
+  return { tasks, loading, error, refetch };
 };
 
 // GET /project-api/mentor-projects
@@ -121,14 +126,17 @@ export const useMentorProjects = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const refetch = useCallback(() => {
+    setLoading(true);
     getMentorProjects()
       .then(setProjects)
       .catch(() => setError("Gagal memuat mentor projects."))
       .finally(() => setLoading(false));
   }, []);
 
-  return { projects, loading, error };
+  useEffect(() => { refetch(); }, [refetch]);
+
+  return { projects, loading, error, refetch };
 };
 
 // GET /project-api/interns

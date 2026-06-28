@@ -18,30 +18,35 @@ export const useMyCertificates = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const refetch = useCallback(() => {
+    setLoading(true);
     getMyCertificates()
       .then(setCertificates)
       .catch(() => setError("Gagal memuat sertifikat."))
       .finally(() => setLoading(false));
   }, []);
 
-  return { certificates, loading, error };
-};
+  useEffect(() => { refetch(); }, [refetch]);
 
+  return { certificates, loading, error, refetch };
+};
 // GET /certificate-api/all
 export const useAllCertificates = () => {
   const [certificates, setCertificates] = useState<Certificate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const refetch = useCallback(() => {
+    setLoading(true);
     getAllCertificates()
       .then(setCertificates)
       .catch(() => setError("Gagal memuat semua sertifikat."))
       .finally(() => setLoading(false));
   }, []);
 
-  return { certificates, loading, error };
+  useEffect(() => { refetch(); }, [refetch]);
+
+  return { certificates, loading, error, refetch };
 };
 
 // GET /certificate-api/detail/{id}
@@ -67,15 +72,18 @@ export const useProjectCertificates = (id_project: number) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const refetch = useCallback(() => {
     if (!id_project) return;
+    setLoading(true);
     getCertificatesByProject(id_project)
       .then(setCertificates)
       .catch(() => setError("Gagal memuat sertifikat project."))
       .finally(() => setLoading(false));
   }, [id_project]);
 
-  return { certificates, loading, error };
+  useEffect(() => { refetch(); }, [refetch]);
+
+  return { certificates, loading, error, refetch };
 };
 
 // GET /certificate-api/verify & verify-uuid (public, on-demand)

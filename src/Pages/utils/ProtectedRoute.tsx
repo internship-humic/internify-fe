@@ -1,7 +1,7 @@
 import { Outlet, Navigate } from "react-router-dom";
 
 interface PrivateRouteProps {
-  allowedRoles?: ("intern" | "admin")[];
+  allowedRoles?: ("intern" | "admin" | "mentor")[];
 }
 
 const decodeJWT = (token: string) => {
@@ -32,7 +32,7 @@ const ProtectedRoutes = ({ allowedRoles }: PrivateRouteProps) => {
   }
 
   const decoded = decodeJWT(token);
-  const userRole = decoded?.role as"intern" | "admin" | undefined;
+  const userRole = decoded?.role as "intern" | "admin" | "mentor" | undefined;
 
   if (!userRole) {
     return <Navigate to="/login-internify" replace />;
@@ -40,7 +40,7 @@ const ProtectedRoutes = ({ allowedRoles }: PrivateRouteProps) => {
 
   if (allowedRoles && !allowedRoles.includes(userRole)) {
     // Jika role tidak diizinkan, kembalikan ke base dashboard masing-masing role
-    if (userRole === "admin") return <Navigate to="/mentor" replace />;
+    if (userRole === "admin" || userRole === "mentor") return <Navigate to="/mentor" replace />;
     if (userRole === "intern") return <Navigate to="/intern" replace />;
   }
 

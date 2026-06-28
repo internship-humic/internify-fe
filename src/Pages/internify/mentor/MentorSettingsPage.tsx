@@ -1,30 +1,44 @@
-import { useState, useRef } from "react";
-
-const mockProfileData = {
-  fullName: "JonathanKristina",
-  email: "JonathanKristina@gmail.com",
-  bio: "UIUX holic"
-};
+import { useState, useRef, useEffect } from "react";
+import { useCurrentUser, useUpdateProfile } from "../../../hooks/useUser";
 
 export default function MentorSettingsPage() {
-  const [formData, setFormData] = useState(mockProfileData);
+  const { user, loading: userLoading } = useCurrentUser();
+  const { save, loading: saving, error: errorMsg, successMsg } = useUpdateProfile();
+
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    bio: "",
+  });
+
+  // File state untuk profile_picture
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Sync form data ketika user sudah di-fetch
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        fullName: user.full_name || "",
+        email: user.email || "",
+        bio: user.professional_bio || "",
+      });
+      if (user.profile_picture) {
+        setPhotoPreview(user.profile_picture);
+      }
+    }
+  }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSaveChanges = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert("Changes saved successfully!");
-    console.log("Saved Data:", formData);
-  };
-
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setPhotoFile(file);
       const reader = new FileReader();
       reader.onloadend = () => setPhotoPreview(reader.result as string);
       reader.readAsDataURL(file);
@@ -32,11 +46,34 @@ export default function MentorSettingsPage() {
   };
 
   const handleRemovePhoto = () => {
+    setPhotoFile(null);
     setPhotoPreview(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  const handleSaveChanges = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await save({
+      full_name: formData.fullName,
+      email: formData.email,
+      professional_bio: formData.bio,
+      ...(photoFile ? { profile_picture: photoFile } : {}),
+    });
+    // Reset file state setelah berhasil save
+    if (!errorMsg) {
+      setPhotoFile(null);
+    }
+  };
+
   const initialLetter = formData.fullName ? formData.fullName.charAt(0).toUpperCase() : "U";
+
+  if (userLoading) {
+    return (
+      <div className="flex items-center justify-center h-40 text-sm text-gray-400">
+        Loading profile...
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -47,6 +84,7 @@ export default function MentorSettingsPage() {
           Manage and edit your profile and account information.
         </p>
       </div>
+
       {/* White Card Container */}
       <div className="w-full bg-white rounded-xl border border-box-border shadow-lg overflow-hidden">
 
@@ -91,6 +129,11 @@ export default function MentorSettingsPage() {
               <p className="text-xs text-gray-400 mb-3">
                 JPG, GIF or PNG. Recommended size 800x800px. Max size of 800K.
               </p>
+              {photoFile && (
+                <p className="text-xs text-blue-500 mb-2 font-medium">
+                  📎 {photoFile.name}
+                </p>
+              )}
               <div className="flex items-center gap-2">
                 <button
                   type="button"
@@ -166,13 +209,26 @@ export default function MentorSettingsPage() {
             </p>
           </div>
 
+          {/* Feedback Messages */}
+          {successMsg && (
+            <p className="text-xs text-green-600 bg-green-50 p-2 rounded-md font-medium">
+              {successMsg}
+            </p>
+          )}
+          {errorMsg && (
+            <p className="text-xs text-red-600 bg-red-50 p-2 rounded-md font-medium">
+              {errorMsg}
+            </p>
+          )}
+
           {/* Footer Action */}
           <div className="flex justify-end pt-2">
             <button
               type="submit"
-              className="px-6 py-2 bg-[#B30000] hover:bg-[#990000] text-white font-bold text-xs rounded-lg shadow-sm transition-colors uppercase tracking-wider"
+              disabled={saving}
+              className="px-6 py-2 bg-[#B30000] hover:bg-[#990000] text-white font-bold text-xs rounded-lg shadow-sm transition-colors uppercase tracking-wider disabled:opacity-60"
             >
-              Save Changes
+              {saving ? "Saving..." : "Save Changes"}
             </button>
           </div>
 
