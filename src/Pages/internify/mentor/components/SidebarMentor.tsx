@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, FolderKanban, Award, Settings, HelpCircle, LogOut, ChevronRight, X } from 'lucide-react';
+import { Home, FolderKanban, Award, Settings, HelpCircle, LogOut, X } from 'lucide-react';
 
 const navItems = [
   // belum kutambahin
@@ -39,7 +39,7 @@ export default function SidebarMentor({ isOpen, closeSidebar }: SidebarProps) {
   return (
     <aside
       className={`
-        bg-white border-r border-gray-300 flex flex-col py-5 px-3 gap-1 overflow-y-auto flex-shrink-0 transition-transform duration-300 ease-in-out
+        bg-white border-r border-gray-300 flex flex-col py-5 px-1 gap-1 overflow-y-auto flex-shrink-0 transition-transform duration-300 ease-in-out
         md:sticky md:top-[50px] md:h-[calc(100vh-73px)] md:w-[250px] md:translate-x-0 md:z-8
         fixed top-0 left-0 h-[calc(100vh-50px)] w-[270px] z-40 pt-5
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
@@ -71,10 +71,10 @@ export default function SidebarMentor({ isOpen, closeSidebar }: SidebarProps) {
             <button
               key={path}
               onClick={() => handleNav(path)}
-              className={`flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-[13.5px] font-medium text-left transition-colors
+              className={`flex items-center gap-2.5 w-full px-3 py-2 text-[13.5px] rounded-lg font-medium text-left transition-colors
                 ${isActive
-                  ? "bg-base-foreground text-base font-semibold border-l-4 border-base"
-                  : "text-font hover:bg-base-foreground hover:text-base"
+                  ? "bg-red-foreground text-red font-semibold border-l-6 border-red"
+                  : "text-font hover:bg-red-foreground"
                 }`}
             >
               <Icon className="w-[18px] h-[18px] flex-shrink-0" />
@@ -99,10 +99,10 @@ export default function SidebarMentor({ isOpen, closeSidebar }: SidebarProps) {
               onClick={() => isLogout ? handleLogout() : handleNav(path)}
               className={`flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-[13.5px] font-medium text-left transition-colors
                 ${isActive
-                  ? "bg-red-50 text-red-600 font-semibold"
+                  ? "bg-red-50 text-red-600 font-semibold border-l-6 border-red "
                   : danger
-                    ? "text-font hover:bg-base-foreground hover:text-base"
-                    : "text-font hover:bg-base-foreground hover:text-base"
+                    ? "text-font hover:bg-base-foreground"
+                    : "text-font hover:bg-red-foreground"
                 }`}
             >
               <Icon className="w-[18px] h-[18px] flex-shrink-0" />

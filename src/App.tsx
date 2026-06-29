@@ -31,23 +31,26 @@ import EditLowongan from "./Pages/EditLowongan";
 import HomeInternPage from "./Pages/Internify/intern/HomeInternPage";
 import { InternLayout, MentorLayout } from "./Pages/Internify/layout";
 import ProjectsPage from "./Pages/Internify/intern/ProjectsPage";
-import SertificatePage from "./Pages/Internify/intern/SertificatePage";
+import SertificatePage from "./Pages/Internify/intern/InternClaimCert";
 import ProjectDetailPage from "./Pages/Internify/intern/ProjectDetailPage";
 import HomeMentorPage from "./Pages/Internify/mentor/HomeMentorPage";
 import MentorProjectsPage from "./Pages/Internify/mentor/BaseProjectsPage";
-import MentorCertificatePage from "./Pages/Internify/mentor/CertificatePage";
+import MentorCertificatePage from "./Pages/Internify/mentor/CertificateListPage";
 import MentorInternPage from "./Pages/Internify/mentor/InternsPage";
 import MentorDetailProject from "./Pages/Internify/mentor/ProjectsPage";
 import InternifyLogin from "./Pages/Internify/LoginInternify"
 import FAQPage from "./Pages/Internify/FAQpage";
 import NotificationList from "./Pages/Internify/NotificationList";
 import SettingsContent from "./Pages/Internify/SettingsPage";
+import MentorSettingsPage from "./Pages/Internify/mentor/MentorSettingsPage";
 import TaskSubmission from "./Pages/Internify/intern/TaskSubmission";
-import SertificateList from "./Pages/Internify/intern/SertificateList";
+import SertificateList from "./Pages/Internify/intern/InternCertList";
 import MentorProjectsDetailPage from "./Pages/Internify/mentor/MentorProjectDetailPage";
 import ViewInternSubmission from "./Pages/Internify/mentor/ViewInternSubmission";
-import SettingsPage from "./Pages/Internify/mentor/MentorSettingsPage";
 import ProtectedRoutes from "./Pages/utils/ProtectedRoute";
+import CertificateDetail from "./Pages/Internify/mentor/CertificateForm";
+import CertificateResult from "./Pages/Internify/mentor/CertificateResult";
+import NotFoundPage from "./Pages/NotFoundPage";
 
 function App() {
   return (
@@ -93,8 +96,8 @@ function App() {
           <Route path="/intern" element={<InternLayout />}>
             <Route index element={<HomeInternPage />} />
             <Route path="projects" element={<ProjectsPage />} />
-            <Route path="certificates" element={<SertificatePage />} />
-            <Route path="certificates/all" element={<SertificateList />} />
+            <Route path="certificates" element={<SertificateList />} />
+            <Route path="certificates/:slug" element={<SertificatePage />} />
             <Route path="projects/:slug" element={<ProjectDetailPage />} />
             <Route path="projects/:slug/:taskSlug" element={<TaskSubmission />} />
             <Route path="faq" element={<FAQPage />} />
@@ -103,21 +106,26 @@ function App() {
           </Route>
         </Route>
 
-        {/* Mentor only */}
-        <Route element={<ProtectedRoutes allowedRoles={["admin"]} />}>
+        {/* Mentor/Admin only */}
+        <Route element={<ProtectedRoutes allowedRoles={["admin", "mentor"]} />}>
           <Route path="/mentor" element={<MentorLayout />}>
             <Route index element={<HomeMentorPage />} />
             <Route path="projects" element={<MentorProjectsPage />} />
             <Route path="certificates" element={<MentorCertificatePage />} />
+            <Route path="certificates/:slug" element={<CertificateDetail />} />
+            <Route path="certificates/result" element={<CertificateResult />} />
             <Route path="intern" element={<MentorInternPage />} />
             <Route path="projects/:slug" element={<MentorDetailProject />} />
             <Route path="projects/:slug/:taskSlug" element={<MentorProjectsDetailPage />} />
             <Route path="projects/:slug/:taskSlug/:nameIntern" element={<ViewInternSubmission />} />
             <Route path="faq" element={<FAQPage />} />
             <Route path="notifications" element={<NotificationList />} />
-            <Route path="settings" element={<SettingsPage />} />
+            <Route path="settings" element={<MentorSettingsPage />} />
           </Route>
         </Route>
+
+        {/* 404 catch-all */}
+        <Route path="*" element={<NotFoundPage />} />
 
       </Routes>
     </Router>

@@ -14,7 +14,7 @@ const ProjectCard = (project: Project) => {
   const Icon = getDynamicIcon(project.project_icon);
 
 
-  const tasksDone = -1; 
+  const tasksDone = project.task_done; 
   const tasksTotal = project.total_tasks;
 
   return (
@@ -23,7 +23,7 @@ const ProjectCard = (project: Project) => {
       className=" rounded-xl overflow-hidden shadow-sm border border-gray-100 w-full flex flex-col cursor-pointer hover:shadow-md transition-shadow duration-200"
     >
       {/* Thumbnail */}
-      <div className="h-[150px] bg-gradient-to-tr from-red-700 to-red-800 overflow-hidden flex items-center justify-center">
+      <div style={{ backgroundColor: project.background_color ?? '#dc2626' }} className="h-[150px]  overflow-hidden flex items-center justify-center">
         <Icon className="w-12 h-12 text-white opacity-80" />
       </div>
 

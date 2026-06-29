@@ -7,12 +7,13 @@ import type { TaskSubmissionData } from "../../../../types/task.types";
 
 interface TaskFormLinkProps {
   taskId: string;
+  projectId?: string;
   deadline?: Date;
   initialSubmission?: TaskSubmissionData | null;
 }
 
-export default function TaskFormLink({ taskId, deadline, initialSubmission }: TaskFormLinkProps) {
-  const { submission, loading, submitLink, updateLink, remove } = useSubmission(taskId, initialSubmission);
+export default function TaskFormLink({ taskId, projectId, deadline, initialSubmission }: TaskFormLinkProps) {
+  const { submission, loading, submitLink, updateLink, remove } = useSubmission(taskId, initialSubmission, projectId);
   const [inputLink, setInputLink] = useState(initialSubmission?.url_link ?? "");
   const [isEditing, setIsEditing] = useState(false);
 

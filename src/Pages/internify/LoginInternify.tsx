@@ -2,7 +2,7 @@ import { useState } from "react";
 import logo from "../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import api from "../../lib/api";
+import { useLogin } from "../../hooks/useUser";
 
 const decodeJWT = (token: string) => {
   try {
@@ -19,49 +19,37 @@ export default function InternifyLogin() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
+
+    const { login, loading, error, setError } = useLogin();
 
     const handleSignIn = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError("");
+        setError(null);
 
         if (!email || !password) {
             setError("Email dan password wajib diisi.");
             return;
         }
 
-        try {
-            setLoading(true);
-            const response = await api.post("/auth-api/login", { email, password });
+        const data = await login(email, password);
+        if (!data) return;
 
-            const { token } = response.data.data;
-            document.cookie = `token=${token}; path=/; SameSite=Strict`;
-            
-            const decoded = decodeJWT(token);
-            const role = decoded?.role;
-            if (role === "intern") {
-                navigate("/intern");
-            } else if (role === "admin") {
-                navigate("/mentor");
-            } else {
-                setError("Role user tidak dikenali.");
-            }
-        } catch (err: any) {
-            if (err.response?.status === 401 || err.response?.status === 400) {
-                setError("Email atau password salah.");
-            } else {
-                setError("Terjadi kesalahan. Coba beberapa saat lagi.");
-            }
-        } finally {
-            setLoading(false);
+        const { token } = data;
+        document.cookie = `token=${token}; path=/; SameSite=Strict`;
+
+        const decoded = decodeJWT(token);
+        const role = decoded?.role;
+        if (role === "intern") {
+            navigate("/intern");
+        } else if (role === "mentor" || role === "admin") {
+            navigate("/mentor");
+        } else {
+            setError("Role user tidak dikenali.");
         }
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 flex flex-col justify-between items-center py-8 px-4 font-sans selection:bg-red-200">
-            <div className="hidden md:block"></div>
-
+        <div className="min-h-screen bg-background flex flex-col justify-between items-center py-8 px-4 font-sans selection:bg-red-foreground">
             <div className="w-full max-w-[440px] flex flex-col items-center">
                 <div className="text-center mb-6">
                     <div className="flex items-center justify-center gap-2 font-bold text-2xl tracking-tight text-black">
@@ -71,8 +59,8 @@ export default function InternifyLogin() {
                         HUMIC LMS PORTAL
                     </p>
                 </div>
-
-                <div className="max-w-md bg-white rounded-2xl border border-gray-100 p-8 md:p-12">
+                {/* MAIN CONTENT */}
+                <div className="max-w-md bg-box-primary rounded-2xl border border-box-border p-8 md:p-12 shadow-sm">
                     <h2 className="text-xl font-bold text-gray-900 mb-1">Welcome back</h2>
                     <p className="text-sm text-gray-500 mb-6">Access your dashboard with your credentials.</p>
 
@@ -132,7 +120,7 @@ export default function InternifyLogin() {
                             disabled={loading}
                             className="w-full bg-[#B30000] hover:bg-[#990000] text-white font-medium text-sm py-2.5 rounded-lg transition-colors shadow-sm mt-2"
                         >
-                            Sign In
+                            {loading ? "Signing in..." : "Sign In"}
                         </button>
                     </form>
 
@@ -147,14 +135,14 @@ export default function InternifyLogin() {
                     <div className="mt-1">
                         <div className="relative flex py-2 items-center">
                             <div className="flex-grow border-t border-gray-100"></div>
-                            <span className="flex-shrink mx-4 text-[10px] font-bold tracking-wider text-gray-400 uppercase">
+                            <span className="flex-shrink mx-4 text-[10px] font-bold tracking-wider text-font-shade uppercase">
                                 SUPPORT
                             </span>
                             <div className="flex-grow border-t border-gray-100"></div>
                         </div>
 
-                        <button className="w-full mt-2 flex items-center justify-center gap-2 border border-gray-200 rounded-full py-1.5 text-xs text-gray-600 hover:bg-gray-50 transition-colors font-medium">
-                            <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <button className="w-full mt-2 flex items-center justify-center gap-2 border border-gray-200 rounded-full py-1.5 text-xs text-font-shade hover:bg-gray-50 transition-colors font-medium">
+                            <svg className="w-3.5 h-3.5 text-font-shade" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             Frequently Asked Questions

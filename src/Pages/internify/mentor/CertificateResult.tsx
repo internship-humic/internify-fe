@@ -1,6 +1,5 @@
 // src/pages/mentor/CertificateResult.tsx
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   CheckCircle2,
   FolderArchive,
@@ -55,7 +54,6 @@ function Avatar({ initials }: { initials: string }) {
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function CertificateResult() {
-  const navigate   = useNavigate();
   const [search, setSearch]   = useState("");
   const [page, setPage]       = useState(1);
 
@@ -75,12 +73,6 @@ export default function CertificateResult() {
 
   return (
     <div>
-      {/* Breadcrumb */}
-      <div className="mb-1 text-xs font-medium text-[#B30000] cursor-pointer w-fit"
-           onClick={() => navigate("/mentor/certificates/all")}>
-        Certificates &rsaquo;
-      </div>
-
       {/* Page Header */}
       <div className="mb-8">
         <h1 className="page-title">Certificates</h1>

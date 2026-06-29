@@ -48,7 +48,7 @@ export default function SidebarIntern({ isOpen, closeSidebar }: SidebarProps) {
       {/* Brand & Tombol Close untuk Mobile */}
       <div className="flex items-center justify-between px-2 pb-10">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-[10px] bg-red-600 flex items-center justify-center flex-shrink-0"></div>
+          <div className="w-9 h-9 rounded-[10px] bg-red flex items-center justify-center flex-shrink-0"></div>
           <div>
             <p className="text-sm font-bold text-gray-900 leading-tight">Internify</p>
             <p className="text-[11px] text-gray-400">LMS Portal</p>

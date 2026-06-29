@@ -11,7 +11,6 @@ import {
 } from 'lucide-react';
 import { LuHistory, LuSendHorizontal } from 'react-icons/lu';
 
-// Mock Data untuk Tabel Riwayat Sertifikat
 const initialHistoryData = [
   { id: 1, name: "Jonathan Kristina", email: "JonathanKristina@gmail.com", project: "Internify Project", date: "24 Oct 2024", initials: "JK" },
   { id: 2, name: "Ahmad Faisal", email: "ahmad.faisal@gmail.com", project: "Web Dev Fundamentals", date: "15 Sep 2024", initials: "AF" },
@@ -20,7 +19,6 @@ const initialHistoryData = [
 ];
 
 const MentorCertificatePage = () => {
-  // State Form Management
   const [selectedIntern, setSelectedIntern] = useState("JonathanKristina@gmail.com");
   const [selectedProject, setSelectedProject] = useState("Internify Project (Web Development)");
   const [issueDate, setIssueDate] = useState("2024-10-24");
@@ -49,17 +47,13 @@ const MentorCertificatePage = () => {
 
   return (
     <div>
-      {/*  Title */}
       <div className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">Certificates</h1>
         <p className="text-sm md:text-base text-gray-500 mt-1">
           Administrate, issue, and track professional certifications for all interns.
         </p>
       </div>
-
-      {/* Main Grid Content */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-        {/* Kiri: Form Issue New Certificate (4 Kolom) */}
         <div className="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
             <PlusCircle className="w-6 h-6 text-[#B30000]" />
@@ -67,7 +61,6 @@ const MentorCertificatePage = () => {
           </div>
 
           <form onSubmit={handleIssueCertificate} className="space-y-5">
-            {/* Select Intern */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-gray-700 tracking-wide">Select Intern</label>
               <select 
@@ -81,7 +74,6 @@ const MentorCertificatePage = () => {
               </select>
             </div>
 
-            {/* Select Project / Course */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-gray-700 tracking-wide">Select Project / Course</label>
               <select 
@@ -94,8 +86,6 @@ const MentorCertificatePage = () => {
                 <option value="UI/UX Essentials">UI/UX Essentials</option>
               </select>
             </div>
-
-            {/* Certificate Image Upload Area */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-gray-700 tracking-wide">Certificate Image</label>
               <div className="border-2 border-dashed border-red-200/60 bg-red-50/10 rounded-xl p-6 text-center flex flex-col items-center justify-center cursor-pointer hover:bg-red-50/20 transition-colors group">

@@ -1,4 +1,4 @@
-// types/project.types.ts
+import type { ProjectTask } from "./task.types";
 
 export type ProjectStatus = "active" | "completed" | "archived";
 export type MemberStatus = "active" | "inactive";
@@ -11,19 +11,12 @@ export interface ProjectAdmin {
   professional_bio: string | null;
 }
 
-export interface ProjectMember {
-  id: number;
-  id_user: number;
-  status?: MemberStatus;
-  created_at?: string;
-  updated_at?: string;
-}
-
 // Response GET /project-api/get dan GET /project-api/get/{id}
 export interface Project {
   id: number;
   slug: string;
   project_icon: string;
+  background_color: string;
   project_name: string;
   description: string;
   start_date: string;
@@ -31,6 +24,7 @@ export interface Project {
   status: ProjectStatus;
   admin: ProjectAdmin;
   total_members: number;
+  task_done: number;
   total_tasks: number;
   created_at: string;
   updated_at: string;
@@ -39,6 +33,7 @@ export interface Project {
 // Detail project (includes members array)
 export interface ProjectDetail extends Project {
   members: ProjectMember[];
+  tasks: ProjectTask[];
 }
 
 // Response GET /project-api/my-tasks
@@ -111,10 +106,30 @@ export interface MemberAssignment {
 }
 
 export interface ProjectMember {
+  avatar: string
   id: number;
   full_name: string;
   email: string;
   professional_bio: string | null;
   position: string;
   kelompok_peminatan: string;
+}
+
+export interface Mahasiswa {
+  id: number;
+  nama_depan: string;
+  nama_belakang: string;
+  email: string;
+  kontak: string;
+  jurusan: string;
+  role: string;
+  cv_path: string;
+  portofolio_path: string;
+  motivasi: string;
+  relevant_skills: string;
+}
+
+export interface MahasiswaResponse {
+  message: string;
+  data: Mahasiswa[];
 }

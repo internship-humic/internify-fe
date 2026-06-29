@@ -1,11 +1,13 @@
-import { mockProjects } from '../../../lib/mockProjects';
 import MentorProjectCard from './components/MentorProjectCard';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import CreateProjectModal from './components/CreateProjectDialog';
+import { useProjects } from '../../../hooks/useProjects';
 
-export default function MentorProjectsPage(){
+
+export default function MentorProjectsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { projects, loading, error } = useProjects("active");
 
   const openDialog = () => {
     setIsModalOpen(true);
@@ -15,8 +17,18 @@ export default function MentorProjectsPage(){
     setIsModalOpen(false);
   };
 
+  if (loading) return (
+    <div className="flex flex-col gap-3">
+      {[...Array(3)].map((_, i) => (
+        <div key={i} className="h-16 bg-gray-100 rounded-lg animate-pulse" />
+      ))}
+    </div>
+  );
+
+  if (error) return <p className="text-danger text-md">{error}</p>;
+
   return (
-    <div className="">
+    <div>
       <div className="flex justify-between items-center mb-6">
         <div className="flex flex-col">
           <h1 className="page-title">List Projects</h1>
@@ -24,8 +36,8 @@ export default function MentorProjectsPage(){
         </div>
         <div>
           {/* Tombol pemicu buka modal */}
-          <button 
-            onClick={openDialog} 
+          <button
+            onClick={openDialog}
             className="flex items-center gap-2 px-4 py-1 bg-[#C0392B] text-white rounded-lg hover:bg-[#A93226] transition-colors duration-150"
           >
             <Plus className="w-4 h-4" />
@@ -35,15 +47,15 @@ export default function MentorProjectsPage(){
       </div>
 
       <div className="flex flex-wrap gap-4 items-stretch">
-        {mockProjects.map(project => (
-          <MentorProjectCard key={project.id} {...project} tasks={project.tasks} />
+        {projects.map(project => (
+          <MentorProjectCard key={project.id} {...project} />
         ))}
       </div>
 
       {isModalOpen && (
-        <CreateProjectModal 
-          isOpen={isModalOpen} 
-          onClose={closeDialog} 
+        <CreateProjectModal
+          isOpen={isModalOpen}
+          onClose={closeDialog}
         />
       )}
     </div>

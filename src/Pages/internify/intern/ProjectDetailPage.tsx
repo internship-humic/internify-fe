@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-// import { useProjectDetail } from '../../../hooks/useProjectDetail';
 import { useProjectDetail } from '../../../hooks/useProjects';
 import ForumTab from './ForumTab';
 import ParticipantsTab from './ParticipantTab';
@@ -10,9 +9,9 @@ export default function ProjectDetailPage() {
   const { project, loading, error } = useProjectDetail(slug ?? "");
   const [activeTab, setActiveTab] = useState<'forum' | 'participants'>('forum');
 
-  // Fallback sederhana
   if (loading) return <p className="p-10 text-gray-400">Memuat project...</p>;
   if (error)   return <p className="p-10 text-red-500">{error}</p>;
+  
   if (!project) return <p className="p-10 text-gray-400">Project tidak ditemukan.</p>;
 
   const tabClass = (tab: string) =>

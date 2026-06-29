@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { Download, Link, Printer } from "lucide-react";
-import { type CertificateData } from "../../../../lib/mockSertificates";
+import type { ProjectDetail } from "../../../../types/project.types";
 import certificateImg from "../../../../assets/certificate.png";
 
-export default function CertificateAvailable({ data }: { data: CertificateData }) {
-  const { certificate } = data;
+interface CertificateAvailableProps {
+  project: ProjectDetail | null;
+}
+
+export default function CertificateAvailable({ project }: CertificateAvailableProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopyLink = () => {
@@ -13,10 +16,25 @@ export default function CertificateAvailable({ data }: { data: CertificateData }
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // Hitung durasi dari start_date - end_date
+  const duration = project
+    ? (() => {
+        const start = new Date(project.start_date);
+        const end = new Date(project.end_date);
+        const diffMs = end.getTime() - start.getTime();
+        const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+        const months = Math.floor(diffDays / 30);
+        const days = diffDays % 30;
+        if (months > 0 && days > 0) return `${months} Bulan ${days} Hari`;
+        if (months > 0) return `${months} Bulan`;
+        return `${diffDays} Hari`;
+      })()
+    : "-";
+
   return (
     <div className="flex flex-col gap-4">
       {/* Certificate Card */}
-        <div className="flex rounded-xl p-5 mb-1 border border-gray-300 shadow-md items-center justify-center">
+        <div className="flex rounded-xl p-5 mb-1 border bg-box-primary border-box-border shadow-md items-center justify-center">
           <img
             src={certificateImg}
             alt="Certificate"
@@ -32,13 +50,14 @@ export default function CertificateAvailable({ data }: { data: CertificateData }
             </div>
             <div className="space-y-3">
               {[
-                { label: "Nama Program", value: certificate.programName },
-                { label: "Durasi", value: certificate.duration },
+                { label: "Nama Program", value: project?.project_name ?? "-" },
+                { label: "Durasi", value: duration },
+                { label: "Total Tugas", value: project ? `${project.total_tasks} Tugas` : "-" },
                 {
                   label: "Status",
                   value: (
                     <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full">
-                      VERIFIED
+                      UNVERIFIED
                     </span>
                   ),
                 },

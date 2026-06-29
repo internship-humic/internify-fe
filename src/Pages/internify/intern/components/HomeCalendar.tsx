@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useMyTasks } from '../../../../hooks/useProjects';
+import { useCurrentUser } from '../../../../hooks/useUser';
+import { useAllMentorTasks } from '../../../../hooks/useTasks';
 
 const DAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
 const MONTH_NAMES = [
@@ -16,19 +18,28 @@ function getFirstDayOfMonth(year: number, month: number) {
   return new Date(year, month, 1).getDay()
 }
 
-const HomeCalendar = () => {
+export default function HomeCalendar() {
   const [today, setToday] = useState(new Date());
-  const { tasks } = useMyTasks();
+  const { user } = useCurrentUser();
 
-  const DEADLINES = tasks.map(task => ({
-    date: new Date(task.deadline_at),
-    label: task.title,
-  }));
+  const isIntern = user?.role === "intern";
+  const { tasks: internTasks } = useMyTasks();
+  const { tasks: mentorTasks } = useAllMentorTasks(!isIntern && user !== null);
+
+   const DEADLINES = isIntern
+    ? internTasks.map(task => ({
+        date: new Date(task.deadline_at),
+        label: task.title,
+      }))
+    : mentorTasks.map(task => ({
+        date: new Date(task.deadline_at),
+        label: `[${task.project_name}] ${task.title}`,
+      }));
 
   useEffect(() => {
     const interval = setInterval(() => {
       setToday(new Date())
-    }, 60 * 1000) // update tiap 1 menit
+    }, 60 * 1000)
 
     return () => clearInterval(interval)
   }, [])
@@ -188,5 +199,3 @@ const HomeCalendar = () => {
     </div>
   )
 }
-
-export default HomeCalendar

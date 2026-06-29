@@ -47,7 +47,7 @@ export const MentorLayout = () => {
           />
         )}
         <main className="container">
-          {/* <Breadcrumbs/> */}
+          <Breadcrumbs/>
           <Outlet />
         </main>
       </div>

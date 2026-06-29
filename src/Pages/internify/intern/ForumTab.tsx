@@ -1,16 +1,13 @@
-import { useParams } from 'react-router-dom';
 import ProjectTimeline from './components/ProjectTimeline';
 import TaskCard from './components/ProjectTaskCard';
 import HeroProject from './components/Hero-project';
-import { useProjectTasks } from '../../../hooks/useTasks';
+import { useProjectMyTasks } from '../../../hooks/useProjects';
 import type { Project } from '../../../types/project.types';
 
 export default function ForumTab({ project }: { project: Project }) {
-  const { slug } = useParams<{ slug: string }>();
-  const { tasks, loading, error } = useProjectTasks(slug ?? "");
+  const { tasks, loading, error } = useProjectMyTasks(project.id);
   return (
     <div>
-      {/* Hero banner */}
       <HeroProject title={project.project_name} description={project.description} />
 
       {/* Loading */}

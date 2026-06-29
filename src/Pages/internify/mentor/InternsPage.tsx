@@ -1,32 +1,55 @@
 import { useState, useMemo } from "react";
 import { Search, SlidersHorizontal, Plus, Trash2 } from "lucide-react";
-import { mockInternsData } from "../../../lib/mockData";
+import { useAllInterns, useRemoveMember, useProjects } from "../../../hooks/useProjects";
 import AddInternsModal from "./components/AddInternsToProjects";
 
 export default function InternsManagement() {
-  // State Filter & Search
   const [searchEmail, setSearchEmail] = useState("");
   const [selectedProject, setSelectedProject] = useState("All Projects");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // Handler Aksi Kursor/Tombol
-  const handleAddAssignment = (id: number) => {
-    alert(`Assign/Add action clicked for intern ID: ${id}`);
-  };
 
-  const handleDeleteIntern = (id: number) => {
-    alert(`Deleted intern ID: ${id}`);
-  };
+  const { interns, loading, error, refetch } = useAllInterns();
+  const { remove, loading: removing } = useRemoveMember();
+  const { projects: activeProjects } = useProjects("active");
 
-  // Logic Filtering Data menggunakan useMemo
+  // Filter data berdasarkan email dan nama project
   const filteredInterns = useMemo(() => {
-    return mockInternsData.filter((intern) => {
+    return interns.filter((intern) => {
       const matchesEmail = intern.email.toLowerCase().includes(searchEmail.toLowerCase());
       const matchesProject =
         selectedProject === "All Projects" ||
-        intern.projectName.toLowerCase() === selectedProject.toLowerCase();
+        (intern.projectName || "Unassigned").toLowerCase() === selectedProject.toLowerCase();
       return matchesEmail && matchesProject;
     });
-  }, [searchEmail, selectedProject]);
+  }, [interns, searchEmail, selectedProject]);
+
+  // Hitung statistik dari data asli
+  const totalInterns = interns.length;
+  // Active assignments = total member dari semua project yang statusnya active
+  const activeAssignments = activeProjects.length;
+
+  // Handler hapus intern dari project
+  // Catatan: useRemoveMember memerlukan id_project & id_user.
+  // Karena InternDetail tidak menyimpan id_project, aksi ini saat ini hanya placeholder.
+  // Untuk implementasi penuh, perlu endpoint khusus atau data id_project dari InternDetail.
+  const handleDeleteIntern = async (internId: number) => {
+    const confirmed = window.confirm("Yakin ingin menghapus intern ini dari project?");
+    if (!confirmed) return;
+    alert(`Remove intern ID ${internId} — perlu id_project dari backend untuk dilanjutkan.`);
+    // Contoh penggunaan jika id_project tersedia:
+    // const res = await remove({ id_project: intern.id_project, id_user: internId });
+    // if (res !== null) refetch();
+  };
+
+  if (loading) return (
+    <div className="flex flex-col gap-3">
+      {[...Array(5)].map((_, i) => (
+        <div key={i} className="h-16 bg-gray-100 rounded-lg animate-pulse" />
+      ))}
+    </div>
+  );
+
+  if (error) return <p className="text-red-500 text-sm">{error}</p>;
 
   return (
     <div className="">
@@ -64,8 +87,6 @@ export default function InternsManagement() {
               className="w-full pl-3 pr-8 py-2 bg-gray-100 border border-transparent rounded-lg text-sm text-gray-700 font-medium appearance-none focus:outline-none focus:bg-white focus:border-gray-200"
             >
               <option value="All Projects">All Projects</option>
-              <option value="Internify Project">Internify Project</option>
-              <option value="MBG Project">MBG Project</option>
               <option value="Unassigned">Unassigned</option>
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
@@ -81,17 +102,21 @@ export default function InternsManagement() {
           </button>
         </div>
 
-        {/* Right Info Box Stats */}
+        {/* Right Info Box Stats — data real dari API */}
         <div className="bg-white border border-gray-100 rounded-xl px-6 py-2.5 flex items-center justify-around text-center shadow-[0_2px_10px_rgba(0,0,0,0.01)] w-full lg:max-w-sm ml-auto">
           <div>
-            <span className="block text-xl font-bold text-red-600 leading-none">124</span>
+            <span className="block text-xl font-bold text-red-600 leading-none">
+              {totalInterns}
+            </span>
             <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase mt-1 block">
               TOTAL INTERNS
             </span>
           </div>
           <div className="h-8 w-px bg-gray-100 mx-2"></div>
           <div>
-            <span className="block text-xl font-bold text-green-600 leading-none">92</span>
+            <span className="block text-xl font-bold text-green-600 leading-none">
+              {activeAssignments}
+            </span>
             <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase mt-1 block">
               ACTIVE ASSIGNMENTS
             </span>
@@ -100,7 +125,10 @@ export default function InternsManagement() {
       </div>
 
       <div className="flex justify-end">
-        <button className="inline-flex items-center gap-5 px-3 py-1 bg-red-700 text-white rounded-xl shadow-sm hover:bg-red-800 transition-colors focus:outline-none focus:ring-2 focus:ring-red-300" onClick={() => setIsModalOpen(true)}>
+        <button
+          className="inline-flex items-center gap-2 px-3 py-1 bg-red-700 text-white rounded-xl shadow-sm hover:bg-red-800 transition-colors focus:outline-none focus:ring-2 focus:ring-red-300"
+          onClick={() => setIsModalOpen(true)}
+        >
           <Plus className="w-4 h-4" />
           Add
         </button>
@@ -120,7 +148,7 @@ export default function InternsManagement() {
         <div className="divide-y divide-gray-100">
           {filteredInterns.length > 0 ? (
             filteredInterns.map((intern, index) => {
-              const isUnassigned = intern.projectName === "Unassigned";
+              const isUnassigned = !intern.projectName || intern.projectName === "Unassigned";
 
               return (
                 <div key={`${intern.id}-${index}`} className="px-6 py-4 flex items-center hover:bg-gray-50/60 transition-colors">
@@ -147,7 +175,7 @@ export default function InternsManagement() {
                   {/* Column 2: Current Project Title & Role Accent */}
                   <div className="w-1/3">
                     <h5 className={`text-sm font-semibold leading-tight ${isUnassigned ? 'text-gray-500 italic' : 'text-gray-900'}`}>
-                      {intern.projectName}
+                      {intern.projectName || "Unassigned"}
                     </h5>
                     <p className={`text-xs font-bold mt-0.5 ${isUnassigned ? 'text-red-500' : 'text-red-600'}`}>
                       {intern.role}
@@ -156,15 +184,20 @@ export default function InternsManagement() {
 
                   {/* Column 3: Action Buttons Block Right aligned */}
                   <div className="w-1/6 flex items-center justify-end gap-3.5 pr-2">
+                    {/* Tombol Add: membuka modal assign member */}
                     <button
-                      onClick={() => handleAddAssignment(intern.id)}
+                      onClick={() => setIsModalOpen(true)}
                       className="p-1.5 bg-[#B30000] hover:bg-[#990000] text-white rounded-lg transition-colors shadow-sm"
+                      title="Assign ke project"
                     >
                       <Plus className="w-4 h-4 stroke-[3]" />
                     </button>
+                    {/* Tombol Delete: remove intern dari project */}
                     <button
                       onClick={() => handleDeleteIntern(intern.id)}
-                      className="p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                      disabled={removing}
+                      className="p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                      title="Hapus dari project"
                     >
                       <Trash2 className="w-4 h-4 stroke-[2]" />
                     </button>
@@ -183,7 +216,7 @@ export default function InternsManagement() {
         {/* Red Table Pagination Bar Footer */}
         <div className="bg-[#B30000] text-white px-6 py-3.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs font-medium">
           <div>
-            Showing <span className="font-bold">{filteredInterns.length}</span> of 124 interns
+            Showing <span className="font-bold">{filteredInterns.length}</span> of {totalInterns} interns
           </div>
 
           <div className="flex items-center gap-2 self-end sm:self-auto">
@@ -196,10 +229,14 @@ export default function InternsManagement() {
           </div>
         </div>
       </div>
+
       {isModalOpen &&
         <AddInternsModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            refetch(); // Refresh data setelah modal assign ditutup
+          }}
         />
       }
     </div>

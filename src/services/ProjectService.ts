@@ -15,7 +15,7 @@ import type {
 // POST /project-api/add
 export const createProject = async (
   payload: CreateProjectPayload
-): Promise<ProjectDetail> => {
+): Promise<Project> => {
   const res = await api.post("/project-api/add", payload);
   return res.data.data;
 };
@@ -23,7 +23,7 @@ export const createProject = async (
 // GET /project-api/get
 export const getProjects = async (
   status?: "active" | "completed" | "archived"
-): Promise<Project[]> => {
+): Promise<ProjectDetail[]> => {
   const res = await api.get("/project-api/get", {
     params: status ? { status } : undefined,
   });
@@ -35,7 +35,16 @@ export const getProjectMembers = async (
   id: string | number
 ): Promise<ProjectMember[]> => {
   const res = await api.get(`/project-api/get/${id}`);
-  return res.data.data.members;
+  console.log(res.data.data.member);
+  return res.data.data.members.map((m: any) => ({
+    id: m.id_user,
+    avatar: m.user.profile_picture ?? null,
+    full_name: m.user.full_name,
+    email: m.user.email,
+    professional_bio: m.user.professional_bio,
+    position: m.user.position,
+    kelompok_peminatan: m.user.kelompok_peminatan,
+  }));
 };
 
 // GET /project-api/get/{id}
@@ -43,7 +52,21 @@ export const getProjectById = async (
   id: string | number
 ): Promise<ProjectDetail> => {
   const res = await api.get(`/project-api/get/${id}`);
-  return res.data.data;
+  const raw = res.data.data;
+  console.log("raw fields:", Object.keys(raw));
+console.log("raw full:", raw);
+  return {
+    ...raw,
+    members: raw.members.map((m: any) => ({
+      id: m.id_user,
+      avatar: m.user?.profile_picture ?? null,
+      full_name: m.user?.full_name,
+      email: m.user?.email,
+      professional_bio: m.user?.professional_bio ?? null,
+      position: m.user?.position,
+      kelompok_peminatan: m.user?.kelompok_peminatan,
+    })),
+  };
 };
 
 // PATCH /project-api/update/{id}
@@ -92,5 +115,15 @@ export const assignMember = async (
   payload: AssignMemberPayload
 ): Promise<MemberAssignment> => {
   const res = await api.post("/project-api/assign-member", payload);
+  return res.data.data;
+};
+
+export const removeMember = async (
+  payload: {
+    id_project: string | number;
+    id_user: number;
+  }
+): Promise<MemberAssignment> => {
+  const res = await api.post("/project-api/remove-member", { id_project: payload.id_project, id_user: payload.id_user });
   return res.data.data;
 };

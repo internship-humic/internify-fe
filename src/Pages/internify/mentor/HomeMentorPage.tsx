@@ -8,7 +8,7 @@ const HomeMentorPage = () => {
       <HomeHeader />
       <div className="flex flex-col gap-5">
         <div className="">
-          <div className="bg-white border border-gray-200 rounded-xl p-6">
+          <div className="bg-white border border-box-border rounded-xl p-6">
             <HomeMentorProject />
           </div>
 

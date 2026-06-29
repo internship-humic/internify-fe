@@ -21,8 +21,10 @@ import {
   updateProject,
   archiveProject,
   assignMember,
-  getProjectMembers
+  getProjectMembers,
+  removeMember
 } from "../services/ProjectService";
+import { useMemo } from "react";
 
 // GET /project-api/get
 export const useProjects = (status?: "active" | "completed" | "archived") => {
@@ -87,30 +89,35 @@ export const useMyProjects = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const refetch = useCallback(() => {
+    setLoading(true);
     getMyProjects()
       .then(setProjects)
       .catch(() => setError("Gagal memuat my projects."))
       .finally(() => setLoading(false));
   }, []);
 
-  return { projects, loading, error };
-};
+  useEffect(() => { refetch(); }, [refetch]);
 
+  return { projects, loading, error, refetch };
+};
 // GET /project-api/my-tasks
 export const useMyTasks = () => {
   const [tasks, setTasks] = useState<InternTaskItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const refetch = useCallback(() => {
+    setLoading(true);
     getMyTasks()
       .then(setTasks)
       .catch(() => setError("Gagal memuat tasks."))
       .finally(() => setLoading(false));
   }, []);
 
-  return { tasks, loading, error };
+  useEffect(() => { refetch(); }, [refetch]);
+
+  return { tasks, loading, error, refetch };
 };
 
 // GET /project-api/mentor-projects
@@ -119,14 +126,17 @@ export const useMentorProjects = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const refetch = useCallback(() => {
+    setLoading(true);
     getMentorProjects()
       .then(setProjects)
       .catch(() => setError("Gagal memuat mentor projects."))
       .finally(() => setLoading(false));
   }, []);
 
-  return { projects, loading, error };
+  useEffect(() => { refetch(); }, [refetch]);
+
+  return { projects, loading, error, refetch };
 };
 
 // GET /project-api/interns
@@ -135,14 +145,17 @@ export const useAllInterns = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const refetch = useCallback(() => {
+    setLoading(true);
     getAllInterns()
       .then(setInterns)
       .catch(() => setError("Gagal memuat data interns."))
       .finally(() => setLoading(false));
   }, []);
 
-  return { interns, loading, error };
+  useEffect(() => { refetch(); }, [refetch]);
+
+  return { interns, loading, error, refetch };
 };
 
 // POST /project-api/add
@@ -164,6 +177,17 @@ export const useCreateProject = () => {
   };
 
   return { create, loading, error };
+};
+
+export const useProjectMyTasks = (projectId: number) => {
+  const { tasks, loading, error } = useMyTasks();
+
+  const projectTasks = useMemo<InternTaskItem[]>(() => {
+    if (!projectId || !tasks.length) return [];
+    return tasks.filter(task => task.id_project === projectId);
+  }, [tasks, projectId]);
+
+  return { tasks: projectTasks, loading, error };
 };
 
 // PATCH /project-api/update/{id}
@@ -227,4 +251,24 @@ export const useAssignMember = () => {
   };
 
   return { assign, loading, error };
+};
+
+export const useRemoveMember = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const remove = async (payload: { id_project: string | number, id_user: number }) => {
+    setLoading(true);
+    setError(null);
+    try {
+      return await removeMember(payload);
+    } catch {
+      setError("Gagal remove member.");
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { remove, loading, error };
 };

@@ -7,6 +7,8 @@ import type {
   UpdateTaskPayload,
   TaskSubmissionData,
 } from "../types/task.types";
+import type { Project } from "../types/project.types";
+import type { MentorTaskItem, AdminTaskDetail } from "../types/task.types";
 
 // ── Task ──────────────────────────────────────────────
 
@@ -35,6 +37,16 @@ export const getTaskById = async (
   return res.data.data;
 };
 
+export const getTaskSubmissions = async (
+  taskId: string | number,
+  projectId?: string | number
+): Promise<AdminTaskDetail> => {
+  const res = await api.get(`/task-api/tasks/${taskId}`, {
+    params: projectId ? { project: projectId } : undefined,
+  });
+  return res.data.data;
+};
+
 export const updateTask = async (
   taskId: string | number,
   payload: UpdateTaskPayload,
@@ -54,6 +66,26 @@ export const deleteTask = async (
     params: projectId ? { project: projectId } : undefined,
   });
 };
+
+export const getAllMentorTasks = async (): Promise<MentorTaskItem[]> => {
+  const projectsRes = await api.get("/project-api/mentor-projects");
+  const projects: Project[] = projectsRes.data.data;
+
+  const tasksByProject = await Promise.all(
+    projects.map(async (project) => {
+      const tasksRes = await api.get(`/task-api/projects/${project.id}/tasks`);
+      return tasksRes.data.data.map((task: any) => ({
+        ...task,
+        project_name: project.project_name,
+        project_slug: project.slug,
+      }));
+    })
+  );
+
+  return tasksByProject.flat();
+};
+
+
 
 // ── Submission ────────────────────────────────────────
 

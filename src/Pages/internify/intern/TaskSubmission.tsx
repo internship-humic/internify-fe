@@ -49,13 +49,15 @@ export default function TaskSubmission() {
 
         {submissionType === "file_upload" ? (
           <TaskFormFile
-            taskId={taskSlug!}
+            taskId={String(task.id)}
+            projectId={String(task.project.id)}
             deadline={new Date(task.deadline_at)}
             initialSubmission={task.my_submission}
           />
         ) : (
           <TaskFormLink
-            taskId={taskSlug!}
+            taskId={String(task.id)}
+            projectId={String(task.project.id)}
             deadline={new Date(task.deadline_at)}
             initialSubmission={task.my_submission}
           />

@@ -1,19 +1,8 @@
 import { useRef, useEffect, useState } from "react";
-import { X, Calendar } from "lucide-react";
-import {
-  LuCode,
-  LuAlbum,
-  LuCloud,
-  LuSmartphone,
-  LuSettings,
-  LuUsers,
-  LuClipboardList,
-  LuPenTool,
-  LuLightbulb,
-  LuShield,
-  LuMail,
-  LuSendHorizontal
-} from "react-icons/lu";
+import { X } from "lucide-react";
+import { PROJECT_ICON_MAP, PROJECT_ICON_CODES } from "../../../../lib/ProjectIcons";
+import { LuSendHorizontal, LuMail } from "react-icons/lu";
+import { useCreateProject } from "../../../../hooks/useProjects";
 
 interface CreateProjectModalProps {
   isOpen: boolean;
@@ -22,32 +11,19 @@ interface CreateProjectModalProps {
 
 export default function CreateProjectModal({ isOpen, onClose }: CreateProjectModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-
-  // State Form Management
-  const [selectedIcon, setSelectedIcon] = useState("code");
+  const [selectedIcon, setSelectedIcon] = useState(PROJECT_ICON_CODES[0]);
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [emailInput, setEmailInput] = useState("");
-  const [invitedEmails, setInvitedEmails] = useState<string[]>([
-    "alex.dev@gmail.com",
-    "sarah.engineer@gmail.com"
-  ]);
+  const [invitedEmails, setInvitedEmails] = useState<string[]>([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const { create, loading, error } = useCreateProject();
 
-  // Daftar Icon Pilihan di baris atas
-  const projectIcons = [
-    { id: "code", icon: LuCode },
-    { id: "chart", icon: LuAlbum },
-    { id: "cloud", icon: LuCloud },
-    { id: "mobile", icon: LuSmartphone },
-    { id: "settings", icon: LuSettings },
-    { id: "users", icon: LuUsers },
-    { id: "task", icon: LuClipboardList },
-    { id: "design", icon: LuPenTool },
-    { id: "idea", icon: LuLightbulb },
-    { id: "secure", icon: LuShield },
-  ];
+  const projectIcons = PROJECT_ICON_CODES.map((id) => ({
+    id,
+    icon: PROJECT_ICON_MAP[id],
+  }));
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -73,7 +49,6 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
     };
   }, [isOpen, onClose]);
 
-  // Fungsi menambah email undangan baru
   const handleAddEmail = (e: React.FormEvent) => {
     e.preventDefault();
     if (emailInput.trim() && !invitedEmails.includes(emailInput.trim())) {
@@ -82,25 +57,29 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
     }
   };
 
-  // Fungsi menghapus email undangan
   const handleRemoveEmail = (emailToRemove: string) => {
     setInvitedEmails(invitedEmails.filter(email => email !== emailToRemove));
   };
 
   // Handler Submit Utama
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const payload = {
-      icon: selectedIcon,
-      name: projectName,
+    const payload: any = {
+      project_icon: selectedIcon,
+      project_name: projectName,
       description: projectDescription,
-      emails: invitedEmails,
-      startDate,
-      endDate
+      start_date: startDate,
+      end_date: endDate,
     };
-    console.log("Launching Project:", payload);
-    alert("Project Launched Successfully!");
-    onClose();
+    
+    if (invitedEmails.length > 0) {
+      payload.member_emails = invitedEmails;
+    }
+
+    const result = await create(payload);
+    if (result) {
+      onClose();
+    }
   };
 
   return (
@@ -125,8 +104,7 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
       </div>
 
       {/* Body Form Modal */}
-      <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-3 md:space-y-4 overflow-y-auto flex-1">
-
+      <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-3 md:space-y-4 overflow-y-auto flex-1">
         {/* Section: Select Project Icon */}
         <div className="space-y-2">
           <label className="text-xs font-bold text-gray-700 tracking-wide">
@@ -141,9 +119,9 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
                   key={item.id}
                   type="button"
                   onClick={() => setSelectedIcon(item.id)}
-                  className={`w-8 h-8 flex items-center justify-center rounded-lg border text-lg transition-all ${isSelected
-                      ? "border-[#B30000] bg-red-50/50 text-[#B30000] ring-2 ring-[#B30000]/20 font-bold"
-                      : "border-gray-200 bg-gray-50 text-gray-500 hover:bg-gray-100"
+                  className={`w-10 h-10 flex items-center justify-center rounded-lg border text-lg transition-all ${isSelected
+                    ? "border-red bg-red-foreground text-red ring-2 ring-red/20 font-bold"
+                    : "border-card-outline bg-card text-font hover:bg-gray-100"
                     }`}
                 >
                   <IconComponent className={isSelected ? "stroke-[2.5]" : "stroke-[2]"} />
@@ -174,7 +152,7 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
             Project Description
           </label>
           <textarea
-            rows={4}
+            rows={3}
             placeholder="Outline the project goals, deliverables, and technical requirements..."
             value={projectDescription}
             onChange={(e) => setProjectDescription(e.target.value)}
@@ -246,10 +224,9 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
                 required
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full pl-4 pr-10 py-2.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium appearance-none"
+                className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium appearance-none"
               />
               <span className="absolute right-3.5 top-3 text-gray-400 pointer-events-none">
-                <Calendar className="w-4 h-4" />
               </span>
             </div>
           </div>
@@ -265,14 +242,17 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
                 required
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full pl-4 pr-10 py-2.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium appearance-none"
+                className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium appearance-none"
               />
               <span className="absolute right-3.5 top-3 text-gray-400 pointer-events-none">
-                <Calendar className="w-4 h-4" />
               </span>
             </div>
           </div>
         </div>
+
+        {error && (
+          <p className="text-xs text-red-600 text-center font-medium">{error}</p>
+        )}
 
         {/* Action Row Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-6">
@@ -286,9 +266,10 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
 
           <button
             type="submit"
-            className="w-full sm:w-[240px] py-2.5 bg-[#B30000] hover:bg-[#990000] text-white text-sm font-bold rounded-xl transition-colors shadow-md flex items-center justify-center gap-2 tracking-wide"
+            disabled={loading}
+            className="w-full sm:w-[240px] py-2.5 bg-[#B30000] hover:bg-[#990000] disabled:opacity-60 text-white text-sm font-bold rounded-xl transition-colors shadow-md flex items-center justify-center gap-2 tracking-wide"
           >
-            Launch Project
+            {loading ? "Launching..." : "Launch Project"}
             <LuSendHorizontal className="w-4 h-4 stroke-[2.5]" />
           </button>
         </div>
