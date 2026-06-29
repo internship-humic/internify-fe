@@ -35,7 +35,6 @@ export const getProjectMembers = async (
   id: string | number
 ): Promise<ProjectMember[]> => {
   const res = await api.get(`/project-api/get/${id}`);
-  console.log(res.data.data.member);
   return res.data.data.members.map((m: any) => ({
     id: m.id_user,
     avatar: m.user.profile_picture ?? null,
@@ -53,8 +52,6 @@ export const getProjectById = async (
 ): Promise<ProjectDetail> => {
   const res = await api.get(`/project-api/get/${id}`);
   const raw = res.data.data;
-  console.log("raw fields:", Object.keys(raw));
-console.log("raw full:", raw);
   return {
     ...raw,
     members: raw.members.map((m: any) => ({

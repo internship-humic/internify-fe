@@ -14,19 +14,26 @@ export default function MentorSettingsPage() {
   // File state untuk profile_picture
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [imageError, setImageError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Sync form data ketika user sudah di-fetch
   useEffect(() => {
     if (user) {
       setFormData({
-        fullName: user.full_name || "",
+        fullName:
+          user.full_name ||
+          `${user.nama_depan ?? ""} ${user.nama_belakang ?? ""}`.trim() ||
+          "",
         email: user.email || "",
         bio: user.professional_bio || "",
       });
       if (user.profile_picture) {
         setPhotoPreview(user.profile_picture);
+      } else {
+        setPhotoPreview(null);
       }
+      setImageError(false);
     }
   }, [user]);
 
@@ -48,6 +55,7 @@ export default function MentorSettingsPage() {
   const handleRemovePhoto = () => {
     setPhotoFile(null);
     setPhotoPreview(null);
+    setImageError(false);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -62,6 +70,7 @@ export default function MentorSettingsPage() {
     // Reset file state setelah berhasil save
     if (!errorMsg) {
       setPhotoFile(null);
+      setImageError(false);
     }
   };
 
@@ -104,8 +113,13 @@ export default function MentorSettingsPage() {
             {/* Avatar dengan badge edit */}
             <div className="relative flex-shrink-0">
               <div className="w-20 h-20 rounded-xl border-2 border-red-100 overflow-hidden bg-gray-100 flex items-center justify-center shadow-sm">
-                {photoPreview ? (
-                  <img src={photoPreview} alt="Profile" className="w-full h-full object-cover" />
+                {photoPreview && !imageError ? (
+                  <img
+                    src={photoPreview}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                    onError={() => setImageError(true)}
+                  />
                 ) : (
                   <span className="text-3xl font-black text-gray-900">{initialLetter}</span>
                 )}

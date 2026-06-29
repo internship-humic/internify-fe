@@ -36,14 +36,6 @@ export const getCertificatesByProject = async (id_project: number): Promise<Cert
   return res.data.data;
 };
 
-// GET /certificate-api/verify?certificate_no=... (public)
-export const verifyCertificate = async (certificate_no: string): Promise<CertificateVerifyResult> => {
-  const res = await api.get("/certificate-api/verify", {
-    params: { certificate_no },
-  });
-  return res.data.data;
-};
-
 // GET /certificate-api/verify-uuid/{uuid} (public)
 export const verifyCertificateByUuid = async (uuid: string): Promise<CertificateVerifyResult> => {
   const res = await api.get(`/certificate-api/verify-uuid/${uuid}`);

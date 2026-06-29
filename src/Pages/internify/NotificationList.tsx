@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Check, Download, Info } from "lucide-react";
-import { LuFileSpreadsheet } from "react-icons/lu"; // Alternatif icon task dari react-icons
+import { LuFileSpreadsheet } from "react-icons/lu";
 import { io } from "socket.io-client";
 import * as NotificationService from "../../services/NotificationService";
 import type { UINotification, BackendNotification } from "../../types/notification.types";
@@ -72,10 +72,6 @@ export default function NotificationList() {
     }
   };
 
-  if (false) {
-    (handleMarkAllRead as any)();
-  }
-
   return (
     <div>
       {/* Header */}
@@ -87,7 +83,7 @@ export default function NotificationList() {
           </p>
         </div>
         <button
-          onClick={markAllRead}
+          onClick={handleMarkAllRead}
           className="flex items-center gap-1.5 self-start sm:self-center px-4 py-2 border border-gray-200 rounded-lg text-xs font-semibold text-gray-700 bg-white hover:bg-gray-50 transition-colors shadow-sm"
         >
           <Check className="w-4 h-4 text-green-600 stroke-[3]" />
@@ -187,13 +183,6 @@ export default function NotificationList() {
           ))}
         </div>
 
-        {/* OLDER */}
-        {olderNotifs.length > 0 && (
-          <div className="space-y-3 pt-2">
-            <h2 className="text-[10px] font-bold tracking-widest text-gray-400 uppercase">Older</h2>
-            {olderNotifs.map(n => renderNotifCard(n, true))}
-          </div>
-        )}
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ const decodeJWT = (token: string) => {
 export default function InternifyLogin() {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [password, setPassword] = useState("")
     const [showPassword, setShowPassword] = useState(false);
 
     const { login, loading, error, setError } = useLogin();

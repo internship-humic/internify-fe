@@ -65,6 +65,7 @@ const SertificatePage = () => {
               progress={progress}
               remainingTasks={remainingTasks}
               allTasksDone={allTasksDone}
+              project_id={project?.id}
             />
           )}
         </div>

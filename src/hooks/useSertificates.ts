@@ -7,7 +7,6 @@ import {
   getAllCertificates,
   getCertificateDetail,
   getCertificatesByProject,
-  verifyCertificate,
   verifyCertificateByUuid,
   uploadCertificateTemplate,
 } from "../services/CertificateService";
@@ -92,16 +91,6 @@ export const useVerifyCertificate = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const verifyByNo = useCallback(async (certificate_no: string) => {
-    setLoading(true); setError(null);
-    try {
-      const res = await verifyCertificate(certificate_no);
-      setResult(res);
-      return res;
-    } catch { setError("Sertifikat tidak valid atau tidak ditemukan."); return null; }
-    finally { setLoading(false); }
-  }, []);
-
   const verifyByUuid = useCallback(async (uuid: string) => {
     setLoading(true); setError(null);
     try {
@@ -112,7 +101,7 @@ export const useVerifyCertificate = () => {
     finally { setLoading(false); }
   }, []);
 
-  return { result, loading, error, verifyByNo, verifyByUuid };
+  return { result, loading, error, verifyByUuid };
 };
 
 // POST /certificate-api/claim

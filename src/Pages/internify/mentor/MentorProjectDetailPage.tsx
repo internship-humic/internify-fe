@@ -3,14 +3,27 @@ import { useState } from "react";
 import { Calendar, Edit } from "lucide-react";
 import EditSubmissionModal from "./components/EditSubmissionTask";
 import { useTaskSubmissions } from "../../../hooks/useTasks";
+import type { ProjectTask } from "../../../types/task.types";
 
 const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
 
 export default function MentorProjectsDetailPage() {
   const navigate = useNavigate();
   const { slug, taskSlug } = useParams<{ slug: string; taskSlug: string }>();
-  const { task, loading, error } = useTaskSubmissions(taskSlug!, slug);
+  const { task, loading, error, refetch } = useTaskSubmissions(taskSlug!, slug);
   const [openModal, setOpenModal] = useState(false);
+
+  // Di MentorProjectsDetailPage
+  const handleEditSuccess = (updatedTask: ProjectTask) => {
+    if (updatedTask.slug !== taskSlug) {
+      // Slug berubah, navigate ke URL baru
+      navigate(`/mentor/projects/${slug}/${updatedTask.slug}`, { replace: true });
+    } else {
+      // Slug sama, cukup refetch
+      refetch();
+    }
+  };
+
   if (loading) return (
     <div className="space-y-4">
       {[...Array(3)].map((_, i) => (
@@ -152,6 +165,8 @@ export default function MentorProjectsDetailPage() {
         <EditSubmissionModal
           isOpen={openModal}
           onClose={() => setOpenModal(false)}
+          task={task}
+          onSuccess={handleEditSuccess}
         />
       )}
     </div>

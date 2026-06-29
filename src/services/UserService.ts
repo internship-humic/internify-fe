@@ -1,6 +1,7 @@
 // services/UserService.ts
 import api from "../lib/api";
 import type { CurrentUser, UpdateProfilePayload } from "../hooks/useUser";
+import type { Mahasiswa, MahasiswaResponse } from "../types/project.types"
 
 // POST /auth-api/login
 export const loginUser = async (payload: {
@@ -18,7 +19,6 @@ export const getProfile = async (): Promise<CurrentUser> => {
 };
 
 // PATCH /auth-api/update-profile
-// Jika payload mengandung profile_picture (File), kirim sebagai multipart/form-data
 export const updateProfile = async (
   payload: UpdateProfilePayload
 ): Promise<CurrentUser> => {
@@ -35,4 +35,9 @@ export const updateProfile = async (
   }
   const res = await api.patch("/auth-api/update-profile", payload);
   return res.data.data;
+};
+
+export const getMahasiswa = async (): Promise<Mahasiswa[]> => {
+  const response = await api.get<MahasiswaResponse>('/mahasiswa-api/get');
+  return response.data.data;
 };

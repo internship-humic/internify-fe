@@ -1,16 +1,27 @@
 import { Clock, Lock, Award } from "lucide-react";
+import { useClaimCertificate } from "../../../../hooks/useSertificates";
 
 interface CertificateNotAvailableProps {
   progress: number;
   remainingTasks: number;
   allTasksDone?: boolean;
+  project_id?: number;
 }
 
 export default function CertificateNotAvailable({
   progress,
   remainingTasks,
   allTasksDone = false,
+  project_id
 }: CertificateNotAvailableProps) {
+
+  const { claim, loading, error } = useClaimCertificate();
+
+  const handleClaim = async () => {
+    if (!project_id) return;
+    await claim(project_id);
+  };
+
   return (
     <div className="bg-box-primary w-full h-full rounded-2xl border border-box-border shadow-sm px-24 py-12 flex flex-col items-center justify-center">
       {/* Icon */}
@@ -59,9 +70,9 @@ export default function CertificateNotAvailable({
 
           {/* Progress Bar */}
           <div className="w-1/3">
-              <p className="text-xs text-font mt-2">
-                Selesaikan {remainingTasks} tugas lagi untuk membuka akses.
-              </p>
+            <p className="text-xs text-font mt-2">
+              Selesaikan {remainingTasks} tugas lagi untuk membuka akses.
+            </p>
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm font-semibold text-gray-700">Progres Proyek</span>
               <span className="text-sm font-bold text-red-700">{progress}%</span>
@@ -72,8 +83,17 @@ export default function CertificateNotAvailable({
                 style={{ width: `${progress}%` }}
               />
             </div>
-
           </div>
+
+          <button
+            onClick={handleClaim}
+            disabled={loading}
+            className="mt-2 px-6 py-2.5 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors duration-200"
+          >
+            {loading ? "Memproses..." : "Klaim Sertifikat"}
+          </button>
+
+          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
         </>
       )}
     </div>

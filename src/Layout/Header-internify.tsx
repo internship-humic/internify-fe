@@ -1,4 +1,5 @@
 import { Bell, Menu } from "lucide-react"
+import { useEffect, useState } from "react";
 import humiclogo from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import { useCurrentUser } from "../hooks/useUser";
@@ -18,13 +19,18 @@ function getInitials(fullName: string | undefined | null): string {
 export default function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
   const nav = useNavigate();
   const { user } = useCurrentUser();
+  const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    setImageError(false);
+  }, [user?.profile_picture, user?.full_name]);
 
   // Tentukan base path settings sesuai role
   const settingsPath =
     user?.role === "intern" ? "/intern/settings" : "/mentor/settings";
 
   const initials = user?.full_name ? getInitials(user.full_name) : "U";
-  const hasPhoto = !!user?.profile_picture;
+  const hasPhoto = !!user?.profile_picture && !imageError;
 
   return (
     <header className='sticky top-0 flex w-full justify-between items-center py-4 px-12 bg-white border-b border-gray-300 z-10'>
@@ -54,9 +60,10 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
         >
           {hasPhoto ? (
             <img
-              src={user!.profile_picture!}
-              alt={user!.full_name}
+              src={user?.profile_picture ?? ""}
+              alt={user?.full_name ?? "Profile"}
               className="w-full h-full object-cover"
+              onError={() => setImageError(true)}
             />
           ) : (
             <div className="w-full h-full bg-[#B30000] flex items-center justify-center">

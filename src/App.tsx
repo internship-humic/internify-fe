@@ -50,6 +50,9 @@ import ViewInternSubmission from "./Pages/Internify/mentor/ViewInternSubmission"
 import ProtectedRoutes from "./Pages/utils/ProtectedRoute";
 import CertificateDetail from "./Pages/Internify/mentor/CertificateForm";
 import CertificateResult from "./Pages/Internify/mentor/CertificateResult";
+import AdminMentorPage from "./Pages/MentorPage";
+import CreateMentorForm from "./Pages/CreateMentorForm";
+import EditMentorForm from "./Pages/EditMentorForm";
 import NotFoundPage from "./Pages/NotFoundPage";
 
 function App() {
@@ -86,6 +89,9 @@ function App() {
           <Route path="/edit-faq/:id" element={<EditFaq />}></Route>
           <Route path="/edit-feedback/:id" element={<EditFeedback />}></Route>
           <Route path="/edit-lowongan/:id" element={<EditLowongan />}></Route>
+          <Route path="/mentor-admin" element={<AdminMentorPage/>}/>
+          <Route path="/create-mentor" element={<CreateMentorForm/>}/>
+          <Route path="/edit-mentor/:id" element={<EditMentorForm/>}/>
 
         </Route>
 

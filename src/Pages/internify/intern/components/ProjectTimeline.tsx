@@ -1,4 +1,4 @@
-import type { ProjectTask } from "../../../../types/project.types";
+import type { ProjectTask } from "../../../../types/task.types";
 
 const formatDate = (dateStr: string) =>
   new Date(dateStr).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
@@ -6,22 +6,24 @@ const formatDate = (dateStr: string) =>
 export default function ProjectTimeline({ tasks }: { tasks: ProjectTask[] }) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-
   return (
     <div className="">
       <div className="flex items-center gap-1.5 mb-4 justify-between">
         <span className="font-semibold text-md text-font-shade">Timeline</span>
       </div>
       <ul className="relative pl-4">
-        {tasks.map((task) => {
+        {tasks.map((task, index) => {
           const d = new Date(task.deadline_at);
           d.setHours(0, 0, 0, 0);
           const isToday = d.getTime() === today.getTime();
           const isPast = d < today;
           const active = isToday || isPast;
-
           return (
             <li key={task.id} className="relative mb-6 list-none">
+              {/* Vertical line ke bawah, kecuali item terakhir */}
+              {index < tasks.length - 1 && (
+                <div className="absolute -left-[1.0625rem] top-3 w-px h-full bg-[#ddd]" />
+              )}
               {/* Dot */}
               <div
                 className={`absolute -left-5 top-0.5 w-3 h-3 rounded-full border-2 border-white ${
@@ -29,7 +31,7 @@ export default function ProjectTimeline({ tasks }: { tasks: ProjectTask[] }) {
                 } ${isToday ? 'shadow-md' : ''}`}
               />
               <div className={`text-[11px] font-semibold ${isToday ? 'text-[#C0392B]' : 'text-[#888]'}`}>
-                {isToday ? 'Hari ini' : formatDate(task.deadline_at)} {/* ← format ISO string */}
+                {isToday ? 'Hari ini' : formatDate(task.deadline_at)}
               </div>
               <div className="text-xs text-[#555] mt-px leading-[1.3]">
                 {task.title}

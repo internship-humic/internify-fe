@@ -1,7 +1,7 @@
 // ManageInternsModal.tsx
 import { useRef, useEffect, useState } from "react";
 import { Search, Plus, Trash2 } from "lucide-react";
-import { useMahasiswa } from "../../../../hooks/useInterns";
+import { useMahasiswa } from "../../../../hooks/useUser";
 import { useAssignMember } from '../../../../hooks/useProjects';
 import type { ProjectMember } from '../../../../types/project.types';
 import type { Mahasiswa } from '../../../../types/project.types';

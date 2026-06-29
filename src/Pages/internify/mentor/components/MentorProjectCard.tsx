@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import * as LucideIcons from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
 import type { Project } from '../../../../types/project.types';
+import { useArchiveProject } from '../../../../hooks/useProjects';
 
 const getDynamicIcon = (iconName: string) => {
         const formatted = iconName.charAt(0).toUpperCase() + iconName.slice(1);
@@ -14,14 +15,28 @@ const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
 
 export default function MentorProjectCard(project: Project) {
   const navigate = useNavigate();
+  const { archive, loading } = useArchiveProject();
+
   const handleCardClick = () => {
     navigate(`/mentor/projects/${toSlug(project.slug)}`)
   };
   const Icon = getDynamicIcon(project.project_icon);
 
-  const handleDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleDeleteClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-  }
+
+    const confirmed = window.confirm(`Arsipkan project "${project.project_name}"?`);
+    if (!confirmed) return;
+
+    const result = await archive(project.id);
+
+    if (result) {
+      window.alert("Project berhasil diarsipkan.");
+      window.location.reload();
+    } else {
+      window.alert("Gagal mengarsipkan project.");
+    }
+  };
   return (
     <div
       onClick={handleCardClick}
@@ -50,7 +65,12 @@ export default function MentorProjectCard(project: Project) {
 
       {/* Footer */}
       <div className="border-t border-gray-300 text-gray-400 flex justify-end p-2 bg-gray-50/50">
-        <button onClick={handleDeleteClick} className="hover:text-red-600 transition-colors">
+        <button
+          onClick={handleDeleteClick}
+          disabled={loading}
+          className="hover:text-red-600 transition-colors disabled:opacity-50"
+          aria-label={`Archive ${project.project_name}`}
+        >
           <Trash2 className="w-4 h-4" />
         </button>
       </div>

@@ -168,6 +168,31 @@ const SidebarAdmin = () => {
           </div>
           <div
             className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${
+              location.pathname === "/mentor-admin"
+                ? "bg-[#D3DFEA] font-bold"
+                : "hover:bg-[#D3DFEA]"
+            }`}
+            onClick={() => navigate("/mentor-admin")}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-8 text-[#2C5282]"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+              />
+            </svg>
+
+            <h2 className="text-[#2C5282]">Mentor</h2>
+          </div>
+          <div
+            className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${
               location.pathname === "/faq-list"
                 ? "bg-[#D3DFEA] font-bold"
                 : "hover:bg-[#D3DFEA]"

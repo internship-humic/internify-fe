@@ -1,12 +1,16 @@
 // hooks/useUser.ts
 import { useState, useEffect, useCallback } from "react";
 import { loginUser, getProfile, updateProfile } from "../services/UserService";
+import type { Mahasiswa } from '../types/project.types';
+import { getMahasiswa } from '../services/MahasiswaService';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface CurrentUser {
   id: number;
   full_name: string;
+  nama_depan: string;
+  nama_belakang: string;
   email: string;
   role: "mentor" | "intern" | "admin";
   professional_bio?: string;
@@ -95,4 +99,24 @@ export const useUpdateProfile = () => {
   };
 
   return { save, loading, error, successMsg, setSuccessMsg, setError };
+};
+
+
+
+export const useMahasiswa = () => {
+  const [mahasiswa, setMahasiswa] = useState<Mahasiswa[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const refetch = useCallback(() => {
+    setLoading(true);
+    getMahasiswa()
+      .then(setMahasiswa)
+      .catch(() => setError('Gagal memuat data mahasiswa.'))
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => { refetch(); }, [refetch]);
+
+  return { mahasiswa, loading, error, refetch };
 };
