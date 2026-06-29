@@ -17,7 +17,7 @@ export default function MentorTaskCard({ task }: {task: ProjectTask}) {
 
   return (
     <div
-      className="border border-[#eee] rounded-[10px] px-5 py-4 mb-3 bg-white shadow-lg flex items-start justify-between gap-3 cursor-pointer hover:border-gray-300 transition-colors"
+      className="border border-card-outline rounded-[10px] px-5 py-4 mb-3 bg-card shadow-lg flex items-start justify-between gap-3 cursor-pointer hover:border-card-outline/50 transition-colors"
       onClick={handleCardClick}
     >
       <div className="flex-1 min-w-0">

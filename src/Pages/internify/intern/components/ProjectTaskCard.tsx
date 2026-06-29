@@ -7,6 +7,16 @@ const formatDate = (dateStr: string) =>
 const formatTime = (dateStr: string) =>
   new Date(dateStr).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
+const statusStyles: Record<InternTaskItem["submission_status"], string> = {
+  not_submitted: "bg-gray-50 text-gray-700 border-gray-200",
+  submitted: "bg-green-50 text-green-700 border-green-200",
+};
+
+const statusLabels: Record<InternTaskItem["submission_status"], string> = {
+  not_submitted: "Pending",
+  submitted: "Submitted",
+};
+
 export default function TaskCard({ task }: { task: InternTaskItem }) {
   const navigate = useNavigate();
   return (
@@ -29,13 +39,12 @@ export default function TaskCard({ task }: { task: InternTaskItem }) {
         </div>
       </div>
 
-      <div className="block md:hidden h-[10px] bg-gray-600"/>
+      <div className="block md:hidden h-[10px] bg-gray-600" />
 
-      <div className="shrink-0 hidden md:flex items-center">
+      <div className="shrink-0 hidden md:flex items-center border border-card-outline">
         <span
-          className={`font-semibold text-xs px-3.5 py-[5px] rounded-md whitespace-nowrap bg-gray-50`}
-        >
-          {task.submission_status}
+          className={`font-semibold text-xs px-3.5 py-[5px] rounded-md whitespace-nowrap border ${statusStyles[task.submission_status]}`}>
+          {statusLabels[task.submission_status]}
         </span>
       </div>
     </div>

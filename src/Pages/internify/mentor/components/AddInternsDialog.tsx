@@ -19,7 +19,7 @@ export default function ManageInternsModal({ isOpen, onClose, projectId, initial
   const [invitedList, setInvitedList] = useState<ProjectMember[]>(initialMembers);
 
   const { mahasiswa, loading: loadingMahasiswa } = useMahasiswa();
-  const { assign, loading: assigning } = useAssignMember();
+  const { assign, loading: assigning, error } = useAssignMember();
 
   // Sync saat modal dibuka
   useEffect(() => {
@@ -84,8 +84,13 @@ export default function ManageInternsModal({ isOpen, onClose, projectId, initial
           />
           <Search className="absolute right-3.5 w-4 h-4 text-gray-400" />
         </div>
+        {error && 
+        <div className="p-1 flex justify-center bg-red-foreground border border-red text-sm text-red-500 font-light rounded-md">
+          {error}: Sudah berada di project lain
+        </div>
+        }
 
-        <div className="overflow-y-auto space-y-3 pr-1 flex-1">
+        <div className="overflow-y-auto space-y-3 pr-1 flex-1 h-[170px]">
           {/* Sudah jadi member */}
           {invitedList.map((member) => (
             <div key={member.id} className="flex items-center justify-between p-2 rounded-xl hover:bg-gray-50 transition-colors">

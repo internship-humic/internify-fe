@@ -253,6 +253,7 @@ export const useAssignMember = () => {
   return { assign, loading, error };
 };
 
+// Hapus/Keluarkan Member dari Projek
 export const useRemoveMember = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

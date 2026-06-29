@@ -24,7 +24,7 @@ const HomeProjectList = () => {
         {projects.map((project) => (
           <div
             key={project.id}
-            onClick={() => navigate(`/intern/projects/${toSlug(project.project_name)}`)}
+            onClick={() => navigate(`/intern/projects/${toSlug(project.slug)}`)}
             className="flex items-center gap-4 border border-card-outline rounded-lg px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors duration-150"
           >
             <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-red-600" />

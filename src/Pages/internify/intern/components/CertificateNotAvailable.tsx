@@ -59,6 +59,13 @@ export default function CertificateNotAvailable({
             </div>
             <p className="text-xs text-gray-400 mt-2 text-left">Semua tugas telah diselesaikan! Silahkan tunggu untuk mendapatkan sertifikat</p>
           </div>
+          <button
+            onClick={handleClaim}
+            disabled={loading}
+            className="mt-0 px-6 py-2.5 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors duration-200"
+          >
+            {loading ? "Memproses..." : "Klaim Sertifikat"}
+          </button>
         </>
       ) : (
         <>
@@ -84,15 +91,6 @@ export default function CertificateNotAvailable({
               />
             </div>
           </div>
-
-          <button
-            onClick={handleClaim}
-            disabled={loading}
-            className="mt-2 px-6 py-2.5 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors duration-200"
-          >
-            {loading ? "Memproses..." : "Klaim Sertifikat"}
-          </button>
-
           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
         </>
       )}

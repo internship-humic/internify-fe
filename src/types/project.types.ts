@@ -48,7 +48,7 @@ export interface InternTaskItem {
   description: string;
   deadline_at: string;
   submission_type: "file_upload" | "url_link";
-  submission_status: "pending" | "submitted" | "done" | "overdue";
+  submission_status: "not_submitted" | "submitted";
   submission_details: {
     id: number;
     file_path: string | null;

@@ -101,8 +101,7 @@ export const useUpdateProfile = () => {
   return { save, loading, error, successMsg, setSuccessMsg, setError };
 };
 
-
-
+// Ambil Seluruh Mahasiswa
 export const useMahasiswa = () => {
   const [mahasiswa, setMahasiswa] = useState<Mahasiswa[]>([]);
   const [loading, setLoading] = useState(true);
