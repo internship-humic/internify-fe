@@ -52,16 +52,16 @@ export default function SertificateList() {
                     {projects.map((item: Project) => (
                         <div
                             key={item.id}
-                            className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer group"
+                            className="bg-white border border-card-outline rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer group"
                             onClick={() => navigate(`/intern/certificates/${item.slug}`, { state: { project: item } })}
                         >
                             {/* Thumbnail */}
                             <div className="p-6 pb-0">
                                 <div className="rounded-lg overflow-hidden">
-                                    <div className="w-full h-32 bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center">
+                                    <div className="w-full h-32 bg-gray-300 flex items-center justify-center">
                                         {(() => {
                                             const Icon = getDynamicIcon(item.project_icon);
-                                            return <Icon className="w-10 h-10 text-white" />;
+                                            return <Icon className="w-10 h-10 text-primary" />;
                                         })()}
                                     </div>
                                 </div>

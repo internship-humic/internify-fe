@@ -1,8 +1,9 @@
 // CertificateAvailable.tsx
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Download, Link, Printer } from "lucide-react";
 import type { ProjectDetail } from "../../../../types/project.types";
 import type { Certificate } from "../../../../types/certificate.types";
+import { downloadCertificateAsImage, downloadCertificateAsPdf } from "../../../utils/DownloadImagetoDevice";
 
 interface CertificateAvailableProps {
   project: ProjectDetail | null;
@@ -11,6 +12,9 @@ interface CertificateAvailableProps {
 
 export default function CertificateAvailable({ project, certificate }: CertificateAvailableProps) {
   const [copied, setCopied] = useState(false);
+  const [downloadingImg, setDownloadingImg] = useState(false);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
+  const certificateRef = useRef<HTMLDivElement>(null);
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -33,12 +37,24 @@ export default function CertificateAvailable({ project, certificate }: Certifica
       })()
     : "-";
 
-  const handleDownload = () => {
-    const a = document.createElement("a");
-    a.href = certificate.image_path;
-    a.download = `Sertifikat - ${certificate.certificate_no}.png`;
-    a.target = "_blank";
-    a.click();
+    const handleDownloadImage = async () => {
+    setDownloadingImg(true);
+    await downloadCertificateAsImage(
+      certificateRef.current,
+      `Sertifikat - ${certificate.certificate_no}`,
+      "png",
+      certificate.image_path
+    );
+    setDownloadingImg(false);
+  };
+
+  const handleDownloadPdf = async () => {
+    setDownloadingPdf(true);
+    await downloadCertificateAsPdf(
+      certificateRef.current,
+      `Sertifikat - ${certificate.certificate_no}`
+    );
+    setDownloadingPdf(false);
   };
 
   return (
@@ -87,11 +103,12 @@ export default function CertificateAvailable({ project, certificate }: Certifica
           <div className="flex flex-col gap-3">
             {/* Unduh Sertifikat */}
             <button
-              onClick={handleDownload}
+              onClick={handleDownloadPdf}
+              disabled={downloadingPdf}
               className="flex items-center justify-center gap-2 w-full bg-red-700 hover:bg-red-800 active:scale-95 transition-all text-white font-semibold py-2 rounded-xl text-sm"
             >
               <Download className="w-4 h-4" />
-              Unduh Sertifikat
+              {downloadingPdf? "Memproses": "Unduh Sertifikat"}
             </button>
 
             {/* Bagikan ke LinkedIn */}
@@ -101,9 +118,12 @@ export default function CertificateAvailable({ project, certificate }: Certifica
 
             {/* Cetak & Salin Link */}
             <div className="grid grid-cols-2 gap-3">
-              <button className="flex flex-col items-center justify-center gap-1.5 border border-card-outline hover:bg-gray-50 active:scale-95 transition-all text-red-700 font-medium py-3.5 rounded-xl text-sm">
+              <button
+                onClick={handleDownloadImage}
+                disabled={downloadingImg}
+                className="flex flex-col items-center justify-center gap-1.5 border border-card-outline hover:bg-gray-50 active:scale-95 transition-all text-red-700 font-medium py-3.5 rounded-xl text-sm">
                 <Printer className="w-5 h-5" />
-                Cetak
+                {downloadingImg? "Memproses" : "Cetak"}
               </button>
               <button
                 onClick={handleCopyLink}
