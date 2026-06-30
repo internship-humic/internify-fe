@@ -34,6 +34,7 @@ export interface Project {
 export interface ProjectDetail extends Project {
   members: ProjectMember[];
   tasks: ProjectTask[];
+  template_sertificate: string;
 }
 
 // Response GET /project-api/my-tasks

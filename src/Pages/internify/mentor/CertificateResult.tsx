@@ -10,61 +10,109 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import { useProjectCertificates } from "../../../hooks/useCertificates";
+import type { Certificate } from "../../../types/certificate.types";
+import { useParams } from "react-router-dom";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-interface InternCert {
-  id: number;
-  name: string;
-  role: string;
-  initials: string;
-  credentialId: string;
-}
+const PER_PAGE = 5;
 
-// ─── Mock Data ────────────────────────────────────────────────────────────────
-const mockCerts: InternCert[] = [
-  { id: 1, name: "Alex Johnson",  role: "Backend Engineering",    initials: "AJ", credentialId: "CERT-2023-0045" },
-  { id: 2, name: "Sarah Lin",     role: "UI/UX Design Specialist",initials: "SL", credentialId: "CERT-2023-0046" },
-  { id: 3, name: "Marcus Kane",   role: "Data Analytics",         initials: "MK", credentialId: "CERT-2023-0047" },
-  { id: 4, name: "Priya Sharma",  role: "Frontend Engineering",   initials: "PS", credentialId: "CERT-2023-0048" },
-  { id: 5, name: "Derek Lim",     role: "DevOps & Cloud",         initials: "DL", credentialId: "CERT-2023-0049" },
-  { id: 6, name: "Nina Castillo", role: "Mobile Development",     initials: "NC", credentialId: "CERT-2023-0050" },
-];
 
-const TOTAL_CERTS = 18;
-const PER_PAGE   = 3;
-
-// ─── Avatar ───────────────────────────────────────────────────────────────────
-const avatarColors: Record<string, string> = {
-  AJ: "bg-blue-100 text-blue-700",
-  SL: "bg-purple-100 text-purple-700",
-  MK: "bg-orange-100 text-orange-700",
-  PS: "bg-teal-100 text-teal-700",
-  DL: "bg-green-100 text-green-700",
-  NC: "bg-pink-100 text-pink-700",
+const getInitials = (name: string): string => {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0][0].toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 };
 
-function Avatar({ initials }: { initials: string }) {
-  const color = avatarColors[initials] ?? "bg-gray-100 text-gray-600";
+function Avatar({ name }: { name: string }) {
+  // "Kemas M Aryadary Rasyad" → "KR"
+  const color = "bg-gray-100 text-gray-600";
   return (
     <div className={`w-9 h-9 rounded-full flex items-center justify-center text-[11px] font-black flex-shrink-0 ${color}`}>
-      {initials}
+      {getInitials(name)}
+    </div>
+  );
+}
+
+function CertificateResultSkeleton() {
+  return (
+    <div className="animate-pulse">
+      {/* Hero */}
+      <div className="flex flex-col items-center text-center mb-8 px-4">
+        <div className="w-16 h-16 rounded-full bg-gray-200 mb-5" />
+        <div className="h-8 w-64 bg-gray-200 rounded-lg mb-3" />
+        <div className="h-4 w-80 bg-gray-100 rounded mb-2" />
+        <div className="h-4 w-64 bg-gray-100 rounded mb-6" />
+        <div className="h-9 w-44 bg-gray-200 rounded-xl" />
+      </div>
+
+      {/* Table */}
+      <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+          <div className="h-4 w-36 bg-gray-200 rounded" />
+          <div className="h-7 w-44 bg-gray-100 rounded-lg" />
+        </div>
+
+        {/* Column headers */}
+        <div className="grid grid-cols-[2fr_1.5fr_auto] px-5 py-2.5 bg-gray-50 border-b border-gray-100 gap-4">
+          <div className="h-3 w-20 bg-gray-200 rounded" />
+          <div className="h-3 w-24 bg-gray-200 rounded" />
+          <div className="h-3 w-16 bg-gray-200 rounded" />
+        </div>
+
+        {/* Rows */}
+        {Array.from({ length: PER_PAGE }).map((_, i) => (
+          <div
+            key={i}
+            className="grid grid-cols-[2fr_1.5fr_auto] items-center px-5 py-3.5 border-b border-gray-50 gap-4"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-gray-200 flex-shrink-0" />
+              <div className="space-y-1.5">
+                <div className="h-3.5 w-28 bg-gray-200 rounded" />
+              </div>
+            </div>
+            <div className="h-3 w-32 bg-gray-100 rounded" />
+            <div className="flex items-center gap-1">
+              {Array.from({ length: 3 }).map((_, j) => (
+                <div key={j} className="w-7 h-7 rounded-md bg-gray-100" />
+              ))}
+            </div>
+          </div>
+        ))}
+
+        {/* Footer */}
+        <div className="flex items-center justify-between px-5 py-3.5 border-t border-gray-100 bg-gray-50/30">
+          <div className="h-3 w-40 bg-gray-100 rounded" />
+          <div className="flex gap-1">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="w-7 h-7 rounded-md bg-gray-200" />
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function CertificateResult() {
-  const [search, setSearch]   = useState("");
-  const [page, setPage]       = useState(1);
+  const { id } = useParams<{ id: string }>();
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const {certificates, loading, error} = useProjectCertificates(Number(id));
+
+  if (loading) return <CertificateResultSkeleton />;
+  if (error) return <div className="text-sm text-red-500 p-4">Gagal memuat data sertifikat.</div>;
 
   // Filter + paginate
-  const filtered = mockCerts.filter(
+  const filtered = certificates.filter(
     (c) =>
-      c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.role.toLowerCase().includes(search.toLowerCase())
+      c.user.full_name.toLowerCase().includes(search.toLowerCase()) ||
+      c.user.email.toLowerCase().includes(search.toLowerCase())
   );
   const totalPages = Math.ceil(filtered.length / PER_PAGE);
-  const paginated  = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+  const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -90,7 +138,7 @@ export default function CertificateResult() {
 
         {/* Headline */}
         <h2 className="text-3xl md:text-4xl font-extrabold text-[#B30000] mb-3 leading-tight">
-          {TOTAL_CERTS} Certificates Successfully Generated!
+          {certificates.length} Certificates Successfully Generated!
         </h2>
 
         {/* Subtext */}
@@ -142,22 +190,22 @@ export default function CertificateResult() {
                 No interns match your search.
               </div>
             ) : (
-              paginated.map((cert) => (
+              paginated.map((cert: Certificate) => (
                 <div
                   key={cert.id}
                   className="grid grid-cols-[2fr_1.5fr_auto] items-center px-5 py-3.5 hover:bg-gray-50/60 transition-colors"
                 >
                   {/* Name + role */}
                   <div className="flex items-center gap-3">
-                    <Avatar initials={cert.initials} />
+                    <Avatar name={cert.user.full_name} />
                     <div>
-                      <p className="text-sm font-bold text-gray-900 leading-tight">{cert.name}</p>
-                      <p className="text-[11px] text-gray-400 mt-0.5">{cert.role}</p>
+                      <p className="text-sm font-bold text-gray-900 leading-tight">{cert.user.full_name}</p>
+                      {/* <p className="text-[11px] text-gray-400 mt-0.5">{cert.role}</p> */}
                     </div>
                   </div>
 
                   {/* Credential ID */}
-                  <p className="text-xs font-mono text-gray-500 tracking-wide">{cert.credentialId}</p>
+                  <p className="text-xs font-mono text-gray-500 tracking-wide">{cert.uuid}</p>
 
                   {/* Actions */}
                   <div className="flex items-center gap-1">
@@ -180,7 +228,7 @@ export default function CertificateResult() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-5 py-3.5 border-t border-gray-100 bg-gray-50/30">
             <p className="text-xs text-gray-400 font-medium">
               Showing {filtered.length === 0 ? 0 : (page - 1) * PER_PAGE + 1} to{" "}
-              {Math.min(page * PER_PAGE, filtered.length)} of {TOTAL_CERTS} interns
+              {Math.min(page * PER_PAGE, filtered.length)} of {certificates.length} interns
             </p>
             <div className="flex items-center gap-1">
               <button
@@ -194,11 +242,10 @@ export default function CertificateResult() {
                 <button
                   key={n}
                   onClick={() => setPage(n)}
-                  className={`w-7 h-7 flex items-center justify-center rounded-md text-xs font-bold transition-colors ${
-                    n === page
-                      ? "bg-[#B30000] text-white shadow-sm"
-                      : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
-                  }`}
+                  className={`w-7 h-7 flex items-center justify-center rounded-md text-xs font-bold transition-colors ${n === page
+                    ? "bg-[#B30000] text-white shadow-sm"
+                    : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
+                    }`}
                 >
                   {n}
                 </button>

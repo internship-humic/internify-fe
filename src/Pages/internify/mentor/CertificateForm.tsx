@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { CalendarDays, UploadCloud, CheckCircle2, XCircle, Loader2 } from "lucide-react";
-import { useUploadCertificateTemplate } from "../../../hooks/useSertificates";
+import { useUploadCertificateTemplate } from "../../../hooks/useCertificates";
 import { useProjectDetail } from "../../../hooks/useProjects";
 import EligibleInternTable from "./components/EligibleInternTable";
 import { useProjectInternProgress } from "../../../hooks/useInternProgress"
@@ -68,7 +68,7 @@ export default function CertificateDetail() {
         </p>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-8 gap-6 items-start">
-        {/* ── Left Column ── */}
+        {/* Left Column */}
         <div className="space-y-4 lg:col-span-3">
           <h2 className="text-3xl font-extrabold text-gray-900 leading-tight">
             {project.project_name}
@@ -76,11 +76,9 @@ export default function CertificateDetail() {
           <div className="flex items-center gap-2 text-sm text-gray-400 font-medium">
             <CalendarDays className="w-4 h-4 flex-shrink-0" />
             {new Date(project.start_date).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
-            {" — "}
+            {" - "}
             {new Date(project.end_date).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
           </div>
-
-          {/* ── Upload Template ── */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-gray-700 tracking-wide">
               Certificate Template
@@ -92,7 +90,7 @@ export default function CertificateDetail() {
               onClick={() => fileInputRef.current?.click()}
             >
               <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-                <UploadCloud className="w-5 h-5 text-[#B30000]" />
+                <UploadCloud className="w-5 h-5 text-red" />
               </div>
               {selectedFile ? (
                 <>
@@ -163,7 +161,7 @@ export default function CertificateDetail() {
             <p className="text-sm text-gray-600 leading-relaxed">{project.description}</p>
           </div>
 
-          {/* ── Stats ── */}
+          {/* Stats: Total Intern dalam project dan jumlah intern eligible */}
           <div className="grid grid-cols-2 gap-4">
             <div className="border border-card-outline rounded-xl p-4">
               <p className="text-2xl font-extrabold text-[#B30000]">{project.total_members}</p>
@@ -176,11 +174,12 @@ export default function CertificateDetail() {
           </div>
         </div>
 
-        {/* ── Right Column ── */}
+        {/* Right Column */}
         <EligibleInternTable
           interns={internProgress}
           loading={progressLoading}
           eligibleCount={eligibleCount}
+          projectId={project.id}
         />
       </div>
     </div>

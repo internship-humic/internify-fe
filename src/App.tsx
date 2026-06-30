@@ -31,7 +31,7 @@ import EditLowongan from "./Pages/EditLowongan";
 import HomeInternPage from "./Pages/Internify/intern/HomeInternPage";
 import { InternLayout, MentorLayout } from "./Pages/Internify/layout";
 import ProjectsPage from "./Pages/Internify/intern/ProjectsPage";
-import SertificatePage from "./Pages/Internify/intern/InternClaimCert";
+import SertificatePage from "./Pages/Internify/intern/InternCertiDetail";
 import ProjectDetailPage from "./Pages/Internify/intern/ProjectDetailPage";
 import HomeMentorPage from "./Pages/Internify/mentor/HomeMentorPage";
 import MentorProjectsPage from "./Pages/Internify/mentor/BaseProjectsPage";
@@ -118,8 +118,8 @@ function App() {
             <Route index element={<HomeMentorPage />} />
             <Route path="projects" element={<MentorProjectsPage />} />
             <Route path="certificates" element={<MentorCertificatePage />} />
-            <Route path="certificates/:slug" element={<CertificateDetail />} />
-            <Route path="certificates/result" element={<CertificateResult />} />
+            <Route path="certificates/:id" element={<CertificateDetail />} />
+            <Route path="certificates/:id/result" element={<CertificateResult />} />
             <Route path="intern" element={<MentorInternPage />} />
             <Route path="projects/:slug" element={<MentorDetailProject />} />
             <Route path="projects/:slug/:taskSlug" element={<MentorProjectsDetailPage />} />

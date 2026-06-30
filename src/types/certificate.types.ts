@@ -17,6 +17,7 @@ export interface Certificate {
   id_project: number;
   id_user: number;
   certificate_no: string;
+  image_path: string
   issued_at: string;
   uuid: string;
   user: CertificateUser;

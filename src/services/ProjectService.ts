@@ -63,6 +63,7 @@ export const getProjectById = async (
       position: m.user?.position,
       kelompok_peminatan: m.user?.kelompok_peminatan,
     })),
+    template_sertificate: raw.template_sertificate,
   };
 };
 

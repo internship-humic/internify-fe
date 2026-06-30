@@ -1,27 +1,23 @@
+// CertificateNotAvailable.tsx
 import { Clock, Lock, Award } from "lucide-react";
-import { useClaimCertificate } from "../../../../hooks/useSertificates";
 
 interface CertificateNotAvailableProps {
   progress: number;
   remainingTasks: number;
   allTasksDone?: boolean;
-  project_id?: number;
+  onClaim: () => void;
+  claiming: boolean;
+  claimError: string | null;
 }
 
 export default function CertificateNotAvailable({
   progress,
   remainingTasks,
   allTasksDone = false,
-  project_id
+  onClaim,
+  claiming,
+  claimError,
 }: CertificateNotAvailableProps) {
-
-  const { claim, loading, error } = useClaimCertificate();
-
-  const handleClaim = async () => {
-    if (!project_id) return;
-    await claim(project_id);
-  };
-
   return (
     <div className="bg-box-primary w-full h-full rounded-2xl border border-box-border shadow-sm px-24 py-12 flex flex-col items-center justify-center">
       {/* Icon */}
@@ -60,12 +56,13 @@ export default function CertificateNotAvailable({
             <p className="text-xs text-gray-400 mt-2 text-left">Semua tugas telah diselesaikan! Silahkan tunggu untuk mendapatkan sertifikat</p>
           </div>
           <button
-            onClick={handleClaim}
-            disabled={loading}
+            onClick={onClaim}
+            disabled={claiming}
             className="mt-0 px-6 py-2.5 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors duration-200"
           >
-            {loading ? "Memproses..." : "Klaim Sertifikat"}
+            {claiming ? "Memproses..." : "Klaim Sertifikat"}
           </button>
+          {claimError && <p className="text-red-500 text-sm mt-2">{claimError}</p>}
         </>
       ) : (
         <>
@@ -91,7 +88,6 @@ export default function CertificateNotAvailable({
               />
             </div>
           </div>
-          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
         </>
       )}
     </div>

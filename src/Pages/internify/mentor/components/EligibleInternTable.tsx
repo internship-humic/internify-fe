@@ -8,73 +8,56 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
+  Check,
+  Loader2
 } from "lucide-react";
 import type { InternSubmissionProgress } from "../../../../hooks/useInternProgress";
-import { useClaimCertificate } from "../../../../hooks/useSertificates";
-import { Loader2, Check } from "lucide-react";
+import { useProjectDetail } from "../../../../hooks/useProjects";
+import JSZip from "jszip";
+import { generateCertificate } from "../../../utils/SertificateGenerator";
+import Avatar from "../../Avatar";
+import ProgressBar from "../../ProgressBar";
 
 interface EligibleInternTableProps {
   interns: InternSubmissionProgress[];
   loading: boolean;
   eligibleCount: number;
+  projectId: number
 }
 
 const PER_PAGE = 5;
 
-function ProgressBar({ value, total }: { value: number; total: number }) {
-  const pct = Math.round((value / total) * 100);
-  const isComplete = value === total;
-  return (
-    <div className="flex items-center gap-2">
-      <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-        <div
-          className={`h-full rounded-full ${isComplete ? "bg-[#B30000]" : "bg-gray-400"}`}
-          style={{ width: `${pct}%` }}
-        />
-      </div>
-      <span className={`text-xs font-bold ${isComplete ? "text-[#B30000]" : "text-gray-500"}`}>
-        {value}/{total}
-      </span>
-    </div>
-  );
-}
-
 function StatusBadge({ status }: { status: boolean }) {
-  const isEligible = status
   return (
-    <div className={`flex items-center gap-1 text-[11px] font-extrabold tracking-wide ${isEligible ? "text-green-600" : "text-orange-500"}`}>
-      {isEligible
+    <div className={`flex items-center gap-1 text-[11px] font-extrabold tracking-wide ${status ? "text-green-600" : "text-orange-500"}`}>
+      {status
         ? <CheckCircle2 className="w-3.5 h-3.5" />
         : <AlertCircle className="w-3.5 h-3.5" />}
-      {status}
+      {status ? "Eligible" : "Incomplete"}
     </div>
   );
 }
 
-interface EligibleInternTableProps {
-  interns: InternSubmissionProgress[];
-  loading: boolean;
-  eligibleCount: number;
-}
-
-function Avatar({ initials }: { initials: string }) {
-  return (
-    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs text-white flex-shrink-0 bg-primary`}>
-      {initials}
-    </div>
-  );
-}
-
-// ─── Component ────────────────────────────────────────────────────────────────
-export default function EligibleInternTable({ interns, loading, eligibleCount }: EligibleInternTableProps) {
+// Main Component
+export default function EligibleInternTable({ 
+  interns, 
+  loading, 
+  eligibleCount, 
+  projectId 
+}: EligibleInternTableProps) {
   const navigate = useNavigate();
+  const { project } = useProjectDetail(String(projectId));
 
   const initialSelected = new Set(
     interns.filter(i => i.is_eligible).map(i => i.id_user)
   );
+  // Pemilihan Id
   const [selected, setSelected] = useState<Set<number>>(initialSelected);
+  // state saat generate sertifikat
+  const [generating, setGenerating] = useState(false);
+  const [generateError, setGenerateError] = useState<string | null>(null);
+  // Halaman (Pagination)
   const [page, setPage] = useState(1);
-
   const totalPages = Math.ceil(interns.length / PER_PAGE);
   const paginated = interns.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
@@ -82,15 +65,11 @@ export default function EligibleInternTable({ interns, loading, eligibleCount }:
   const allEligibleSelected = eligibleIds.every(id => selected.has(id));
 
   const toggleSelectAll = () => {
-    if (allEligibleSelected) {
-      setSelected(new Set());
-    } else {
-      setSelected(new Set(eligibleIds));
-    }
+    setSelected(allEligibleSelected ? new Set() : new Set(eligibleIds));
   };
 
-  const toggleOne = (id: number, status: boolean) => {
-    if (status) return;
+  const toggleOne = (id: number, isEligible: boolean) => {
+    if (!isEligible) return;
     setSelected((prev) => {
       const next = new Set(prev);
       next.has(id) ? next.delete(id) : next.add(id);
@@ -98,14 +77,65 @@ export default function EligibleInternTable({ interns, loading, eligibleCount }:
     });
   };
 
+  const handleGenerate = async () => {
+    if (!project?.template_sertificate) {
+      setGenerateError("Template sertifikat belum diupload.");
+      return;
+    }
+    if (selected.size === 0) {
+      setGenerateError("Pilih minimal satu intern.");
+      return;
+    }
+
+    setGenerating(true);
+    setGenerateError(null);
+
+    try {
+      const selectedInterns = interns.filter((i) => selected.has(i.id_user));
+      const zip = new JSZip();
+
+      // Generate semua sertifikat secara paralel
+      await Promise.all(
+        selectedInterns.map(async (intern) => {
+          const blob = await generateCertificate(
+            project.template_sertificate,
+            intern.full_name
+          );
+          // Nama file: "Sertifikat - Nama Intern.png"
+          const filename = `Sertifikat - ${intern.full_name}.png`;
+          zip.file(filename, blob);
+        })
+      );
+
+      // Download ZIP
+      const zipBlob = await zip.generateAsync({ type: "blob" });
+      const url = URL.createObjectURL(zipBlob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Sertifikat-Project-${projectId}.zip`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      // Navigasi ke result page
+      navigate(`/mentor/certificates/${projectId}/result`);
+    } catch (err) {
+      console.error(err);
+      setGenerateError(
+        err instanceof Error ? err.message : "Gagal generate sertifikat."
+      );
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   if (loading) {
-  return (
-    <div className="lg:col-span-5 flex items-center justify-center py-20 text-gray-400 text-sm">
-      <Loader2 className="w-5 h-5 animate-spin mr-2" />
-      Memuat data intern...
-    </div>
-  );
-}
+    return (
+      <div className="lg:col-span-5 flex items-center justify-center py-20 text-gray-400 text-sm">
+        <Loader2 className="w-5 h-5 animate-spin mr-2" />
+        Memuat data intern...
+      </div>
+    );
+  }
 
   return (
     <div className="lg:col-span-5 flex flex-col gap-4">
@@ -251,14 +281,28 @@ export default function EligibleInternTable({ interns, loading, eligibleCount }:
         </div>
       </div>
 
-      {/* ── Bottom Action Bar ── */}
+      {generateError && (
+        <p className="text-xs text-red-500 font-medium text-right">{generateError}</p>
+      )}
+
+      {/* Bottom Action Bar */}
       <div className="flex items-center justify-end">
         <button
-          onClick={() => navigate("/mentor/certificates/result")}
-          className="flex items-center gap-2 px-8 py-3.5 bg-[#B30000] hover:bg-[#990000] text-white font-bold text-sm rounded-xl shadow-md transition-colors"
+          onClick={handleGenerate}
+          disabled={generating || selected.size === 0}
+          className="flex items-center gap-2 px-8 py-3.5 bg-[#B30000] hover:bg-red-800 disabled:opacity-60 text-white font-bold text-sm rounded-xl shadow-md transition-colors"
         >
-          Generate Certificates
-          <Sparkles className="w-4 h-4" />
+          {generating ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            <>
+              Generate Certificates
+              <Sparkles className="w-4 h-4" />
+            </>
+          )}
         </button>
       </div>
     </div>

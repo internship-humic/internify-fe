@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { History, Loader2, AlertCircle } from "lucide-react";
 import type { Certificate } from "../../../../types/certificate.types";
-import certificateImg from "../../../../assets/certificate.png";
-import { useMyCertificates } from "../../../../hooks/useSertificates";
+import certificateImg from "../../../../assets/certificate.png"; //Placeholder
+import { useMyCertificates } from "../../../../hooks/useCertificates";
 
 export default function SertificateHistory() {
     const navigate = useNavigate();
