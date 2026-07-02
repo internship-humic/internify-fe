@@ -9,7 +9,8 @@ import type {
   UpdateProjectPayload,
   AssignMemberPayload,
   MemberAssignment,
-  ProjectMember
+  ProjectMember,
+  AssignableIntern
 } from "../types/project.types";
 
 // POST /project-api/add
@@ -84,6 +85,14 @@ export const archiveProject = async (
   return res.data.data;
 };
 
+
+export const completeProject = async (
+  id: string | number
+): Promise<ProjectDetail> => {
+  const res = await api.post(`/project-api/complete/${id}`);
+  return res.data.data;
+}; 
+
 // GET /project-api/my-projects (intern only)
 export const getMyProjects = async (): Promise<ProjectDetail[]> => {
   const res = await api.get("/project-api/my-projects");
@@ -107,6 +116,12 @@ export const getAllInterns = async (): Promise<InternDetail[]> => {
   const res = await api.get("/project-api/interns");
   return res.data.data;
 };
+
+// GET /project-api/assignable-interns
+export const getAssignableInterns = async (): Promise<AssignableIntern[]> => {
+  const res = await api.get("/project-api/assignable-interns");
+  return res.data.data;
+}
 
 // POST /project-api/assign-member (admin/mentor only)
 export const assignMember = async (

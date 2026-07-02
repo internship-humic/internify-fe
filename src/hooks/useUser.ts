@@ -3,28 +3,8 @@ import { useState, useEffect, useCallback } from "react";
 import { loginUser, getProfile, updateProfile } from "../services/UserService";
 import type { Mahasiswa } from '../types/project.types';
 import { getMahasiswa } from '../services/MahasiswaService';
+import type { CurrentUser, UpdateProfilePayload } from "../types/user.types";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-export interface CurrentUser {
-  id: number;
-  full_name: string;
-  nama_depan: string;
-  nama_belakang: string;
-  email: string;
-  role: "mentor" | "intern" | "admin";
-  professional_bio?: string;
-  profile_picture?: string | null;
-}
-
-export interface UpdateProfilePayload {
-  full_name?: string;
-  email?: string;
-  professional_bio?: string;
-  profile_picture?: File | null;
-}
-
-// ─── useCurrentUser ───────────────────────────────────────────────────────────
 // GET /auth-api/me — ambil data user yang sedang login
 export const useCurrentUser = () => {
   const [user, setUser] = useState<CurrentUser | null>(null);
@@ -47,7 +27,6 @@ export const useCurrentUser = () => {
   return { user, loading, error, refetch };
 };
 
-// ─── useLogin ────────────────────────────────────────────────────────────────
 // POST /auth-api/login
 export const useLogin = () => {
   const [loading, setLoading] = useState(false);
@@ -75,7 +54,6 @@ export const useLogin = () => {
   return { login, loading, error, setError };
 };
 
-// ─── useUpdateProfile ────────────────────────────────────────────────────────
 // PATCH /auth-api/update-profile
 export const useUpdateProfile = () => {
   const [loading, setLoading] = useState(false);
@@ -119,3 +97,5 @@ export const useMahasiswa = () => {
 
   return { mahasiswa, loading, error, refetch };
 };
+
+export const useAssignableInterns = () => {}

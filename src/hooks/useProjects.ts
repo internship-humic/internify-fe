@@ -8,6 +8,7 @@ import type {
   CreateProjectPayload,
   UpdateProjectPayload,
   AssignMemberPayload,
+  AssignableIntern,
   ProjectMember
 } from "../types/project.types";
 import {
@@ -22,7 +23,9 @@ import {
   archiveProject,
   assignMember,
   getProjectMembers,
-  removeMember
+  removeMember,
+  getAssignableInterns,
+  completeProject
 } from "../services/ProjectService";
 import { useMemo } from "react";
 
@@ -158,6 +161,24 @@ export const useAllInterns = () => {
   return { interns, loading, error, refetch };
 };
 
+export const useAssignableInterns = () => {
+  const [AssignableInterns, setAssignableInterns] = useState<AssignableIntern[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const refetch = useCallback(() => {
+    setLoading(true);
+    getAssignableInterns()
+      .then(setAssignableInterns)
+      .catch(() => setError("Gagal memuat data assignable interns."))
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => { refetch(); }, [refetch]);
+
+  return { interns: AssignableInterns, loading, error, refetch };
+}
+
 // POST /project-api/add
 export const useCreateProject = () => {
   const [loading, setLoading] = useState(false);
@@ -231,6 +252,26 @@ export const useArchiveProject = () => {
 
   return { archive, loading, error };
 };
+
+export const useCompleteProject = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const complete = async (id: string | number) => {
+    setLoading(true);
+    setError(null);
+    try {
+      return await completeProject(id);
+    } catch {
+      setError("Gagal menyelesaikan project.");
+      return null;
+    } finally {
+      setLoading(false);
+    }
+
+    return { complete, loading, error };
+  }
+}
 
 // POST /project-api/assign-member
 export const useAssignMember = () => {

@@ -1,5 +1,5 @@
 // hooks/useTasks.ts
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import type { ProjectTask, ProjectTaskDetail, CreateTaskPayload, UpdateTaskPayload, TaskSubmissionData, AdminTaskDetail } from "../types/task.types";
 import {
   getProjectTasks,
@@ -16,6 +16,8 @@ import {
   getTaskSubmissions,
 } from "../services/TaskService";
 import type { MentorTaskItem } from "../types/task.types";
+import { useCurrentUser } from "./useUser";
+import { useMyTasks } from "./useProjects";
 
 // GET /task-api/projects/{id_project}/tasks
 export const useProjectTasks = (projectId: string) => {
@@ -219,4 +221,39 @@ export const useAllMentorTasks = (enabled: boolean) => {
   }, [enabled]);
 
   return { tasks, loading, error };
+};
+
+export interface Deadline {
+  date: Date;
+  label: string;
+}
+
+export const useDeadlines = () => {
+  const { user, loading: userLoading, error: userError } = useCurrentUser();
+
+  const isIntern = user?.role === "intern";
+
+  const { tasks: internTasks, loading: internLoading, error: internError } = useMyTasks();
+  const { tasks: mentorTasks, loading: mentorLoading, error: mentorError } = useAllMentorTasks(
+    !isIntern && user !== null
+  );
+
+  const deadlines: Deadline[] = useMemo(() => {
+    if (!user) return [];
+    return isIntern
+      ? internTasks.map((task) => ({
+          date: new Date(task.deadline_at),
+          label: task.title,
+        }))
+      : mentorTasks.map((task) => ({
+          date: new Date(task.deadline_at),
+          label: `[${task.project_name}] ${task.title}`,
+        }));
+  }, [isIntern, internTasks, mentorTasks, user]);
+
+  // Loading: tunggu user dulu, baru tunggu task yang relevan dengan rolenya
+  const loading = userLoading || (isIntern ? internLoading : mentorLoading);
+  const error = userError || (isIntern ? internError : mentorError);
+
+  return { deadlines, loading, error, isIntern };
 };

@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom'
-import { mockProjects } from '../../../../lib/mockData'
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import CreateProjectModal from './CreateProjectDialog';
@@ -20,9 +19,9 @@ const HomeMentorProject = () => {
             <div className='flex flex-row justify-between mb-3 px-5 items-center'>
                 <h2 className="text-lg font-semibold text-gray-800 mb-4">Projects</h2>
                 <button
-                    className='bg-gray-300 p-1.5 rounded-lg font-bold hover:bg-gray-400'
+                    className='bg-card p-1.5 rounded-lg font-bold hover:bg-card-hover border border-card-outline'
                     onClick={openDialog} >
-                    <span className='text-sm flex flex-row justify-between items-center gap-3.5'>
+                    <span className='text-sm flex flex-row px-1 justify-between items-center gap-3.5'>
                         <Plus className='w-4 h-4' />
                         Add
                     </span>

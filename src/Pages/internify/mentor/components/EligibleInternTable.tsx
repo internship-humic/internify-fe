@@ -78,7 +78,8 @@ export default function EligibleInternTable({
   };
 
   const handleGenerate = async () => {
-    if (!project?.template_sertificate) {
+    // NOTE: DI RESPONSE GAK DIKASIH TAHU DIMANA SIMPAN TEMPLATE SERTIF NYA
+    if (!project?.certificate_template) {
       setGenerateError("Template sertifikat belum diupload.");
       return;
     }
@@ -98,7 +99,7 @@ export default function EligibleInternTable({
       await Promise.all(
         selectedInterns.map(async (intern) => {
           const blob = await generateCertificate(
-            project.template_sertificate,
+            project.certificate_template,
             intern.full_name
           );
           // Nama file: "Sertifikat - Nama Intern.png"
@@ -286,7 +287,12 @@ export default function EligibleInternTable({
       )}
 
       {/* Bottom Action Bar */}
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-between">
+        <button
+          className="text-gray-700 hover:underline" 
+          onClick={()=> navigate(`/mentor/certificates/${project?.slug}/result`)}>
+            Ke Hasil
+          </button>
         <button
           onClick={handleGenerate}
           disabled={generating || selected.size === 0}
@@ -304,6 +310,7 @@ export default function EligibleInternTable({
             </>
           )}
         </button>
+        
       </div>
     </div>
   );

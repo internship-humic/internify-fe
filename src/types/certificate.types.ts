@@ -32,6 +32,11 @@ export interface CertificateVerifyResult {
   created_at: string;
 }
 
+export interface GenerateCertificatePayload {
+  id_project: number;
+  id_users: number[];
+}
+
 export interface CertificateTemplate {
   id_project: number;
   certificate_template: string;

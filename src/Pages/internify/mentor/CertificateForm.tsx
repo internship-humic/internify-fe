@@ -4,7 +4,8 @@ import { CalendarDays, UploadCloud, CheckCircle2, XCircle, Loader2 } from "lucid
 import { useUploadCertificateTemplate } from "../../../hooks/useCertificates";
 import { useProjectDetail } from "../../../hooks/useProjects";
 import EligibleInternTable from "./components/EligibleInternTable";
-import { useProjectInternProgress } from "../../../hooks/useInternProgress"
+import { useProjectInternProgress } from "../../../hooks/useInternProgress";
+import { resolveImageUrl } from "../../utils/SertificateGenerator";
 
 export default function CertificateDetail() {
   const navigate = useNavigate();
@@ -17,12 +18,17 @@ export default function CertificateDetail() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setSelectedFile(file);
     setUploadSuccess(false);
+
+    // Revoke object URL lama biar tidak memory leak
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl(URL.createObjectURL(file));
   };
 
   const handleUpload = async () => {
@@ -33,6 +39,16 @@ export default function CertificateDetail() {
       setSelectedFile(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
+  };
+
+  const handleClearFile = () => {
+    setSelectedFile(null);
+    setUploadSuccess(false);
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   if (loading) {
@@ -85,30 +101,48 @@ export default function CertificateDetail() {
             </label>
 
             {/* Drop Zone */}
-            <div
-              className="border-2 border-dashed border-card-outline bg-primary-foreground rounded-xl p-6 text-center flex flex-col items-center justify-center cursor-pointer hover:bg-red-50/20 transition-colors group"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-                <UploadCloud className="w-5 h-5 text-red" />
+            <div className="relative">
+              <div
+                className="border-2 border-dashed border-card-outline bg-primary-foreground rounded-xl p-6 text-center flex flex-col items-center justify-center cursor-pointer hover:bg-red-50/20 transition-colors group overflow-hidden"
+                onClick={() => !selectedFile && fileInputRef.current?.click()}
+              >
+                {previewUrl || project.certificate_template ? (
+                  <>
+                    <img
+                      src={previewUrl || resolveImageUrl(project.certificate_template)}
+                      alt="Preview template"
+                      className="w-full h-32 object-contain rounded-lg mb-2"
+                    />
+                    <p className="text-xs font-bold text-gray-800 truncate max-w-[180px]">
+                      {selectedFile?.name}
+                    </p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">
+                      {selectedFile && (selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
+                      <UploadCloud className="w-5 h-5 text-red" />
+                    </div>
+                    <p className="text-xs font-bold text-gray-800">Upload Certificate Image</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">PNG, JPG up to 5MB</p>
+                  </>
+                )}
               </div>
-              {selectedFile ? (
-                <>
-                  <p className="text-xs font-bold text-gray-800 truncate max-w-[180px]">
-                    {selectedFile.name}
-                  </p>
-                  <p className="text-[10px] text-gray-400 mt-0.5">
-                    {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-                  </p>
-                </>
-              ) : (
-                <>
-                  <p className="text-xs font-bold text-gray-800">Upload Certificate Image</p>
-                  <p className="text-[10px] text-gray-400 mt-0.5">PNG, JPG up to 5MB</p>
-                </>
+
+              {/* Tombol Clear */}
+              {selectedFile && (
+                <button
+                  onClick={handleClearFile}
+                  type="button"
+                  className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-500 hover:text-red-600 hover:border-red-200 transition-colors"
+                  title="Hapus file"
+                >
+                  <XCircle className="w-3.5 h-3.5" />
+                </button>
               )}
             </div>
-
             <input
               ref={fileInputRef}
               type="file"
@@ -151,25 +185,25 @@ export default function CertificateDetail() {
                 )}
               </button>
             )}
-          </div>
 
-          {/* ── Project Scope ── */}
-          <div className="border border-card-outline rounded-xl p-5">
-            <p className="text-[13px] font-bold text-gray-400 uppercase tracking-widest mb-3">
-              Project Scope
-            </p>
-            <p className="text-sm text-gray-600 leading-relaxed">{project.description}</p>
-          </div>
-
-          {/* Stats: Total Intern dalam project dan jumlah intern eligible */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="border border-card-outline rounded-xl p-4">
-              <p className="text-2xl font-extrabold text-[#B30000]">{project.total_members}</p>
-              <p className="text-xs text-font font-medium mt-0.5">Total Interns</p>
+            {/* ── Project Scope ── */}
+            <div className="border border-card-outline rounded-xl p-5">
+              <p className="text-[13px] font-bold text-gray-400 uppercase tracking-widest mb-3">
+                Project Scope
+              </p>
+              <p className="text-sm text-gray-600 leading-relaxed">{project.description}</p>
             </div>
-            <div className="border border-card-outline rounded-xl p-4">
-              <p className="text-2xl font-extrabold text-gray-900">{eligibleCount}</p>
-              <p className="text-xs text-font font-medium mt-0.5">Eligible</p>
+
+            {/* Stats: Total Intern dalam project dan jumlah intern eligible */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="border border-card-outline rounded-xl p-4">
+                <p className="text-2xl font-extrabold text-[#B30000]">{project.total_members}</p>
+                <p className="text-xs text-font font-medium mt-0.5">Total Interns</p>
+              </div>
+              <div className="border border-card-outline rounded-xl p-4">
+                <p className="text-2xl font-extrabold text-gray-900">{eligibleCount}</p>
+                <p className="text-xs text-font font-medium mt-0.5">Eligible</p>
+              </div>
             </div>
           </div>
         </div>

@@ -34,7 +34,7 @@ export interface Project {
 export interface ProjectDetail extends Project {
   members: ProjectMember[];
   tasks: ProjectTask[];
-  template_sertificate: string;
+  certificate_template: string;
 }
 
 // Response GET /project-api/my-tasks
@@ -68,6 +68,17 @@ export interface InternDetail {
   role: string;
   isAssignedByMentor: boolean;
   avatar: string | null;
+}
+
+export interface AssignableIntern {
+  id: number;
+  full_name: string;
+  email: string;
+  profesional_bio: string;
+  position: string;
+  kelompok_peminatan: string;
+  is_active: boolean;
+  is_assignable: boolean;
 }
 
 // Payload POST /project-api/add

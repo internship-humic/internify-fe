@@ -40,8 +40,8 @@ export default function CertificateNotAvailable({
         <>
           <h2 className="text-[37px] font-bold text-gray-900 mb-3">Selamat!</h2>
           <p className="text-gray-500 text-[17px] mb-6 text-center">
-            Semua tugas proyek telah selesai. Klik tombol di bawah untuk{" "}
-            <span className="font-bold text-green-600">mengklaim sertifikat</span> kelulusan Anda.
+            Semua tugas proyek telah selesai. Silahkan tunggu Mentor untuk{" "}
+            <span className="font-bold text-green-600">Mempublish Sertifikat</span> kelulusan Anda.
           </p>
 
           {/* Progress Bar — 100% */}
@@ -53,7 +53,6 @@ export default function CertificateNotAvailable({
             <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
               <div className="h-full bg-green-500 rounded-full transition-all duration-700 w-full" />
             </div>
-            <p className="text-xs text-gray-400 mt-2 text-left">Semua tugas telah diselesaikan! Silahkan tunggu untuk mendapatkan sertifikat</p>
           </div>
           <button
             onClick={onClaim}

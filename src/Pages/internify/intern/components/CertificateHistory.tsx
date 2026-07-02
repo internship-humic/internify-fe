@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { History, Loader2, AlertCircle } from "lucide-react";
 import type { Certificate } from "../../../../types/certificate.types";
-import certificateImg from "../../../../assets/certificate.png"; //Placeholder
 import { useMyCertificates } from "../../../../hooks/useCertificates";
 
 export default function SertificateHistory() {
@@ -43,7 +42,7 @@ export default function SertificateHistory() {
                         >
                             <div className="w-full flex justify-center">
                                 <img
-                                    src={certificateImg}
+                                    src={item.image_path}
                                     alt="Certificate"
                                     className="rounded-xl h-[150px] w-full object-cover"
                                 />

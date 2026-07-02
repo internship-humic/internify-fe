@@ -4,6 +4,7 @@ import { Download, Link, Printer } from "lucide-react";
 import type { ProjectDetail } from "../../../../types/project.types";
 import type { Certificate } from "../../../../types/certificate.types";
 import { downloadCertificateAsImage, downloadCertificateAsPdf } from "../../../utils/DownloadImagetoDevice";
+import { resolveImageUrl } from "../../../utils/SertificateGenerator";
 
 interface CertificateAvailableProps {
   project: ProjectDetail | null;
@@ -62,7 +63,7 @@ export default function CertificateAvailable({ project, certificate }: Certifica
       {/* Certificate Card */}
       <div className="flex rounded-xl p-5 mb-1 border bg-box-primary border-box-border shadow-md items-center justify-center">
         <img
-          src={certificate.image_path}
+          src={resolveImageUrl(certificate.image_path)}
           alt="Certificate"
           className="rounded-xl w-[550px] h-[350px] object-contain"
         />
@@ -83,7 +84,7 @@ export default function CertificateAvailable({ project, certificate }: Certifica
                 label: "Status",
                 value: (
                   <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full">
-                    {certificate.certificate_status.toUpperCase()}
+                    {certificate.certificate_status}
                   </span>
                 ),
               },

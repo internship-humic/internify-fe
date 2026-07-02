@@ -1,14 +1,14 @@
 // hooks/useNotifications.ts
 import { useState, useEffect, useCallback } from "react";
-import type { Notification } from "../types/certificate.types";
 import {
   getNotifications,
-  markAllNotificationsRead,
-  markNotificationRead,
+  markAllAsRead,
+  markAsRead,
 } from "../services/NotificationService";
+import type { BackendNotification } from "../types/notification.types";
 
 export const useNotifications = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<BackendNotification[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,14 +24,14 @@ export const useNotifications = () => {
 
   const markAllRead = async () => {
     try {
-      await markAllNotificationsRead();
+      await markAllAsRead();
       setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
     } catch { setError("Gagal menandai semua notifikasi."); }
   };
 
   const markOneRead = async (id: number) => {
     try {
-      await markNotificationRead(id);
+      await markAsRead(id);
       setNotifications(prev =>
         prev.map(n => n.id === id ? { ...n, is_read: true } : n)
       );

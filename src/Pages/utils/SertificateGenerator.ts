@@ -1,4 +1,4 @@
-// src/utils/certificateGenerator.ts
+import api from "../../lib/api";
 
 // ── Konstanta posisi nama di template ─────────────────────────────────────────
 const NAME_Y_RATIO = 0.55;       // posisi Y = 55% dari tinggi canvas
@@ -6,14 +6,25 @@ const NAME_FONT_SIZE = 48;       // px
 const NAME_FONT_FAMILY = "Georgia, serif";
 const NAME_COLOR = "#1a1a1a";
 
+// src/utils/certificateGenerator.ts
+export function resolveImageUrl(path: string): string {
+  if (!path) return "";
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+  const apiBaseURL = api.defaults.baseURL ?? "";
+  const origin = new URL(apiBaseURL).origin;
+  return `${origin}${path.startsWith("/") ? "" : "/"}${path}`;
+}
+
 // ── Load Image dari URL ────────────────────────────────────────────────────────
 export function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    img.crossOrigin = "anonymous"; // penting untuk URL eksternal (Supabase, dll)
+    img.crossOrigin = "anonymous";
     img.onload = () => resolve(img);
     img.onerror = () => reject(new Error(`Gagal load gambar: ${src}`));
-    img.src = src;
+    img.src = resolveImageUrl(src);
   });
 }
 

@@ -9,7 +9,9 @@ import {
   getCertificatesByProject,
   verifyCertificateByUuid,
   uploadCertificateTemplate,
+  generateCertificate
 } from "../services/CertificateService";
+import { AxiosError } from "axios";
 
 // GET /certificate-api/my-certificates
 export const useMyCertificates = () => {
@@ -117,6 +119,51 @@ export const useClaimCertificate = () => {
   };
 
   return { claim, loading, error };
+};
+
+export const useGenerateCertificates = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+
+  const generate = async (id_project: number, id_users: number[]): Promise<boolean> => {
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+    try {
+      await generateCertificate(id_project, id_users);
+      setSuccess(true);
+      return true;
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        switch (err.response?.status) {
+          case 400:
+            setError("Ada intern yang tidak eligible atau parameter tidak lengkap.");
+            break;
+          case 403:
+            setError("Hanya mentor/admin project ini yang bisa generate sertifikat.");
+            break;
+          case 409:
+            setError("Sertifikat sudah pernah di-generate untuk satu atau lebih intern.");
+            break;
+          default:
+            setError("Gagal generate sertifikat.");
+        }
+      } else {
+        setError("Gagal generate sertifikat.");
+      }
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const reset = () => {
+    setError(null);
+    setSuccess(false);
+  };
+
+  return { generate, loading, error, success, reset };
 };
 
 // POST /certificate-api/projects/{id_project}/template

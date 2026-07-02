@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { useMyTasks } from '../../../../hooks/useProjects';
-import { useCurrentUser } from '../../../../hooks/useUser';
-import { useAllMentorTasks } from '../../../../hooks/useTasks';
+import { useDeadlines } from '../../hooks/useTasks';
 
 const DAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
 const MONTH_NAMES = [
@@ -20,21 +18,7 @@ function getFirstDayOfMonth(year: number, month: number) {
 
 export default function HomeCalendar() {
   const [today, setToday] = useState(new Date());
-  const { user } = useCurrentUser();
-
-  const isIntern = user?.role === "intern";
-  const { tasks: internTasks } = useMyTasks();
-  const { tasks: mentorTasks } = useAllMentorTasks(!isIntern && user !== null);
-
-   const DEADLINES = isIntern
-    ? internTasks.map(task => ({
-        date: new Date(task.deadline_at),
-        label: task.title,
-      }))
-    : mentorTasks.map(task => ({
-        date: new Date(task.deadline_at),
-        label: `[${task.project_name}] ${task.title}`,
-      }));
+  const { deadlines, loading } = useDeadlines();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -74,13 +58,13 @@ export default function HomeCalendar() {
     currentYear === today.getFullYear()
 
   const hasDeadline = (day: number) =>
-    DEADLINES.some(d =>
+    deadlines.some(d =>
       d.date.getDate() === day &&
       d.date.getMonth() === currentMonth &&
       d.date.getFullYear() === currentYear
     )
 
-  const upcomingDeadlines = DEADLINES.filter(d => {
+  const upcomingDeadlines = deadlines.filter(d => {
     return (
       d.date.getMonth() === currentMonth &&
       d.date.getFullYear() === currentYear
@@ -102,6 +86,14 @@ export default function HomeCalendar() {
   const isBold = (day: number) => {
     const d = new Date(currentYear, currentMonth, day).getDay()
     return d === 0 || d === 6 // Sun or Sat
+  }
+
+  if (loading) {
+    return (
+      <div className="px-13 py-5 border border-card-outline rounded-2xl">
+        <p className="text-[11px] text-font-shade">Loading calendar...</p>
+      </div>
+    )
   }
 
   return (

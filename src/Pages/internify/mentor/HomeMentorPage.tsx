@@ -1,5 +1,5 @@
 import HomeHeader from '../intern/components/HomeHeader'
-import HomeCalendar from '../intern/components/HomeCalendar'
+import HomeCalendar from '../HomeCalendar'
 import HomeMentorProject from './components/HomeMentorProject'
 
 const HomeMentorPage = () => {

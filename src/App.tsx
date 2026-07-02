@@ -118,8 +118,8 @@ function App() {
             <Route index element={<HomeMentorPage />} />
             <Route path="projects" element={<MentorProjectsPage />} />
             <Route path="certificates" element={<MentorCertificatePage />} />
-            <Route path="certificates/:id" element={<CertificateDetail />} />
-            <Route path="certificates/:id/result" element={<CertificateResult />} />
+            <Route path="certificates/:slug" element={<CertificateDetail />} />
+            <Route path="certificates/:slug/result" element={<CertificateResult />} />
             <Route path="intern" element={<MentorInternPage />} />
             <Route path="projects/:slug" element={<MentorDetailProject />} />
             <Route path="projects/:slug/:taskSlug" element={<MentorProjectsDetailPage />} />

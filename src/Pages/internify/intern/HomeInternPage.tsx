@@ -1,6 +1,6 @@
 import HomeHeader from "./components/HomeHeader";
 import HomeProjectList from "./components/HomeProjectList";
-import HomeCalendar from "./components/HomeCalendar";
+import HomeCalendar from "../HomeCalendar";
 import TaskTimeline from "./components/TaskTimeline";
 
 export default function HomeInternPage()  {

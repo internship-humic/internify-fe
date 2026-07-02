@@ -10,7 +10,8 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { useProjectCertificates } from "../../../hooks/useCertificates";
+import { useProjectCertificates } from "../../../hooks/useCertificates"; //Problemnya cuma role "admin" yang bisa
+import { useProjectDetail } from "../../../hooks/useProjects";
 import type { Certificate } from "../../../types/certificate.types";
 import { useParams } from "react-router-dom";
 
@@ -97,10 +98,17 @@ function CertificateResultSkeleton() {
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function CertificateResult() {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const {certificates, loading, error} = useProjectCertificates(Number(id));
+
+  const { project, loading: projectLoading, error: projectError } = useProjectDetail(slug ?? "");
+  const { certificates, loading: certLoading, error: certError } = useProjectCertificates(
+    project?.id ?? 0
+  );
+
+  const loading = projectLoading || certLoading;
+  const error = projectError || certError;
 
   if (loading) return <CertificateResultSkeleton />;
   if (error) return <div className="text-sm text-red-500 p-4">Gagal memuat data sertifikat.</div>;
@@ -262,7 +270,7 @@ export default function CertificateResult() {
         </div>
 
         {/* Preview Card (placeholder — gambar belum diimplementasi) */}
-        <div className="xl:w-64 w-full flex-shrink-0 rounded-2xl overflow-hidden bg-gradient-to-br from-gray-700 via-[#7a1010] to-[#B30000] shadow-md min-h-[200px] flex flex-col justify-end p-5">
+        {/* <div className="xl:w-64 w-full flex-shrink-0 rounded-2xl overflow-hidden bg-gradient-to-br from-gray-700 via-[#7a1010] to-[#B30000] shadow-md min-h-[200px] flex flex-col justify-end p-5">
           <div className="mt-auto">
             <p className="text-white font-extrabold text-base leading-snug">
               Institutional Excellence
@@ -271,7 +279,7 @@ export default function CertificateResult() {
               Certified via Mentor Portal v2.4
             </p>
           </div>
-        </div>
+        </div> */}
 
       </div>
     </div>

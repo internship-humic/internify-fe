@@ -12,6 +12,11 @@ export const claimCertificate = async (id_project: number): Promise<Certificate>
   return res.data.data;
 };
 
+export const generateCertificate = async (id_project: number, id_users: number[]): Promise<void> => {
+  const res = await api.post("/certificate-api/generate", { id_project, id_users });
+  return res.data.data;
+};
+
 // GET /certificate-api/my-certificates
 export const getMyCertificates = async (): Promise<Certificate[]> => {
   const res = await api.get("/certificate-api/my-certificates");
