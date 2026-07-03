@@ -65,7 +65,7 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
     if (ok) { setFiles([]); setIsEditing(false); }
   };
 
-  // Sudah ada submission dan tidak sedang edit → tampilkan status
+  // Sudah ada submission dan tidak sedang edit -> tampilkan status
   if (submission && !isEditing) {
     return (
       <SubmitStatusTable

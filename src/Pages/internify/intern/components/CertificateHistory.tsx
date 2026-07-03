@@ -1,12 +1,10 @@
-import { useNavigate } from "react-router-dom";
 import { History, Loader2, AlertCircle } from "lucide-react";
 import type { Certificate } from "../../../../types/certificate.types";
 import { useMyCertificates } from "../../../../hooks/useCertificates";
 
 export default function SertificateHistory() {
-    const navigate = useNavigate();
     const { certificates, loading, error } = useMyCertificates();
-    const displayed = certificates.slice(0, 2);
+    const displayed = certificates.slice(0, 3);
 
     return (
         <div className="bg-box-primary rounded-2xl border border-box-border shadow-sm p-5">
@@ -56,15 +54,6 @@ export default function SertificateHistory() {
                     ))}
                 </div>
             )}
-
-            <div className="w-full my-3 flex justify-end">
-                <button
-                    onClick={() => navigate('/intern/certificates/all')}
-                    className="text-sm text-red-700 font-semibold hover:underline"
-                >
-                    See more
-                </button>
-            </div>
         </div>
     );
 }

@@ -6,14 +6,17 @@ import { generateCertificate, resolveImageUrl } from "./SertificateGenerator";
 // ── 1. Preview di tab baru ────────────────────────────────────────────────────
 export const previewCertificate = async (
   cert: Certificate,
-  templateUrl: string
+  templateUrl: string,
 ): Promise<void> => {
   // Buka tab DULU sebelum await — supaya tidak diblokir popup blocker
   const tab = window.open("", "_blank");
 
   const blob = await generateCertificate(
     resolveImageUrl(templateUrl),
-    cert.user.full_name
+    cert.user.full_name,
+    cert.project.project_name,
+    cert.certificate_no,
+    cert.uuid,
   );
   const url = URL.createObjectURL(blob);
 
@@ -68,12 +71,15 @@ export const previewCertificate = async (
 // ── 2. Download PDF ───────────────────────────────────────────────────────────
 export const downloadCertificatePdf = async (
   cert: Certificate,
-  templateUrl: string
+  templateUrl: string,
 ): Promise<void> => {
   const fileName = `Sertifikat - ${cert.user.full_name} - ${cert.certificate_no}`;
   const blob = await generateCertificate(
     resolveImageUrl(templateUrl),
-    cert.user.full_name
+    cert.user.full_name,
+    cert.project.project_name,
+    cert.certificate_no,
+    cert.uuid,
   );
 
   const dataUrl: string = await new Promise((resolve, reject) => {
@@ -91,7 +97,11 @@ export const downloadCertificatePdf = async (
   });
 
   const orientation = img.width > img.height ? "landscape" : "portrait";
-  const pdf = new jsPDF({ orientation, unit: "px", format: [img.width, img.height] });
+  const pdf = new jsPDF({
+    orientation,
+    unit: "px",
+    format: [img.width, img.height],
+  });
   pdf.addImage(dataUrl, "PNG", 0, 0, img.width, img.height);
   pdf.save(`${fileName}.pdf`);
 };
@@ -100,12 +110,15 @@ export const downloadCertificatePdf = async (
 export const downloadCertificateImage = async (
   cert: Certificate,
   templateUrl: string,
-  format: "png" | "jpg" = "png"
+  format: "png" | "jpg" = "png",
 ): Promise<void> => {
   const fileName = `Sertifikat - ${cert.user.full_name} - ${cert.certificate_no}`;
   const blob = await generateCertificate(
     resolveImageUrl(templateUrl),
-    cert.user.full_name
+    cert.user.full_name,
+    cert.project.project_name,
+    cert.certificate_no,
+    cert.uuid,
   );
 
   let finalBlob = blob;
@@ -137,7 +150,7 @@ export const downloadCertificateImage = async (
       canvas.toBlob(
         (b) => (b ? resolve(b) : reject(new Error("toBlob gagal"))),
         "image/jpeg",
-        0.95
+        0.95,
       );
     });
   }
@@ -155,7 +168,7 @@ export const downloadAllCertificatesZip = async (
   certificates: Certificate[],
   templateUrl: string,
   projectName: string,
-  onProgress?: (done: number, total: number) => void
+  onProgress?: (done: number, total: number) => void,
 ): Promise<void> => {
   const zip = new JSZip();
   const total = certificates.length;
@@ -164,11 +177,14 @@ export const downloadAllCertificatesZip = async (
     certificates.map(async (cert, i) => {
       const blob = await generateCertificate(
         resolveImageUrl(templateUrl),
-        cert.user.full_name
+        cert.user.full_name,
+        cert.project.project_name,
+        cert.certificate_no,
+        cert.uuid,
       );
       zip.file(`Sertifikat - ${cert.user.full_name}.png`, blob);
       onProgress?.(i + 1, total);
-    })
+    }),
   );
 
   const zipBlob = await zip.generateAsync({ type: "blob" });

@@ -22,7 +22,7 @@ export default function CertificateAvailable({ project, certificate, templateUrl
   useEffect(() => {
     if (!templateUrl) return;
 
-    generateCertificate(resolveImageUrl(templateUrl), certificate.user.full_name)
+    generateCertificate(resolveImageUrl(templateUrl), certificate.user.full_name, certificate.project.project_name, certificate.certificate_no, certificate.uuid)
       .then((blob) => {
         const url = URL.createObjectURL(blob);
         setPreviewUrl(url);

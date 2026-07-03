@@ -2,8 +2,9 @@
 
 import { FileText, CheckCircle2, AlertCircle, MinusCircle } from "lucide-react";
 import type { TaskSubmissionData, DisplayStatus } from "../../../../types/task.types";
+import { resolveImageUrl } from "../../../utils/SertificateGenerator";
 
-// ─── StatusBadge ────────────────────────────────────────────────────────────
+// StatusBadge
 
 export function StatusBadge({ status }: { status: DisplayStatus }) {
   if (status === "submitted" || status === "done")
@@ -30,7 +31,7 @@ export function StatusBadge({ status }: { status: DisplayStatus }) {
   );
 }
 
-// ─── StatusTable ────────────────────────────────────────────────────────────
+// StatusTable
 
 interface StatusTableProps {
   status: DisplayStatus;
@@ -65,13 +66,18 @@ export function StatusTable({ status, submission }: StatusTableProps) {
       label: "File submission",
       value: hasSubmission && submission?.file_path
         ? (
-          <div className="flex items-center gap-2 text-sm text-gray-800">
-            <FileText className="w-4 h-4 text-red-700 stroke-[2.5]" />
+          <a
+            href={resolveImageUrl(submission.file_path)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-sm text-blue-600 hover:underline"
+          >
+            <FileText className="w-4 h-4 stroke-[2.5]" />
             <span>{submission.file_path.split("/").pop()}</span>
-          </div>
+          </a>
         )
         : hasSubmission && submission?.url_link
-        ? (
+          ? (
             <a
               href={submission.url_link}
               target="_blank"
@@ -80,8 +86,8 @@ export function StatusTable({ status, submission }: StatusTableProps) {
             >
               {submission.url_link}
             </a>
-        )
-        : <span className="text-sm text-gray-400">-</span>,
+          )
+          : <span className="text-sm text-gray-400">-</span>,
     },
   ];
 

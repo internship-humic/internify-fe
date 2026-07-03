@@ -1,8 +1,12 @@
 import api from "../../lib/api";
+import QRCode from "qrcode";
 
-// src/utils/certificateGenerator.ts
+// Flag supaya font hanya di-load sekali (tidak berulang tiap generate)
+let fontsLoaded = false;
+
 export function resolveImageUrl(path: string): string {
   if (!path) return "";
+  if (path.startsWith("data:")) return path; // untuk QR data URL
   if (path.startsWith("http://") || path.startsWith("https://")) {
     return path;
   }
@@ -11,7 +15,7 @@ export function resolveImageUrl(path: string): string {
   return `${origin}${path.startsWith("/") ? "" : "/"}${path}`;
 }
 
-// ── Load Image dari URL ────────────────────────────────────────────────────────
+// Load Image dari URL
 export function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -22,29 +26,74 @@ export function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
+// Load kedua font dari Google Fonts (hanya sekali)
+export async function ensureFontsLoaded(): Promise<void> {
+  // Trigger & tunggu font yang sudah diload via <link> di index.html
+  await Promise.all([
+    document.fonts.load('105px "Great Vibes"'),
+    document.fonts.load('54px "Grenze"'),
+  ]);
+  await document.fonts.ready;
+}
+
 // ── Generate satu sertifikat sebagai Blob ─────────────────────────────────────
 export async function generateCertificate(
   templateUrl: string,
   internName: string,
   projectName: string,
-  uuid: string,
-  barcodeUrl: string
+  certificateNo: string,
+  verifyUrl: string
 ): Promise<Blob> {
-  const img = await loadImage(templateUrl);
+  // Pastikan font siap sebelum menggambar teks
+  await ensureFontsLoaded();
 
+  const img = await loadImage(templateUrl);
   const canvas = document.createElement("canvas");
   canvas.width = img.naturalWidth;
   canvas.height = img.naturalHeight;
-
   const ctx = canvas.getContext("2d")!;
   ctx.drawImage(img, 0, 0);
-
-  // Tulis nama di tengah horizontal, posisi Y dari konstanta
-  ctx.font = `bold 48px Georgia, serif`;
-  ctx.fillStyle = "#800000";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(internName, canvas.width / 2, canvas.height * 0.55);
+
+  // Nama intern — besar (Great Vibes)
+  ctx.font = `105px "Great Vibes", cursive`;
+  ctx.fillStyle = "#800000";
+  ctx.fillText(internName, canvas.width * 0.57, canvas.height * 0.48);
+
+  // Nama intern — versi kecil di pojok bawah
+  ctx.font = `30px "Great Vibes", cursive`;
+  ctx.fillStyle = "#800000";
+  ctx.fillText(internName, canvas.width * 0.825, canvas.height * 0.895);
+
+  // Nama project (Grenze)
+  ctx.font = `400 54px "Grenze", serif`;
+  ctx.fillStyle = "#090909";
+  ctx.fillText(projectName, canvas.width * 0.57, canvas.height * 0.615);
+
+  // Certificate no — besar (Grenze)
+  ctx.font = `50px "Grenze", serif`;
+  ctx.fillStyle = "#090909";
+  ctx.fillText(certificateNo, canvas.width * 0.666, canvas.height * 0.305);
+
+  // Certificate no — kecil di pojok bawah
+  ctx.font = `20px "Grenze", serif`;
+  ctx.fillStyle = "#800000";
+  ctx.fillText(certificateNo, canvas.width * 0.825, canvas.height * 0.918);
+
+  // QR code — kalau verifyUrl diisi
+  // if (verifyUrl) {
+  //   const qrDataUrl = await QRCode.toDataURL(verifyUrl, { width: 200, margin: 1 });
+  //   const qrImg = await loadImage(qrDataUrl);
+  //   const qrSize = canvas.width * 0.08;
+  //   ctx.drawImage(
+  //     qrImg,
+  //     canvas.width * 0.1 - qrSize / 2,  // posisi X — sesuaikan
+  //     canvas.height * 0.88 - qrSize / 2, // posisi Y — sesuaikan
+  //     qrSize,
+  //     qrSize
+  //   );
+  // }
 
   return new Promise((resolve, reject) => {
     canvas.toBlob(

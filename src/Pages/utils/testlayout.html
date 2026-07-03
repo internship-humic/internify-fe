@@ -1,39 +1,61 @@
-<!-- test-cert.html — buka langsung di browser -->
 <!DOCTYPE html>
 <html>
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Grenze:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
 <body>
-  <canvas id="preview"></canvas>
+  <canvas id="preview" style="max-width: 100%;"></canvas>
+
   <script>
-    // GANTI INI UNTUK MENGGUNAKAN TEMPLATE YANG BERBEDA
-    const templateUrl = "http://localhost:9000/uploads/template.png"; // ganti URL template
+    async function draw() {
+      // Tunggu semua font dari Google Fonts selesai load
+      await document.fonts.ready;
 
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => {
-      const canvas = document.getElementById("preview");
-      canvas.width = img.naturalWidth;
-      canvas.height = img.naturalHeight;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0);
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+        const canvas = document.getElementById("preview");
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
 
-      // Nama
-      ctx.font = "bold 48px Georgia, serif";
-      ctx.fillStyle = "#800000";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("Rafi Athallah", canvas.width / 2, canvas.height * 0.55);
+        // Nama intern — pakai Great Vibes (font kaligrafi/script)
+        ctx.font = `105px "Great Vibes", cursive`;
+        ctx.fillStyle = "#800000";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("Jonathan Kristina", canvas.width * 0.57, canvas.height * 0.48);
 
-      // Project
-      ctx.font = "24px Georgia, serif";
-      ctx.fillStyle = "#444444";
-      ctx.fillText("Internify Platform Dev", canvas.width / 2, canvas.height * 0.65);
+        // Nama intern — versi kecil
+        ctx.font = `30px "Great Vibes", cursive`;
+        ctx.fillStyle = "#800000";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("Jonathan Kristina", canvas.width * 0.825, canvas.height * 0.895);
 
-      // UUID
-      ctx.font = "16px monospace";
-      ctx.fillStyle = "#888888";
-      ctx.fillText("CERT/20260609/PRJ2/USR5", canvas.width / 2, canvas.height * 0.88);
-    };
-    img.src = templateUrl;
+        // Nama project — pakai Grenze
+        ctx.font = `400 54px "Grenze", serif`;
+        ctx.fillStyle = "#090909";
+        ctx.fillText("Internify Platform Dev", canvas.width * 0.57, canvas.height * 0.615);
+
+        // Certificate no — monospace biasa
+        ctx.font = `50px Grenze`;
+        ctx.fillStyle = "#090909";
+        ctx.fillText("CERT/20260609/PRJ2/USR5", canvas.width * 0.666, canvas.height * 0.305);
+
+        // Certificate no — monospace biasa
+        ctx.font = `20px Grenze`;
+        ctx.fillStyle = "#800000";
+        ctx.fillText("CERT/20260609/PRJ2/USR5",canvas.width * 0.825, canvas.height * 0.918);
+      };
+
+      img.src = "http://localhost:9000/uploads/1783080498359-420570422.png"; // ganti URL template kamu
+    }
+
+    draw();
   </script>
 </body>
 </html>

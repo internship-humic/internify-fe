@@ -5,10 +5,10 @@ import CertificateAvailable from "./components/CertificateAvailabe";
 import CertificateNotAvailable from "./components/CertificateNotAvailable";
 import SertificateHistory from "./components/CertificateHistory";
 
-import { useClaimCertificate } from "../../../hooks/useCertificates";
+// import { useClaimCertificate } from "../../../hooks/useCertificates";
 import { useProjectDetail } from "../../../hooks/useProjects";
 
-import { useProjectCertificates } from "../../../hooks/useCertificates";
+import { useMyCertificates } from "../../../hooks/useCertificates";
 import type { Project } from "../../../types/project.types";
 
 export default function InternCertificateDetail () {
@@ -17,8 +17,8 @@ export default function InternCertificateDetail () {
   const projectFromList = location.state?.project as Project | undefined;
 
   const { project: projectDetail, loading: projectLoading } = useProjectDetail(slug ?? "");
-  const { certificates, loading: certLoading, refetch: refetchCertificates } = useProjectCertificates(projectDetail?.id ?? 0);
-  const { claim, loading: claiming, error: claimError } = useClaimCertificate();
+  const { certificates, loading: certLoading, refetch: refetchCertificates } = useMyCertificates();
+  // const { claim, loading: claiming, error: claimError } = useClaimCertificate();
 
   const myCertificateForProject = useMemo(() => {
     if (!projectDetail) return null;
@@ -43,13 +43,13 @@ export default function InternCertificateDetail () {
   const remainingTasks = project ? project.total_tasks - project.task_done : 0;
   const isLoading = projectLoading || certLoading;
 
-  const handleClaim = async () => {
-    if (!project?.id) return;
-    const result = await claim(project.id);
-    if (result) {
-      refetchCertificates();
-    }
-  };
+  // const handleClaim = async () => {
+  //   if (!project?.id) return;
+  //   const result = await claim(project.id);
+  //   if (result) {
+  //     refetchCertificates();
+  //   }
+  // };
 
   if (isLoading) {
     return (
@@ -78,9 +78,9 @@ export default function InternCertificateDetail () {
               progress={progress}
               remainingTasks={remainingTasks}
               allTasksDone={allTasksDone}
-              onClaim={handleClaim}
-              claiming={claiming}
-              claimError={claimError}
+              // onClaim={handleClaim}
+              // claiming={claiming}
+              // claimError={claimError}
             />
           )}
         </div>

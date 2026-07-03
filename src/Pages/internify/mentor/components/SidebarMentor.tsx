@@ -66,7 +66,7 @@ export default function SidebarMentor({ isOpen, closeSidebar }: SidebarProps) {
       {/* Main nav */}
       <nav className="flex flex-col gap-0.5">
         {navItems.map(({ label, icon: Icon, path }) => {
-          const isActive = location.pathname === path || location.pathname.startsWith(path + "/");
+          const isActive = location.pathname === path || location.pathname.startsWith(path + "/mentor");
           return (
             <button
               key={path}
