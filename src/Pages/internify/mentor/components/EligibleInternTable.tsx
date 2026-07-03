@@ -15,6 +15,7 @@ import type { InternSubmissionProgress } from "../../../../hooks/useInternProgre
 import { useProjectDetail } from "../../../../hooks/useProjects";
 import JSZip from "jszip";
 import { generateCertificate } from "../../../utils/SertificateGenerator";
+import { useGenerateCertificates } from "../../../../hooks/useCertificates";
 import Avatar from "../../Avatar";
 import ProgressBar from "../../ProgressBar";
 
@@ -47,20 +48,19 @@ export default function EligibleInternTable({
 }: EligibleInternTableProps) {
   const navigate = useNavigate();
   const { project } = useProjectDetail(String(projectId));
+  const { generate: SubmitCertificates, loading: generatingCertificates, error, success, reset } = useGenerateCertificates();
 
   const initialSelected = new Set(
     interns.filter(i => i.is_eligible).map(i => i.id_user)
   );
-  // Pemilihan Id
   const [selected, setSelected] = useState<Set<number>>(initialSelected);
-  // state saat generate sertifikat
   const [generating, setGenerating] = useState(false);
   const [generateError, setGenerateError] = useState<string | null>(null);
+
   // Halaman (Pagination)
   const [page, setPage] = useState(1);
   const totalPages = Math.ceil(interns.length / PER_PAGE);
   const paginated = interns.slice((page - 1) * PER_PAGE, page * PER_PAGE);
-
   const eligibleIds = interns.filter(i => i.is_eligible).map(i => i.id_user);
   const allEligibleSelected = eligibleIds.every(id => selected.has(id));
 
@@ -78,56 +78,48 @@ export default function EligibleInternTable({
   };
 
   const handleGenerate = async () => {
-    // NOTE: DI RESPONSE GAK DIKASIH TAHU DIMANA SIMPAN TEMPLATE SERTIF NYA
-    if (!project?.certificate_template) {
-      setGenerateError("Template sertifikat belum diupload.");
-      return;
-    }
-    if (selected.size === 0) {
-      setGenerateError("Pilih minimal satu intern.");
-      return;
-    }
+  if (!project?.certificate_template) {
+    setGenerateError("Template sertifikat belum diupload.");
+    return;
+  }
+  if (selected.size === 0) {
+    setGenerateError("Pilih minimal satu intern.");
+    return;
+  }
 
-    setGenerating(true);
-    setGenerateError(null);
+  setGenerating(true);
+  setGenerateError(null);
 
-    try {
-      const selectedInterns = interns.filter((i) => selected.has(i.id_user));
-      const zip = new JSZip();
+  try {
+    // 1. Generate blob PNG per intern & kumpulkan ke ZIP
+    const selectedInterns = interns.filter((i) => selected.has(i.id_user));
+    const zip = new JSZip();
 
-      // Generate semua sertifikat secara paralel
-      await Promise.all(
-        selectedInterns.map(async (intern) => {
-          const blob = await generateCertificate(
-            project.certificate_template,
-            intern.full_name
-          );
-          // Nama file: "Sertifikat - Nama Intern.png"
-          const filename = `Sertifikat - ${intern.full_name}.png`;
-          zip.file(filename, blob);
-        })
-      );
+    await Promise.all(
+      selectedInterns.map(async (intern) => {
+        const blob = await generateCertificate(
+          project.certificate_template,
+          intern.full_name
+        );
+        zip.file(`Sertifikat - ${intern.full_name}.png`, blob);
+      })
+    );
 
-      // Download ZIP
-      const zipBlob = await zip.generateAsync({ type: "blob" });
-      const url = URL.createObjectURL(zipBlob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `Sertifikat-Project-${projectId}.zip`;
-      a.click();
-      URL.revokeObjectURL(url);
+    // 2. POST ke backend untuk mencatat sertifikat sudah di-generate
+    const ok = await SubmitCertificates(projectId, Array.from(selected));
+    if (!ok) return;
 
-      // Navigasi ke result page
-      navigate(`/mentor/certificates/${projectId}/result`);
-    } catch (err) {
-      console.error(err);
-      setGenerateError(
-        err instanceof Error ? err.message : "Gagal generate sertifikat."
-      );
-    } finally {
-      setGenerating(false);
-    }
-  };
+    // 3. Navigasi ke result page
+    navigate(`/mentor/certificates/${projectId}/result`);
+  } catch (err) {
+    console.error(err);
+    setGenerateError(
+      err instanceof Error ? err.message : "Gagal generate sertifikat."
+    );
+  } finally {
+    setGenerating(false);
+  }
+};
 
   if (loading) {
     return (

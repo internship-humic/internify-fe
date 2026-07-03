@@ -3,13 +3,15 @@ import { X } from "lucide-react";
 import { PROJECT_ICON_MAP, PROJECT_ICON_CODES } from "../../../../lib/ProjectIcons";
 import { LuSendHorizontal, LuMail } from "react-icons/lu";
 import { useCreateProject } from "../../../../hooks/useProjects";
+import type { CreateProjectPayload } from "../../../../types/project.types";
 
 interface CreateProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-export default function CreateProjectModal({ isOpen, onClose }: CreateProjectModalProps) {
+export default function CreateProjectModal({ isOpen, onClose, onSuccess }: CreateProjectModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [selectedIcon, setSelectedIcon] = useState(PROJECT_ICON_CODES[0]);
   const [projectName, setProjectName] = useState("");
@@ -61,23 +63,23 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
     setInvitedEmails(invitedEmails.filter(email => email !== emailToRemove));
   };
 
-  // Handler Submit Utama
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const payload: any = {
+    const payload: CreateProjectPayload = {
       project_icon: selectedIcon,
       project_name: projectName,
       description: projectDescription,
       start_date: startDate,
       end_date: endDate,
     };
-    
+
     if (invitedEmails.length > 0) {
       payload.member_emails = invitedEmails;
     }
 
     const result = await create(payload);
     if (result) {
+      onSuccess?.();  // panggil refetch di parent (kalau ada)
       onClose();
     }
   };

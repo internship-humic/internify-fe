@@ -2,20 +2,23 @@ import MentorProjectCard from './components/MentorProjectCard';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import CreateProjectModal from './components/CreateProjectDialog';
-import { useProjects } from '../../../hooks/useProjects';
+import { useProjectsByRole } from '../../../hooks/useListProjects';
 
 
 export default function MentorProjectsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { projects, loading, error } = useProjects("active");
+  const { projects, loading, error, refetch } = useProjectsByRole();
 
   const openDialog = () => {
     setIsModalOpen(true);
   };
-
   const closeDialog = () => {
     setIsModalOpen(false);
   };
+  const handleRefetch = () => {
+    closeDialog();
+    refetch();
+  }
 
   if (loading) return (
     <div className="flex flex-col gap-3">
@@ -56,6 +59,7 @@ export default function MentorProjectsPage() {
         <CreateProjectModal
           isOpen={isModalOpen}
           onClose={closeDialog}
+          onSuccess={handleRefetch}
         />
       )}
     </div>

@@ -1,5 +1,3 @@
-// types/certificate.types.ts
-
 export interface CertificateUser {
   id: number;
   full_name: string;
@@ -17,38 +15,21 @@ export interface Certificate {
   id_project: number;
   id_user: number;
   certificate_no: string;
-  image_path: string
   issued_at: string;
   uuid: string;
   user: CertificateUser;
   project: CertificateProject;
-  certificate_status: string;
 }
 
-export interface CertificateVerifyResult {
+// Khusus GET /certificate-api/verify-uuid/{uuid}
+export interface CertificateVerification {
   uuid: string;
   intern_name: string;
   project_name: string;
   created_at: string;
 }
 
-export interface GenerateCertificatePayload {
-  id_project: number;
-  id_users: number[];
-}
-
 export interface CertificateTemplate {
   id_project: number;
   certificate_template: string;
-}
-
-// Notification
-export interface Notification {
-  id: number;
-  id_user: number;
-  id_admin: number | null;
-  title: string;
-  message: string;
-  is_read: boolean;
-  created_at: string;
 }

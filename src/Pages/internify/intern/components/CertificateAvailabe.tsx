@@ -1,72 +1,91 @@
 // CertificateAvailable.tsx
-import { useState, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Download, Link, Printer } from "lucide-react";
 import type { ProjectDetail } from "../../../../types/project.types";
 import type { Certificate } from "../../../../types/certificate.types";
-import { downloadCertificateAsImage, downloadCertificateAsPdf } from "../../../utils/DownloadImagetoDevice";
-import { resolveImageUrl } from "../../../utils/SertificateGenerator";
+import { downloadCertificatePdf, downloadCertificateImage } from "../../../utils/Certificates";
+import { generateCertificate, resolveImageUrl } from "../../../utils/SertificateGenerator";
 
 interface CertificateAvailableProps {
   project: ProjectDetail | null;
   certificate: Certificate;
+  templateUrl: string;
 }
 
-export default function CertificateAvailable({ project, certificate }: CertificateAvailableProps) {
-  const [copied, setCopied] = useState(false);
+export default function CertificateAvailable({ project, certificate, templateUrl }: CertificateAvailableProps) {
+  // const [copied, setCopied] = useState(false);
   const [downloadingImg, setDownloadingImg] = useState(false);
   const [downloadingPdf, setDownloadingPdf] = useState(false);
-  const certificateRef = useRef<HTMLDivElement>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [loadingPreview, setLoadingPreview] = useState(true);
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  useEffect(() => {
+    if (!templateUrl) return;
 
-  // Hitung durasi dari start_date - end_date
+    generateCertificate(resolveImageUrl(templateUrl), certificate.user.full_name)
+      .then((blob) => {
+        const url = URL.createObjectURL(blob);
+        setPreviewUrl(url);
+      })
+      .finally(() => setLoadingPreview(false));
+
+    // Cleanup supaya tidak memory leak
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [templateUrl, certificate.user.full_name]);
+
   const duration = project
     ? (() => {
-        const start = new Date(project.start_date);
-        const end = new Date(project.end_date);
-        const diffMs = end.getTime() - start.getTime();
-        const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-        const months = Math.floor(diffDays / 30);
-        const days = diffDays % 30;
-        if (months > 0 && days > 0) return `${months} Bulan ${days} Hari`;
-        if (months > 0) return `${months} Bulan`;
-        return `${diffDays} Hari`;
-      })()
+      const start = new Date(project.start_date);
+      const end = new Date(project.end_date);
+      const diffMs = end.getTime() - start.getTime();
+      const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+      const months = Math.floor(diffDays / 30);
+      const days = diffDays % 30;
+      if (months > 0 && days > 0) return `${months} Bulan ${days} Hari`;
+      if (months > 0) return `${months} Bulan`;
+      return `${diffDays} Hari`;
+    })()
     : "-";
 
-    const handleDownloadImage = async () => {
+  const handleDownloadImage = async () => {
     setDownloadingImg(true);
-    await downloadCertificateAsImage(
-      certificateRef.current,
-      `Sertifikat - ${certificate.certificate_no}`,
-      "png",
-      certificate.image_path
-    );
-    setDownloadingImg(false);
+    try {
+      await downloadCertificateImage(certificate, templateUrl, "png");
+    } finally {
+      setDownloadingImg(false);
+    }
   };
 
   const handleDownloadPdf = async () => {
     setDownloadingPdf(true);
-    await downloadCertificateAsPdf(
-      certificateRef.current,
-      `Sertifikat - ${certificate.certificate_no}`
-    );
-    setDownloadingPdf(false);
+    try {
+      await downloadCertificatePdf(certificate, templateUrl);
+    } finally {
+      setDownloadingPdf(false);
+    }
   };
 
   return (
     <div className="flex flex-col gap-4">
       {/* Certificate Card */}
       <div className="flex rounded-xl p-5 mb-1 border bg-box-primary border-box-border shadow-md items-center justify-center">
-        <img
-          src={resolveImageUrl(certificate.image_path)}
-          alt="Certificate"
-          className="rounded-xl w-[550px] h-[350px] object-contain"
-        />
+        {loadingPreview ? (
+          <div className="w-[550px] h-[350px] flex items-center justify-center text-gray-400 text-sm">
+            Memuat sertifikat...
+          </div>
+        ) : previewUrl ? (
+          <img
+            src={previewUrl}
+            alt="Certificate"
+            className="rounded-xl w-[550px] h-[350px] object-contain"
+          />
+        ) : (
+          <div className="w-[550px] h-[350px] flex items-center justify-center text-gray-400 text-sm">
+            Gagal memuat sertifikat.
+          </div>
+        )}
       </div>
 
       {/* Program Summary */}
@@ -79,15 +98,7 @@ export default function CertificateAvailable({ project, certificate }: Certifica
             {[
               { label: "Nama Program", value: project?.project_name ?? "-" },
               { label: "Durasi", value: duration },
-              { label: "Total Tugas", value: project ? `${project.total_tasks} Tugas` : "-" },
-              {
-                label: "Status",
-                value: (
-                  <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full">
-                    {certificate.certificate_status}
-                  </span>
-                ),
-              },
+              { label: "No. Sertifikat", value: certificate.certificate_no ?? "-" },
             ].map((row) => (
               <div
                 key={row.label}
@@ -109,7 +120,7 @@ export default function CertificateAvailable({ project, certificate }: Certifica
               className="flex items-center justify-center gap-2 w-full bg-red-700 hover:bg-red-800 active:scale-95 transition-all text-white font-semibold py-2 rounded-xl text-sm"
             >
               <Download className="w-4 h-4" />
-              {downloadingPdf? "Memproses": "Unduh Sertifikat"}
+              {downloadingPdf ? "Memproses" : "Unduh Sertifikat"}
             </button>
 
             {/* Bagikan ke LinkedIn */}
@@ -124,14 +135,14 @@ export default function CertificateAvailable({ project, certificate }: Certifica
                 disabled={downloadingImg}
                 className="flex flex-col items-center justify-center gap-1.5 border border-card-outline hover:bg-gray-50 active:scale-95 transition-all text-red-700 font-medium py-3.5 rounded-xl text-sm">
                 <Printer className="w-5 h-5" />
-                {downloadingImg? "Memproses" : "Cetak"}
+                {downloadingImg ? "Memproses" : "Cetak"}
               </button>
               <button
-                onClick={handleCopyLink}
+                // onClick={handleCopyLink}
                 className="flex flex-col items-center justify-center gap-1.5 border border-card-outline hover:bg-gray-50 active:scale-95 transition-all text-red-700 font-medium py-3.5 rounded-xl text-sm"
               >
                 <Link className="w-5 h-5" />
-                {copied ? "Copied!" : "Salin Link"}
+                  Salin Link
               </button>
             </div>
           </div>

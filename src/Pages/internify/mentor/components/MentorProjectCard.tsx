@@ -6,10 +6,10 @@ import type { Project } from '../../../../types/project.types';
 import { useArchiveProject } from '../../../../hooks/useProjects';
 
 const getDynamicIcon = (iconName: string) => {
-        const formatted = iconName.charAt(0).toUpperCase() + iconName.slice(1);
-        const Icon = (LucideIcons as unknown as Record<string, React.ComponentType<LucideProps>>)[formatted];
-        return Icon ?? LucideIcons.FolderOpen;
-    };
+  const formatted = iconName.charAt(0).toUpperCase() + iconName.slice(1);
+  const Icon = (LucideIcons as unknown as Record<string, React.ComponentType<LucideProps>>)[formatted];
+  return Icon ?? LucideIcons.FolderOpen;
+};
 
 const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
 
@@ -61,7 +61,19 @@ export default function MentorProjectCard(project: Project) {
             {project.total_members}/{project.total_members}
           </span>
         </div>
+        <div className="flex items-center text-xs text-gray-500 gap-1">
+          {project.status === "active" ? (
+            <span className="px-2 py-0.5 bg-green-100 text-green-800 rounded-full">Active</span>
+          ) : project.status === "completed" ? (
+            <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full">Completed</span>
+          ) : project.status === "archived" ? (
+            <span className="px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded-full">Archived</span>
+          ) : (
+            <span className="px-2 py-0.5 bg-gray-100 text-gray-800 rounded-full">Inactive</span>
+          )}
+        </div>
       </div>
+
 
       {/* Footer */}
       <div className="border-t border-gray-300 text-gray-400 flex justify-end p-2 bg-gray-50/50">

@@ -97,5 +97,3 @@ export const useMahasiswa = () => {
 
   return { mahasiswa, loading, error, refetch };
 };
-
-export const useAssignableInterns = () => {}

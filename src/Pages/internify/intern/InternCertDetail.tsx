@@ -4,18 +4,26 @@ import { useParams, useLocation } from "react-router-dom";
 import CertificateAvailable from "./components/CertificateAvailabe";
 import CertificateNotAvailable from "./components/CertificateNotAvailable";
 import SertificateHistory from "./components/CertificateHistory";
-import { useMyCertificates, useClaimCertificate } from "../../../hooks/useCertificates";
+
+import { useClaimCertificate } from "../../../hooks/useCertificates";
 import { useProjectDetail } from "../../../hooks/useProjects";
+
+import { useProjectCertificates } from "../../../hooks/useCertificates";
 import type { Project } from "../../../types/project.types";
 
-const SertificatePage = () => {
+export default function InternCertificateDetail () {
   const { slug } = useParams<{ slug: string }>();
   const location = useLocation();
   const projectFromList = location.state?.project as Project | undefined;
 
   const { project: projectDetail, loading: projectLoading } = useProjectDetail(slug ?? "");
-  const { certificates, loading: certLoading, refetch: refetchCertificates } = useMyCertificates();
+  const { certificates, loading: certLoading, refetch: refetchCertificates } = useProjectCertificates(projectDetail?.id ?? 0);
   const { claim, loading: claiming, error: claimError } = useClaimCertificate();
+
+  const myCertificateForProject = useMemo(() => {
+    if (!projectDetail) return null;
+    return certificates.find((cert) => cert.id_project === projectDetail.id);
+  }, [projectDetail, certificates]);
 
   const project = useMemo(() => {
     if (!projectDetail) return null;
@@ -27,13 +35,6 @@ const SertificatePage = () => {
   }, [projectDetail, projectFromList]);
 
   const allTasksDone = !projectLoading && !!project && project.task_done >= project.total_tasks;
-
-  const myCertificateForProject = useMemo(() => {
-    if (!project || !certificates.length) return null;
-    return certificates.find((cert) => cert.project.id === project.id) ?? null;
-  }, [certificates, project]);
-
-  const alreadyDone = !!myCertificateForProject;
 
   const progress =
     project && project.total_tasks > 0
@@ -53,7 +54,7 @@ const SertificatePage = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20 text-gray-400 text-sm">
-        Loading...
+        Memuat Data...
       </div>
     );
   }
@@ -66,10 +67,11 @@ const SertificatePage = () => {
       </div>
       <div className="flex flex-col lg:flex-row gap-6 items-stretch">
         <div className="w-full lg:w-5/8 flex flex-col">
-          {alreadyDone ? (
+          {myCertificateForProject ? (
             <CertificateAvailable
               project={project}
               certificate={myCertificateForProject}
+              templateUrl = {project?.certificate_template ?? ""}
             />
           ) : (
             <CertificateNotAvailable
@@ -89,5 +91,3 @@ const SertificatePage = () => {
     </div>
   );
 };
-
-export default SertificatePage;

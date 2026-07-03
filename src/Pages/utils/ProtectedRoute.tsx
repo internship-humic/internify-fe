@@ -39,12 +39,10 @@ const ProtectedRoutes = ({ allowedRoles }: PrivateRouteProps) => {
   }
 
   if (allowedRoles && !allowedRoles.includes(userRole)) {
-    // Jika role tidak diizinkan, kembalikan ke base dashboard masing-masing role
     if (userRole === "admin" || userRole === "mentor") return <Navigate to="/mentor" replace />;
     if (userRole === "intern") return <Navigate to="/intern" replace />;
   }
 
-  // Jika lolos seleksi, render komponen di dalamnya
   return <Outlet />;
 };
 

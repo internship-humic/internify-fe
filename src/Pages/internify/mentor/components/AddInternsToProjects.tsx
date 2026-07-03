@@ -1,23 +1,26 @@
 import { useRef, useEffect, useState } from "react";
 import { X } from "lucide-react";
-import { LuUserPlus, LuMail, LuFolderOpen } from "react-icons/lu";
+import { LuUserPlus, LuUser, LuFolderOpen } from "react-icons/lu";
 import { useAssignMember, useProjects } from "../../../../hooks/useProjects";
+import { useAssignableInterns } from "../../../../hooks/useProjects";
 
 interface AddInternsModalProps {
   isOpen: boolean;
   onClose: () => void;
+  userId: number | null;
 }
 
-export default function AddInternsModal({ isOpen, onClose }: AddInternsModalProps) {
+export default function AddInternsModal({ isOpen, onClose, userId }: AddInternsModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   // Form States
-  const [email, setEmail] = useState("");
+  const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
 
   // Hooks
   const { assign, loading: assigning, error: assignError } = useAssignMember();
   const { projects, loading: loadingProjects } = useProjects("active");
+  const { interns, loading: loadingInterns } = useAssignableInterns();
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -43,30 +46,26 @@ export default function AddInternsModal({ isOpen, onClose }: AddInternsModalProp
     };
   }, [isOpen, onClose]);
 
-  // Reset form saat modal dibuka kembali
+  // Reset form saat modal dibuka kembali.
+  // Kalau userId diberikan, dropdown langsung ter-select ke intern tsb.
   useEffect(() => {
     if (isOpen) {
-      setEmail("");
+      setSelectedUserId(userId !== null ? String(userId) : "");
       setSelectedProjectId("");
     }
-  }, [isOpen]);
+  }, [isOpen, userId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedUserId) return;
 
-    // Catatan: useAssignMember memerlukan id_user (number), bukan email.
-    // Endpoint /project-api/assign-member menerima { id_project: number, id_user: number }.
-    // Untuk implementasi berbasis email, perlu endpoint tambahan atau lookup user by email.
-    // Saat ini form ini dikomen karena tidak ada lookup email → id_user di service.
-
-    // Contoh penggunaan jika id_user sudah diketahui:
-    // const res = await assign({ id_project: Number(selectedProjectId), id_user: userId });
-    // if (res !== null) {
-    //   onClose();
-    // }
-
-    alert(`Assign intern "${email}" ke project ID ${selectedProjectId} — perlu lookup id_user dari email via backend.`);
-    onClose();
+    const res = await assign({
+      id_project: Number(selectedProjectId),
+      id_user: Number(selectedUserId),
+    });
+    if (res !== null) {
+      onClose();
+    }
   };
 
   return (
@@ -92,23 +91,36 @@ export default function AddInternsModal({ isOpen, onClose }: AddInternsModalProp
       {/* Form Body */}
       <form onSubmit={handleSubmit} className="bg-gray-100 px-6 py-6 space-y-4 overflow-y-auto flex-1">
 
-        {/* Email Address */}
+        {/* Intern Selection */}
         <div className="space-y-1.5">
           <label className="text-xs font-bold tracking-wide text-foreground">
-            Email Address
+            Intern
           </label>
           <div className="relative">
             <span className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-border">
-              <LuMail className="w-4 h-4 stroke-[2]" />
+              <LuUser className="w-4 h-4 stroke-[2]" />
             </span>
-            <input
-              type="email"
+            <select
               required
-              placeholder="intern.name@gmail.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-white text-sm font-medium border border-border rounded-radius text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-            />
+              value={selectedUserId}
+              onChange={(e) => setSelectedUserId(e.target.value)}
+              disabled={loadingInterns}
+              className="w-full pl-10 pr-9 py-2.5 bg-white text-sm font-medium appearance-none cursor-pointer border border-border rounded-radius focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-foreground disabled:opacity-60"
+            >
+              <option value="" disabled>
+                {loadingInterns ? "Memuat interns..." : "Pilih intern"}
+              </option>
+              {interns.map((intern) => (
+                <option key={intern.id} value={intern.id}>
+                  {intern.full_name}
+                </option>
+              ))}
+            </select>
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-border">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
           </div>
         </div>
 
@@ -144,12 +156,6 @@ export default function AddInternsModal({ isOpen, onClose }: AddInternsModalProp
             </span>
           </div>
         </div>
-
-        {/* Field Position dikomentari — tidak ada dalam payload assign-member */}
-        {/* <div className="space-y-1.5">
-          <label className="text-xs font-bold tracking-wide text-foreground">Position</label>
-          <select>...</select>
-        </div> */}
 
         {assignError && (
           <p className="text-xs text-red-600 font-medium">{assignError}</p>

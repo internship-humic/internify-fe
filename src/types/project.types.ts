@@ -74,7 +74,7 @@ export interface AssignableIntern {
   id: number;
   full_name: string;
   email: string;
-  profesional_bio: string;
+  professional_bio: string;
   position: string;
   kelompok_peminatan: string;
   is_active: boolean;

@@ -1,12 +1,15 @@
 import { useState, useMemo } from "react";
 import { Search, SlidersHorizontal, Plus, Trash2 } from "lucide-react";
 import { useAllInterns, useRemoveMember, useProjects } from "../../../hooks/useProjects";
-import AddInternsModal from "./components/AddInternsToProjects";
+import AddInternsModal from "./components/AddInternsToProjects";  
+import type { InternDetail } from "../../../types/project.types";
+import type { Project } from "../../../types/project.types";
 
 export default function InternsManagement() {
   const [searchEmail, setSearchEmail] = useState("");
   const [selectedProject, setSelectedProject] = useState("All Projects");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
   const { interns, loading, error, refetch } = useAllInterns();
   const { remove, loading: removing } = useRemoveMember();
@@ -23,22 +26,24 @@ export default function InternsManagement() {
     });
   }, [interns, searchEmail, selectedProject]);
 
-  // Hitung statistik dari data asli
   const totalInterns = interns.length;
-  // Active assignments = total member dari semua project yang statusnya active
   const activeAssignments = activeProjects.length;
 
+  // Buka modal untuk assign intern tertentu (dari tombol + di baris)
+  const openAssignFor = (userId: number | null) => {
+    setSelectedUserId(userId);
+    setIsModalOpen(true);
+  };
+
   // Handler hapus intern dari project
-  // Catatan: useRemoveMember memerlukan id_project & id_user.
-  // Karena InternDetail tidak menyimpan id_project, aksi ini saat ini hanya placeholder.
-  // Untuk implementasi penuh, perlu endpoint khusus atau data id_project dari InternDetail.
-  const handleDeleteIntern = async (internId: number) => {
-    const confirmed = window.confirm("Yakin ingin menghapus intern ini dari project?");
-    if (!confirmed) return;
-    alert(`Remove intern ID ${internId} — perlu id_project dari backend untuk dilanjutkan.`);
-    // Contoh penggunaan jika id_project tersedia:
-    // const res = await remove({ id_project: intern.id_project, id_user: internId });
-    // if (res !== null) refetch();
+  const handleDeleteIntern = async (intern: InternDetail) => {
+    const matchedProject = activeProjects.find((project: Project) => project.project_name === intern.projectName);
+    if (!matchedProject) {
+      console.error("Project not found for intern:", intern);
+      return;
+    }
+    const res = await remove({ id_project: matchedProject.id, id_user: intern.id });
+    if (res !== null) refetch();
   };
 
   if (loading) return (
@@ -127,7 +132,7 @@ export default function InternsManagement() {
       <div className="flex justify-end">
         <button
           className="inline-flex items-center gap-2 px-3 py-1 bg-red-700 text-white rounded-xl shadow-sm hover:bg-red-800 transition-colors focus:outline-none focus:ring-2 focus:ring-red-300"
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => openAssignFor(null)}
         >
           <Plus className="w-4 h-4" />
           Add
@@ -184,9 +189,9 @@ export default function InternsManagement() {
 
                   {/* Column 3: Action Buttons Block Right aligned */}
                   <div className="w-1/6 flex items-center justify-end gap-3.5 pr-2">
-                    {/* Tombol Add: membuka modal assign member */}
+                    {/* Tombol Add: membuka modal assign member untuk intern ini */}
                     <button
-                      onClick={() => setIsModalOpen(true)}
+                      onClick={() => openAssignFor(intern.id)}
                       className="p-1.5 bg-[#B30000] hover:bg-[#990000] text-white rounded-lg transition-colors shadow-sm"
                       title="Assign ke project"
                     >
@@ -194,7 +199,7 @@ export default function InternsManagement() {
                     </button>
                     {/* Tombol Delete: remove intern dari project */}
                     <button
-                      onClick={() => handleDeleteIntern(intern.id)}
+                      onClick={() => handleDeleteIntern(intern)}
                       disabled={removing}
                       className="p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
                       title="Hapus dari project"
@@ -233,6 +238,7 @@ export default function InternsManagement() {
       {isModalOpen &&
         <AddInternsModal
           isOpen={isModalOpen}
+          userId={selectedUserId}
           onClose={() => {
             setIsModalOpen(false);
             refetch(); // Refresh data setelah modal assign ditutup

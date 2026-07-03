@@ -1,13 +1,12 @@
 // hooks/useCertificates.ts
 import { useState, useEffect, useCallback } from "react";
-import type { Certificate, CertificateVerifyResult } from "../types/certificate.types";
+import type { Certificate } from "../types/certificate.types";
 import {
   claimCertificate,
   getMyCertificates,
   getAllCertificates,
   getCertificateDetail,
   getCertificatesByProject,
-  verifyCertificateByUuid,
   uploadCertificateTemplate,
   generateCertificate
 } from "../services/CertificateService";
@@ -85,25 +84,6 @@ export const useProjectCertificates = (id_project: number) => {
   useEffect(() => { refetch(); }, [refetch]);
 
   return { certificates, loading, error, refetch };
-};
-
-// GET /certificate-api/verify & verify-uuid (public, on-demand)
-export const useVerifyCertificate = () => {
-  const [result, setResult] = useState<CertificateVerifyResult | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const verifyByUuid = useCallback(async (uuid: string) => {
-    setLoading(true); setError(null);
-    try {
-      const res = await verifyCertificateByUuid(uuid);
-      setResult(res);
-      return res;
-    } catch { setError("Sertifikat tidak valid atau tidak ditemukan."); return null; }
-    finally { setLoading(false); }
-  }, []);
-
-  return { result, loading, error, verifyByUuid };
 };
 
 // POST /certificate-api/claim

@@ -1,12 +1,19 @@
 import { useNavigate } from 'react-router-dom';
 import { useProjects } from '../../../../hooks/useProjects';
+import * as LucideIcons from 'lucide-react';
+import type { LucideProps } from 'lucide-react';
 
 const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
+
+const getDynamicIcon = (iconName: string) => {
+  const formatted = iconName.charAt(0).toUpperCase() + iconName.slice(1);
+  const Icon = (LucideIcons as unknown as Record<string, React.ComponentType<LucideProps>>)[formatted];
+  return Icon ?? LucideIcons.FolderOpen;
+};
 
 const HomeProjectList = () => {
   const navigate = useNavigate();
   const { projects, loading, error } = useProjects();
-
   if (loading) return (
     <div className="flex flex-col gap-3">
       {[...Array(3)].map((_, i) => (
@@ -27,7 +34,12 @@ const HomeProjectList = () => {
             onClick={() => navigate(`/intern/projects/${toSlug(project.slug)}`)}
             className="flex items-center gap-4 border border-card-outline rounded-lg px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors duration-150"
           >
-            <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-red-600" />
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: project.background_color ?? '#dc2626' }}>
+              {(() => {
+                const Icon = getDynamicIcon(project.project_icon);
+                return <Icon className="w-5 h-5 text-white" />;
+              })()}
+            </div>
             <div>
               <p className="text-sm font-semibold text-font-shade">{project.project_name}</p>
               <p className="text-xs text-gray-400">{project.status}</p>
