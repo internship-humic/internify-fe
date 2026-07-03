@@ -75,6 +75,15 @@ const Navbar = () => {
           >
             Internship
           </button>
+
+          <button
+            onClick={() => {
+              navigate("/login-internify");
+            }}
+            className="block w-full text-left hover:text-red-600 transition"
+          >
+            Login
+          </button>
         </div>
       </div>
 
@@ -114,7 +123,7 @@ const Navbar = () => {
             onClick={() => {
               navigate("/login-internify");
             }}
-            className="block w-full text-left hover:text-blue-600 transition"
+            className="block w-full text-left hover:text-red-600 transition"
           >
             Login
           </button>

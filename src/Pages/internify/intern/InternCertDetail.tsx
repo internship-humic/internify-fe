@@ -7,7 +7,6 @@ import SertificateHistory from "./components/CertificateHistory";
 
 // import { useClaimCertificate } from "../../../hooks/useCertificates";
 import { useProjectDetail } from "../../../hooks/useProjects";
-
 import { useMyCertificates } from "../../../hooks/useCertificates";
 import type { Project } from "../../../types/project.types";
 

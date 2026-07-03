@@ -12,9 +12,10 @@ export const claimCertificate = async (id_project: number): Promise<Certificate>
   return res.data.data;
 };
 
-export const generateCertificate = async (id_project: number, id_users: number[]): Promise<void> => {
+// POST /certificate-api/generate
+export const generateCertificate = async (id_project: number, id_users: number[]): Promise<Certificate[]> => {
   const res = await api.post("/certificate-api/generate", { id_project, id_users });
-  return res.data.data;
+  return res.data.data.certificates;
 };
 
 // GET /certificate-api/my-certificates

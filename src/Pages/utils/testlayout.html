@@ -7,52 +7,63 @@
 </head>
 <body>
   <canvas id="preview" style="max-width: 100%;"></canvas>
-
   <script>
+    // Helper: bungkus loading image jadi Promise, biar bisa di-await
+    function loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+      });
+    }
+
     async function draw() {
-      // Tunggu semua font dari Google Fonts selesai load
       await document.fonts.ready;
 
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = () => {
-        const canvas = document.getElementById("preview");
-        canvas.width = img.naturalWidth;
-        canvas.height = img.naturalHeight;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
+      // Load template sertifikat & QR dummy secara paralel
+      const [templateImg, qrImg] = await Promise.all([
+        loadImage("http://localhost:9000/uploads/1783080498359-420570422.png"),
+        loadImage("https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=dummy-uuid-preview")
+      ]);
 
-        // Nama intern — pakai Great Vibes (font kaligrafi/script)
-        ctx.font = `105px "Great Vibes", cursive`;
-        ctx.fillStyle = "#800000";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("Jonathan Kristina", canvas.width * 0.57, canvas.height * 0.48);
+      const canvas = document.getElementById("preview");
+      canvas.width = templateImg.naturalWidth;
+      canvas.height = templateImg.naturalHeight;
+      const ctx = canvas.getContext("2d");
 
-        // Nama intern — versi kecil
-        ctx.font = `30px "Great Vibes", cursive`;
-        ctx.fillStyle = "#800000";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("Jonathan Kristina", canvas.width * 0.825, canvas.height * 0.895);
+      // 1. Gambar template dulu (paling belakang)
+      ctx.drawImage(templateImg, 0, 0);
 
-        // Nama project — pakai Grenze
-        ctx.font = `400 54px "Grenze", serif`;
-        ctx.fillStyle = "#090909";
-        ctx.fillText("Internify Platform Dev", canvas.width * 0.57, canvas.height * 0.615);
+      // 2. Nama intern — Great Vibes
+      ctx.font = `105px "Great Vibes", cursive`;
+      ctx.fillStyle = "#800000";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("Jonathan Kristina", canvas.width * 0.57, canvas.height * 0.48);
 
-        // Certificate no — monospace biasa
-        ctx.font = `50px Grenze`;
-        ctx.fillStyle = "#090909";
-        ctx.fillText("CERT/20260609/PRJ2/USR5", canvas.width * 0.666, canvas.height * 0.305);
+      ctx.font = `30px "Great Vibes", cursive`;
+      ctx.fillText("Jonathan Kristina", canvas.width * 0.825, canvas.height * 0.895);
 
-        // Certificate no — monospace biasa
-        ctx.font = `20px Grenze`;
-        ctx.fillStyle = "#800000";
-        ctx.fillText("CERT/20260609/PRJ2/USR5",canvas.width * 0.825, canvas.height * 0.918);
-      };
+      // 3. Nama project — Grenze
+      ctx.font = `400 54px "Grenze", serif`;
+      ctx.fillStyle = "#090909";
+      ctx.fillText("Internify Platform Dev", canvas.width * 0.57, canvas.height * 0.615);
 
-      img.src = "http://localhost:9000/uploads/1783080498359-420570422.png"; // ganti URL template kamu
+      // 4. Certificate no
+      ctx.font = `50px Grenze`;
+      ctx.fillText("CERT/20260609/PRJ2/USR5", canvas.width * 0.665, canvas.height * 0.305);
+
+      ctx.font = `20px Grenze`;
+      ctx.fillStyle = "#800000";
+      ctx.fillText("CERT/20260609/PRJ2/USR5", canvas.width * 0.825, canvas.height * 0.918);
+
+      // 5. QR code — posisi & ukuran pakai persentase, sama seperti elemen lain
+      const qrSize = canvas.width * 0.103; // atur besar-kecil di sini
+      const qrX = canvas.width * 0.77;     // titik kiri-atas QR (bukan tengah!)
+      const qrY = canvas.height * 0.715;
+      ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
     }
 
     draw();

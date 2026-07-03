@@ -33,3 +33,10 @@ export interface CertificateTemplate {
   id_project: number;
   certificate_template: string;
 }
+
+export interface CertificateVerifyResult {
+  uuid: string;
+  intern_name: string;
+  project_name: string;
+  created_at: string;
+}

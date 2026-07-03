@@ -1,9 +1,6 @@
 import api from "../../lib/api";
 import QRCode from "qrcode";
 
-// Flag supaya font hanya di-load sekali (tidak berulang tiap generate)
-let fontsLoaded = false;
-
 export function resolveImageUrl(path: string): string {
   if (!path) return "";
   if (path.startsWith("data:")) return path; // untuk QR data URL
@@ -36,13 +33,13 @@ export async function ensureFontsLoaded(): Promise<void> {
   await document.fonts.ready;
 }
 
-// ── Generate satu sertifikat sebagai Blob ─────────────────────────────────────
+// Generate satu sertifikat sebagai Blob
 export async function generateCertificate(
   templateUrl: string,
   internName: string,
   projectName: string,
   certificateNo: string,
-  verifyUrl: string
+  verifyUrl: string,
 ): Promise<Blob> {
   // Pastikan font siap sebelum menggambar teks
   await ensureFontsLoaded();
@@ -82,23 +79,24 @@ export async function generateCertificate(
   ctx.fillText(certificateNo, canvas.width * 0.825, canvas.height * 0.918);
 
   // QR code — kalau verifyUrl diisi
-  // if (verifyUrl) {
-  //   const qrDataUrl = await QRCode.toDataURL(verifyUrl, { width: 200, margin: 1 });
-  //   const qrImg = await loadImage(qrDataUrl);
-  //   const qrSize = canvas.width * 0.08;
-  //   ctx.drawImage(
-  //     qrImg,
-  //     canvas.width * 0.1 - qrSize / 2,  // posisi X — sesuaikan
-  //     canvas.height * 0.88 - qrSize / 2, // posisi Y — sesuaikan
-  //     qrSize,
-  //     qrSize
-  //   );
-  // }
+  const qrDataUrl = await QRCode.toDataURL(verifyUrl, {
+    width: 200,
+    margin: 1,
+  });
+  const qrImg = await loadImage(qrDataUrl);
+  const qrSize = canvas.width * 0.103;
+  ctx.drawImage(
+    qrImg,
+    canvas.width * 0.77 - qrSize / 2, // posisi X — sesuaikan
+    canvas.height * 0.715 - qrSize / 2, // posisi Y — sesuaikan
+    qrSize,
+    qrSize,
+  );
 
   return new Promise((resolve, reject) => {
     canvas.toBlob(
       (blob) => (blob ? resolve(blob) : reject(new Error("toBlob gagal"))),
-      "image/png"
+      "image/png",
     );
   });
 }

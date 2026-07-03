@@ -14,7 +14,7 @@ import {
 import type { InternSubmissionProgress } from "../../../../hooks/useInternProgress";
 import { useProjectDetail } from "../../../../hooks/useProjects";
 import JSZip from "jszip";
-import { generateCertificate } from "../../../utils/SertificateGenerator";
+import { generateCertificate, resolveImageUrl } from "../../../utils/SertificateGenerator";
 import { useGenerateCertificates } from "../../../../hooks/useCertificates";
 import Avatar from "../../Avatar";
 import ProgressBar from "../../ProgressBar";
@@ -40,15 +40,15 @@ function StatusBadge({ status }: { status: boolean }) {
 }
 
 // Main Component
-export default function EligibleInternTable({ 
-  interns, 
-  loading, 
-  eligibleCount, 
-  projectId 
+export default function EligibleInternTable({
+  interns,
+  loading,
+  eligibleCount,
+  projectId
 }: EligibleInternTableProps) {
   const navigate = useNavigate();
   const { project } = useProjectDetail(String(projectId));
-  const { generate: SubmitCertificates, loading: generatingCertificates, error, success, reset } = useGenerateCertificates();
+  const { generate: SubmitCertificates } = useGenerateCertificates();
 
   const initialSelected = new Set(
     interns.filter(i => i.is_eligible).map(i => i.id_user)
@@ -57,7 +57,6 @@ export default function EligibleInternTable({
   const [generating, setGenerating] = useState(false);
   const [generateError, setGenerateError] = useState<string | null>(null);
 
-  // Halaman (Pagination)
   const [page, setPage] = useState(1);
   const totalPages = Math.ceil(interns.length / PER_PAGE);
   const paginated = interns.slice((page - 1) * PER_PAGE, page * PER_PAGE);
@@ -78,48 +77,52 @@ export default function EligibleInternTable({
   };
 
   const handleGenerate = async () => {
-  if (!project?.certificate_template) {
-    setGenerateError("Template sertifikat belum diupload.");
-    return;
-  }
-  if (selected.size === 0) {
-    setGenerateError("Pilih minimal satu intern.");
-    return;
-  }
+    if (!project?.certificate_template) {
+      setGenerateError("Template sertifikat belum diupload.");
+      return;
+    }
+    if (selected.size === 0) {
+      setGenerateError("Pilih minimal satu intern.");
+      return;
+    }
 
-  setGenerating(true);
-  setGenerateError(null);
+    setGenerating(true);
+    setGenerateError(null);
 
-  try {
-    // 1. Generate blob PNG per intern & kumpulkan ke ZIP
-    const selectedInterns = interns.filter((i) => selected.has(i.id_user));
-    const zip = new JSZip();
+    try {
+      const result = await SubmitCertificates(projectId, Array.from(selected));
+      if (!result) return;
 
-    await Promise.all(
-      selectedInterns.map(async (intern) => {
-        const blob = await generateCertificate(
-          project.certificate_template,
-          intern.full_name
+      const zip = new JSZip();
+      const templateUrl = resolveImageUrl(project.certificate_template);
+
+      await Promise.all(
+        result.map(async (cert) => {
+          const verifyUrl = `${window.location.origin}/verify/${cert.uuid}`;
+
+          const blob = await generateCertificate(
+          templateUrl,
+          cert.user.full_name,
+          cert.project.project_name,
+          cert.certificate_no,
+          verifyUrl
         );
-        zip.file(`Sertifikat - ${intern.full_name}.png`, blob);
-      })
-    );
 
-    // 2. POST ke backend untuk mencatat sertifikat sudah di-generate
-    const ok = await SubmitCertificates(projectId, Array.from(selected));
-    if (!ok) return;
+          zip.file(`Sertifikat - ${cert.user.full_name}.png`, blob);
+        })
+      );
 
-    // 3. Navigasi ke result page
-    navigate(`/mentor/certificates/${projectId}/result`);
-  } catch (err) {
-    console.error(err);
-    setGenerateError(
-      err instanceof Error ? err.message : "Gagal generate sertifikat."
-    );
-  } finally {
-    setGenerating(false);
-  }
-};
+      // 3. Navigasi ke result page
+      navigate(`/mentor/certificates/${projectId}/result`);
+    } catch (err) {
+      console.error(err);
+      setGenerateError(
+        err instanceof Error ? err.message : "Gagal generate sertifikat."
+      );
+    } finally {
+      setGenerating(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -281,10 +284,10 @@ export default function EligibleInternTable({
       {/* Bottom Action Bar */}
       <div className="flex items-center justify-between">
         <button
-          className="text-gray-700 hover:underline" 
-          onClick={()=> navigate(`/mentor/certificates/${project?.slug}/result`)}>
-            Ke Hasil
-          </button>
+          className="text-gray-700 hover:underline"
+          onClick={() => navigate(`/mentor/certificates/${project?.slug}/result`)}>
+          Ke Hasil
+        </button>
         <button
           onClick={handleGenerate}
           disabled={generating || selected.size === 0}
@@ -302,7 +305,7 @@ export default function EligibleInternTable({
             </>
           )}
         </button>
-        
+
       </div>
     </div>
   );

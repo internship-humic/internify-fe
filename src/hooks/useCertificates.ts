@@ -1,6 +1,6 @@
 // hooks/useCertificates.ts
 import { useState, useEffect, useCallback } from "react";
-import type { Certificate } from "../types/certificate.types";
+import type { Certificate, CertificateVerifyResult } from "../types/certificate.types";
 import {
   claimCertificate,
   getMyCertificates,
@@ -8,7 +8,8 @@ import {
   getCertificateDetail,
   getCertificatesByProject,
   uploadCertificateTemplate,
-  generateCertificate
+  generateCertificate,
+  verifyCertificateByUuid
 } from "../services/CertificateService";
 import { AxiosError } from "axios";
 
@@ -106,19 +107,25 @@ export const useGenerateCertificates = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const generate = async (id_project: number, id_users: number[]): Promise<boolean> => {
+  const generate = async (
+    id_project: number,
+    id_users: number[]
+  ): Promise<Certificate[] | null> => {
     setLoading(true);
     setError(null);
     setSuccess(false);
     try {
-      await generateCertificate(id_project, id_users);
+      const data = await generateCertificate(id_project, id_users);
       setSuccess(true);
-      return true;
+      return data;
     } catch (err) {
       if (err instanceof AxiosError) {
         switch (err.response?.status) {
           case 400:
             setError("Ada intern yang tidak eligible atau parameter tidak lengkap.");
+            break;
+          case 401:
+            setError("Sesi kamu berakhir, silakan login ulang.");
             break;
           case 403:
             setError("Hanya mentor/admin project ini yang bisa generate sertifikat.");
@@ -132,7 +139,7 @@ export const useGenerateCertificates = () => {
       } else {
         setError("Gagal generate sertifikat.");
       }
-      return false;
+      return null;
     } finally {
       setLoading(false);
     }
@@ -160,3 +167,20 @@ export const useUploadCertificateTemplate = () => {
 
   return { upload, loading, error };
 };
+
+export const useCertificateVerification = (uuid: string) => {
+  const [verification, setVerification] = useState<CertificateVerifyResult | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!uuid) return;
+    verifyCertificateByUuid(uuid)
+      .then(setVerification)
+      .catch(() => setError("Gagal memverifikasi sertifikat."))
+      .finally(() => setLoading(false));
+  }, [uuid]);
+
+  return { verification, loading, error };
+
+}

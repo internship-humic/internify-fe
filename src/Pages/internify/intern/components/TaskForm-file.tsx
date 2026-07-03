@@ -65,7 +65,12 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
     if (ok) { setFiles([]); setIsEditing(false); }
   };
 
-  // Sudah ada submission dan tidak sedang edit -> tampilkan status
+  // Batal edit — kembali ke tampilan status tanpa kehilangan submission lama
+  const handleCancelEdit = () => {
+    setFiles([]);
+    setIsEditing(false);
+  };
+
   if (submission && !isEditing) {
     return (
       <SubmitStatusTable
@@ -78,6 +83,8 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
       />
     );
   }
+
+  const currentFileName = submission?.file_path?.split("/").pop();
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -97,6 +104,7 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
           }`}
       >
         {files.length > 0 ? (
+          // File baru sudah dipilih — tampilkan itu (menggantikan file lama)
           <div className="space-y-2">
             {files.map((file, index) => (
               <div key={index} className="flex items-center justify-between text-sm font-medium text-gray-800" onClick={(e) => e.stopPropagation()}>
@@ -110,6 +118,17 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
               </div>
             ))}
           </div>
+        ) : isEditing && currentFileName ? (
+          // Mode edit, belum pilih file baru — tampilkan file submission lama sebagai referensi
+          <div className="flex flex-col items-center justify-center h-full space-y-2 text-center py-6">
+            <FileText className="w-6 h-6 text-gray-400" />
+            <p className="text-sm font-semibold text-gray-700">
+              File saat ini: <span className="text-red-700">{currentFileName}</span>
+            </p>
+            <p className="text-[11px] text-gray-400 font-medium pointer-events-none">
+              Klik atau drag & drop untuk mengganti file
+            </p>
+          </div>
         ) : (
           <div className="flex flex-col items-center justify-center h-full space-y-2 pointer-events-none text-center py-6">
             <UploadCloud className="w-8 h-8 text-gray-400 mx-auto stroke-[1.5]" />
@@ -118,13 +137,25 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
           </div>
         )}
       </div>
-      <button
-        type="submit" disabled={loading}
-        className="w-full bg-[#B30000] hover:bg-[#990000] disabled:opacity-60 text-white font-bold py-3 rounded-xl transition-colors shadow-md flex items-center justify-center gap-2 tracking-wide cursor-pointer"
-      >
-        {loading ? "Mengirim..." : isEditing ? "Update Submission" : "Save Changes"}
-        <LuSendHorizontal className="w-4 h-4 stroke-[2.5]" />
-      </button>
+
+      <div className="flex gap-2">
+        {isEditing && (
+          <button
+            type="button"
+            onClick={handleCancelEdit}
+            className="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold py-3 rounded-xl transition-colors"
+          >
+            Batal
+          </button>
+        )}
+        <button
+          type="submit" disabled={loading}
+          className="w-full bg-[#B30000] hover:bg-[#990000] disabled:opacity-60 text-white font-bold py-3 rounded-xl transition-colors shadow-md flex items-center justify-center gap-2 tracking-wide cursor-pointer"
+        >
+          {loading ? "Mengirim..." : isEditing ? "Update Submission" : "Save Changes"}
+          <LuSendHorizontal className="w-4 h-4 stroke-[2.5]" />
+        </button>
+      </div>
     </form>
   );
 }

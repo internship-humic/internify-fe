@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { FileText, FileUp, Link } from "lucide-react";
+import { resolveImageUrl } from "../../../utils/SertificateGenerator";
 
 interface SubmitStatusTableProps {
   type: "file" | "link";
-  filePath?: string | null;  // ganti dari files: File[]
+  filePath?: string | null;
   link?: string;
   submittedAt?: Date;
   deadline?: Date;
@@ -66,7 +67,7 @@ export default function SubmitStatusTable({
           <div className="flex items-center gap-3">
             <button
               onClick={() => setConfirmDelete(false)}
-              className="text-xs font-medium px-4 py-1.5 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+              className="text-xs font-medium px-4 py-1.5 rounded-lg bg-card border border-card-outline text-gray-700 hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>
@@ -106,7 +107,7 @@ export default function SubmitStatusTable({
             key={row.label}
             className="grid grid-cols-[180px_1fr] border-b border-box-border"
           >
-            <div className="px-4 py-3 text-sm text-gray-500 border-r border-box-border">
+            <div className="px-4 py-3 text-sm text-font border-r border-box-border">
               {row.label}
             </div>
             <div className="px-4 py-3 text-sm text-gray-800">{row.value}</div>
@@ -115,15 +116,20 @@ export default function SubmitStatusTable({
 
         {/* File / Link row */}
         <div className="grid grid-cols-[180px_1fr]">
-          <div className="px-4 py-3 text-sm text-gray-500 border-r border-box-border">
+          <div className="px-4 py-3 text-sm text-font border-r border-box-border">
             {type === "file" ? "File submission" : "Link submission"}
           </div>
           <div className="px-4 py-3 flex flex-col gap-2">
             {type === "file" ? (
-              <div className="flex items-center gap-2 text-sm text-gray-800">
-                <FileText className="w-4 h-4 text-red-700 stroke-[2.5]" />
-                {filePath ? filePath.split("/").pop() : "File submitted"}
-              </div>
+              <a
+                href={resolveImageUrl(filePath ?? "")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-blue-600 hover:underline"
+              >
+                <FileText className="w-4 h-4 stroke-[2.5]" />
+                <span>{resolveImageUrl(filePath ?? "").split("/").pop()}</span>
+              </a>
             ) : (
               <a href={link} target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-1.5 text-sm text-blue-600 hover:underline break-all">
