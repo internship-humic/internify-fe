@@ -92,5 +92,6 @@ export const mapNotificationToUI = (notif: BackendNotification): UINotification 
     isNew: !notif.is_read,
     group: mapGroup(notif.created_at),
     description: notif.message,
+    link: notif.link,
   };
 };

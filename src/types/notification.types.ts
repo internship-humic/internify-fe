@@ -6,6 +6,7 @@ export interface BackendNotification {
   message: string;
   is_read: boolean;
   created_at: string;
+  link?: string | null;
 }
 
 export interface UINotification {
@@ -16,4 +17,5 @@ export interface UINotification {
   isNew: boolean;
   group: "TODAY" | "YESTERDAY";
   description: string;
+  link?: string | null;
 }
