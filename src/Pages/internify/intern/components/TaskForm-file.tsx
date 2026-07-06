@@ -20,7 +20,7 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const validateAndAddFiles = (selectedFiles: File[]) => {
-    const allowedExtensions = ["pdf", "docx", "zip"];
+    const allowedExtensions = ["pdf"];
     const validFiles: File[] = [];
     selectedFiles.forEach((file) => {
       const ext = file.name.split(".").pop()?.toLowerCase();
@@ -28,7 +28,7 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
         if (file.size <= 10 * 1024 * 1024) validFiles.push(file);
         else alert(`Ukuran file ${file.name} melebihi 10MB.`);
       } else {
-        alert(`Format ${file.name} tidak didukung. Gunakan PDF, DOCX, atau ZIP.`);
+        alert(`Format ${file.name} tidak didukung. Gunakan PDF.`);
       }
     });
     if (validFiles.length > 0) setFiles((prev) => [...prev, ...validFiles]);
@@ -54,8 +54,8 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
     e.preventDefault();
     if (files.length === 0) { alert("Pilih file terlebih dahulu."); return; }
     const res = isEditing
-      ? await updateFile(submission!.id, files[0])
-      : await submitFile(files[0]);
+      ? await updateFile(submission!.id, files)
+      : await submitFile(files);
     if (res) { setIsEditing(false); setFiles([]); }
   };
 
@@ -65,7 +65,6 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
     if (ok) { setFiles([]); setIsEditing(false); }
   };
 
-  // Batal edit — kembali ke tampilan status tanpa kehilangan submission lama
   const handleCancelEdit = () => {
     setFiles([]);
     setIsEditing(false);
@@ -75,7 +74,7 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
     return (
       <SubmitStatusTable
         type="file"
-        filePath={submission.file_path}
+        files={submission.files}
         submittedAt={new Date(submission.submitted_at)}
         deadline={deadline}
         onEdit={() => setIsEditing(true)}
@@ -84,7 +83,7 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
     );
   }
 
-  const currentFileName = submission?.file_path?.split("/").pop();
+  // const currentFileName = submission?.file_path?.split("/").pop();
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -93,7 +92,7 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
         multiple
         ref={fileInputRef}
         onChange={(e) => e.target.files && validateAndAddFiles(Array.from(e.target.files))}
-        accept=".pdf,.docx,.zip"
+        accept=".pdf"
         className="hidden"
       />
       <div
@@ -104,7 +103,6 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
           }`}
       >
         {files.length > 0 ? (
-          // File baru sudah dipilih — tampilkan itu (menggantikan file lama)
           <div className="space-y-2">
             {files.map((file, index) => (
               <div key={index} className="flex items-center justify-between text-sm font-medium text-gray-800" onClick={(e) => e.stopPropagation()}>
@@ -118,13 +116,17 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
               </div>
             ))}
           </div>
-        ) : isEditing && currentFileName ? (
-          // Mode edit, belum pilih file baru — tampilkan file submission lama sebagai referensi
+        ) : isEditing && submission?.files && submission.files.length > 0 ? (
           <div className="flex flex-col items-center justify-center h-full space-y-2 text-center py-6">
             <FileText className="w-6 h-6 text-gray-400" />
-            <p className="text-sm font-semibold text-gray-700">
-              File saat ini: <span className="text-red-700">{currentFileName}</span>
-            </p>
+            <p className="text-sm font-semibold text-gray-700">File saat ini:</p>
+            <div className="space-y-0.5">
+              {submission.files.map((f) => (
+                <p key={f.id} className="text-sm font-medium text-red-700">
+                  {f.original_name}
+                </p>
+              ))}
+            </div>
             <p className="text-[11px] text-gray-400 font-medium pointer-events-none">
               Klik atau drag & drop untuk mengganti file
             </p>

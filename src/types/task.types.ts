@@ -20,6 +20,15 @@ export interface TaskSubmissionData {
   id_task: number;
   id_user: number;
   file_path: string | null;
+  files: Array<{
+    id: number;
+    file_path: string;
+    original_name: string;
+    mime_type: string;
+    size_bytes: number;
+    created_at: string;
+  }>
+  file_paths:string[];
   url_link: string | null;
   submitted_at: string;
   updated_at: string;

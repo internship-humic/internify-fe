@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import Landing from "./Pages/Landing";
 import AboutUs from "./Pages/AboutUs";
 import Internships from "./Pages/Internships";
@@ -54,87 +55,96 @@ import CreateMentorForm from "./Pages/CreateMentorForm";
 import EditMentorForm from "./Pages/EditMentorForm";
 import NotFoundPage from "./Pages/NotFoundPage";
 import InternCertificateDetail from "./Pages/Internify/intern/InternCertDetail";
+import VerificationCert from "./Pages/Internify/VerificationCert";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/about-us" element={<AboutUs />} />
-        <Route path="/internships" element={<Internships />} />
-        <Route path="/details/:id" element={<InternshipDetails />} />
-        <Route path="/register-intern/:id" element={<RegisterInternships />} />
-        <Route path="/register-done" element={<RegisterDone />} />
-        <Route path="/our-developer" element={<OurDeveloper />} />
-        <Route path="/details-product/:id" element={<DetailsProduct />} />
-        <Route path="/login-admin" element={<LoginAdmin />} />
+    <>
+      <Toaster
+        position="bottom-right"
+        reverseOrder={true}
+      />
 
-        <Route element={<PrivateRoute />}>
-          <Route path="/add-product-admin" element={<AddProduct />} />
-          <Route path="/internships-list" element={<InternshipList />} />
-          <Route path="/lowongan-list" element={<ListLowongan />} />
-          <Route path="/product-list" element={<ListProduct />} />
-          <Route path="/add-product-humic" element={<AddProductHumic />} />
-          <Route path="/edit-product-humic/:id" element={<EditProductHumic />} />
-          <Route path="/kontent-aktif/edit/:id" element={<EditKontenAdmin />} />
-          <Route path="/internships-details-admin/:id" element={<InternshipDetailsAdmin />} />
-          <Route path="/partnership-admin" element={<PartnershipsList />} />
-          <Route path="/add-partnership" element={<AddPartnershipAdmin />} />
-          <Route path="/edit-partnership/:id" element={<EditPartnerships />} />
-          <Route path="/feedback-list" element={<ListFeedback />} />
-          <Route path="/add-feedback" element={<AddFeedback />} />
-          <Route path="/faq-list" element={<ListFaq />} />
-          <Route path="/add-faq" element={<AddFaq />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/edit-faq/:id" element={<EditFaq />}></Route>
-          <Route path="/edit-feedback/:id" element={<EditFeedback />}></Route>
-          <Route path="/edit-lowongan/:id" element={<EditLowongan />}></Route>
-          <Route path="/mentor-admin" element={<AdminMentorPage/>}/>
-          <Route path="/create-mentor" element={<CreateMentorForm/>}/>
-          <Route path="/edit-mentor/:id" element={<EditMentorForm/>}/>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/internships" element={<Internships />} />
+          <Route path="/details/:id" element={<InternshipDetails />} />
+          <Route path="/register-intern/:id" element={<RegisterInternships />} />
+          <Route path="/register-done" element={<RegisterDone />} />
+          <Route path="/our-developer" element={<OurDeveloper />} />
+          <Route path="/details-product/:id" element={<DetailsProduct />} />
+          <Route path="/login-admin" element={<LoginAdmin />} />
+          <Route path="/verify-certificate/:uuid" element={<VerificationCert />} />
 
-        </Route>
+          <Route element={<PrivateRoute />}>
+            <Route path="/add-product-admin" element={<AddProduct />} />
+            <Route path="/internships-list" element={<InternshipList />} />
+            <Route path="/lowongan-list" element={<ListLowongan />} />
+            <Route path="/product-list" element={<ListProduct />} />
+            <Route path="/add-product-humic" element={<AddProductHumic />} />
+            <Route path="/edit-product-humic/:id" element={<EditProductHumic />} />
+            <Route path="/kontent-aktif/edit/:id" element={<EditKontenAdmin />} />
+            <Route path="/internships-details-admin/:id" element={<InternshipDetailsAdmin />} />
+            <Route path="/partnership-admin" element={<PartnershipsList />} />
+            <Route path="/add-partnership" element={<AddPartnershipAdmin />} />
+            <Route path="/edit-partnership/:id" element={<EditPartnerships />} />
+            <Route path="/feedback-list" element={<ListFeedback />} />
+            <Route path="/add-feedback" element={<AddFeedback />} />
+            <Route path="/faq-list" element={<ListFaq />} />
+            <Route path="/add-faq" element={<AddFaq />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/edit-faq/:id" element={<EditFaq />}></Route>
+            <Route path="/edit-feedback/:id" element={<EditFeedback />}></Route>
+            <Route path="/edit-lowongan/:id" element={<EditLowongan />}></Route>
+            <Route path="/mentor-admin" element={<AdminMentorPage />} />
+            <Route path="/create-mentor" element={<CreateMentorForm />} />
+            <Route path="/edit-mentor/:id" element={<EditMentorForm />} />
 
-        <Route path="/login-internify" element={<InternifyLogin />} />
-
-        {/* Intern only */}
-        <Route element={<ProtectedRoutes allowedRoles={["intern"]} />}>
-          <Route path="/intern" element={<InternLayout />}>
-            <Route index element={<HomeInternPage />} />
-            <Route path="projects" element={<ProjectsPage />} />
-            <Route path="certificates" element={<SertificateList />} />
-            <Route path="certificates/:slug" element={<InternCertificateDetail />} />
-            <Route path="projects/:slug" element={<ProjectDetailPage />} />
-            <Route path="projects/:slug/:taskSlug" element={<TaskSubmission />} />
-            <Route path="faq" element={<FAQPage />} />
-            <Route path="notifications" element={<NotificationList />} />
-            <Route path="settings" element={<SettingsContent />} />
           </Route>
-        </Route>
 
-        {/* Mentor/Admin only */}
-        <Route element={<ProtectedRoutes allowedRoles={["admin", "mentor"]} />}>
-          <Route path="/mentor" element={<MentorLayout />}>
-            <Route index element={<HomeMentorPage />} />
-            <Route path="projects" element={<MentorProjectsPage />} />
-            <Route path="certificates" element={<MentorCertificatePage />} />
-            <Route path="certificates/:slug" element={<CertificateDetail />} />
-            <Route path="certificates/:slug/result" element={<CertificateResult />} />
-            <Route path="intern" element={<MentorInternPage />} />
-            <Route path="projects/:slug" element={<MentorDetailProject />} />
-            <Route path="projects/:slug/:taskSlug" element={<MentorProjectsDetailPage />} />
-            <Route path="projects/:slug/:taskSlug/:nameIntern" element={<ViewInternSubmission />} />
-            <Route path="faq" element={<FAQPage />} />
-            <Route path="notifications" element={<NotificationList />} />
-            <Route path="settings" element={<MentorSettingsPage />} />
+          <Route path="/login-internify" element={<InternifyLogin />} />
+
+          {/* Intern only */}
+          <Route element={<ProtectedRoutes allowedRoles={["intern"]} />}>
+            <Route path="/intern" element={<InternLayout />}>
+              <Route index element={<HomeInternPage />} />
+              <Route path="projects" element={<ProjectsPage />} />
+              <Route path="certificates" element={<SertificateList />} />
+              <Route path="certificates/:slug" element={<InternCertificateDetail />} />
+              <Route path="projects/:slug" element={<ProjectDetailPage />} />
+              <Route path="projects/:slug/:taskSlug" element={<TaskSubmission />} />
+              <Route path="faq" element={<FAQPage />} />
+              <Route path="notifications" element={<NotificationList />} />
+              <Route path="settings" element={<SettingsContent />} />
+            </Route>
           </Route>
-        </Route>
 
-        {/* 404 catch-all */}
-        <Route path="*" element={<NotFoundPage />} />
+          {/* Mentor/Admin only */}
+          <Route element={<ProtectedRoutes allowedRoles={["admin", "mentor"]} />}>
+            <Route path="/mentor" element={<MentorLayout />}>
+              <Route index element={<HomeMentorPage />} />
+              <Route path="projects" element={<MentorProjectsPage />} />
+              <Route path="certificates" element={<MentorCertificatePage />} />
+              <Route path="certificates/:slug" element={<CertificateDetail />} />
+              <Route path="certificates/:slug/result" element={<CertificateResult />} />
+              <Route path="intern" element={<MentorInternPage />} />
+              <Route path="projects/:slug" element={<MentorDetailProject />} />
+              <Route path="projects/:slug/:taskSlug" element={<MentorProjectsDetailPage />} />
+              <Route path="projects/:slug/:taskSlug/:nameIntern" element={<ViewInternSubmission />} />
+              <Route path="faq" element={<FAQPage />} />
+              <Route path="notifications" element={<NotificationList />} />
+              <Route path="settings" element={<MentorSettingsPage />} />
+            </Route>
+          </Route>
 
-      </Routes>
-    </Router>
+          {/* 404 catch-all */}
+          <Route path="*" element={<NotFoundPage />} />
+
+        </Routes>
+      </Router>
+    </>
   );
 }
 

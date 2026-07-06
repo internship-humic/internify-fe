@@ -1,6 +1,13 @@
 // hooks/useTasks.ts
 import { useState, useEffect, useCallback, useMemo } from "react";
-import type { ProjectTask, ProjectTaskDetail, CreateTaskPayload, UpdateTaskPayload, TaskSubmissionData, AdminTaskDetail } from "../types/task.types";
+import type {
+  ProjectTask,
+  ProjectTaskDetail,
+  CreateTaskPayload,
+  UpdateTaskPayload,
+  TaskSubmissionData,
+  AdminTaskDetail,
+} from "../types/task.types";
 import {
   getProjectTasks,
   getTaskById,
@@ -34,7 +41,9 @@ export const useProjectTasks = (projectId: string) => {
       .finally(() => setLoading(false));
   }, [projectId]);
 
-  useEffect(() => { refetch(); }, [refetch]);
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   return { tasks, loading, error, refetch }; // tambah refetch
 };
@@ -54,7 +63,9 @@ export const useTaskDetail = (taskId: string, projectId?: string) => {
       .finally(() => setLoading(false));
   }, [taskId, projectId]);
 
-  useEffect(() => { refetch(); }, [refetch]);
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   return { task, loading, error, refetch };
 };
@@ -73,7 +84,9 @@ export const useTaskSubmissions = (taskId: string, projectId?: string) => {
       .finally(() => setLoading(false));
   }, [taskId, projectId]);
 
-  useEffect(() => { refetch(); }, [refetch]);
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   return { task, loading, error, refetch };
 };
@@ -83,7 +96,9 @@ export const useCreateTask = (projectId: string) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const create = async (payload: CreateTaskPayload): Promise<ProjectTask | null> => {
+  const create = async (
+    payload: CreateTaskPayload,
+  ): Promise<ProjectTask | null> => {
     setLoading(true);
     setError(null);
     try {
@@ -107,7 +122,7 @@ export const useUpdateTask = () => {
   const update = async (
     taskId: string | number,
     payload: UpdateTaskPayload,
-    projectId?: string
+    projectId?: string,
   ) => {
     setLoading(true);
     setError(null);
@@ -147,62 +162,102 @@ export const useDeleteTask = () => {
 };
 
 // POST + PATCH + DELETE submission — digabung dalam satu hook per task
-export const useSubmission = (taskId: string, initialSubmission?: TaskSubmissionData | null, projectId?: string) => {
-  const [submission, setSubmission] = useState<TaskSubmissionData | null>(initialSubmission ?? null);
+export const useSubmission = (
+  taskId: string,
+  initialSubmission?: TaskSubmissionData | null,
+  projectId?: string,
+) => {
+  const [submission, setSubmission] = useState<TaskSubmissionData | null>(
+    initialSubmission ?? null,
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const submitFile = async (file: File) => {
-    setLoading(true); setError(null);
+  const submitFile = async (files: File[]) => {
+    setLoading(true);
+    setError(null);
     try {
-      const res = await submitTaskFile(taskId, file, projectId);
+      const res = await submitTaskFile(taskId, files, projectId);
       if (res) setSubmission(res);
       return res;
-    } catch { setError("Gagal submit file."); return null; }
-    finally { setLoading(false); }
+    } catch {
+      setError("Gagal submit file.");
+      return null;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const submitLink = async (url: string) => {
-    setLoading(true); setError(null);
+    setLoading(true);
+    setError(null);
     try {
       const res = await submitTaskLink(taskId, url, projectId);
       if (res) setSubmission(res);
       return res;
-    } catch { setError("Gagal submit link."); return null; }
-    finally { setLoading(false); }
+    } catch {
+      setError("Gagal submit link.");
+      return null;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const updateFile = async (submissionId: number, file: File) => {
-    setLoading(true); setError(null);
+  const updateFile = async (submissionId: number, files: File[]) => {
+    setLoading(true);
+    setError(null);
     try {
-      const res = await updateSubmissionFile(submissionId, file);
+      const res = await updateSubmissionFile(submissionId, files);
       if (res) setSubmission(res);
       return res;
-    } catch { setError("Gagal update submission."); return null; }
-    finally { setLoading(false); }
+    } catch {
+      setError("Gagal update submission.");
+      return null;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const updateLink = async (submissionId: number, url: string) => {
-    setLoading(true); setError(null);
+    setLoading(true);
+    setError(null);
     try {
       const res = await updateSubmissionLink(submissionId, url);
       if (res) setSubmission(res);
       return res;
-    } catch { setError("Gagal update submission."); return null; }
-    finally { setLoading(false); }
+    } catch {
+      setError("Gagal update submission.");
+      return null;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const remove = async (submissionId: number) => {
-    setLoading(true); setError(null);
+    setLoading(true);
+    setError(null);
     try {
       await deleteSubmission(submissionId);
       setSubmission(null);
       return true;
-    } catch { setError("Gagal hapus submission."); return false; }
-    finally { setLoading(false); }
+    } catch {
+      setError("Gagal hapus submission.");
+      return false;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  return { submission, submitFile, submitLink, updateFile, updateLink, remove, loading, error };
+  return {
+    submission,
+    submitFile,
+    submitLink,
+    updateFile,
+    updateLink,
+    remove,
+    loading,
+    error,
+  };
 };
 
 // hooks/useAllMentorTasks.ts
@@ -233,10 +288,16 @@ export const useDeadlines = () => {
 
   const isIntern = user?.role === "intern";
 
-  const { tasks: internTasks, loading: internLoading, error: internError } = useMyTasks();
-  const { tasks: mentorTasks, loading: mentorLoading, error: mentorError } = useAllMentorTasks(
-    !isIntern && user !== null
-  );
+  const {
+    tasks: internTasks,
+    loading: internLoading,
+    error: internError,
+  } = useMyTasks();
+  const {
+    tasks: mentorTasks,
+    loading: mentorLoading,
+    error: mentorError,
+  } = useAllMentorTasks(!isIntern && user !== null);
 
   const deadlines: Deadline[] = useMemo(() => {
     if (!user) return [];

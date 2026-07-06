@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useCurrentUser, useUpdateProfile } from "../../hooks/useUser";
+import { customToast } from "../utils/showToast";
 
 export default function SettingsContent() {
   const { user, loading } = useCurrentUser();
@@ -11,7 +12,6 @@ export default function SettingsContent() {
     bio: "",
   });
 
-  // Sync form data when user is loaded
   useEffect(() => {
     if (user) {
       setFormData({
@@ -29,11 +29,25 @@ export default function SettingsContent() {
 
   const handleSaveChanges = async (e: React.FormEvent) => {
     e.preventDefault();
-    await save({
-      full_name: formData.fullName,
-      email: formData.email,
-      professional_bio: formData.bio,
-    });
+    
+    await customToast.promise(     
+      save({
+        full_name: formData.fullName,
+        email: formData.email,
+        professional_bio: formData.bio,
+      }),
+      {
+        loading: "Menyimpan perubahan...",
+        success: () => ({
+          title: "Perubahan berhasil disimpan!",
+          description: successMsg || "Profil Anda telah diperbarui.",
+        }),
+        error: () => ({
+          title: "Gagal menyimpan perubahan!",
+          description: errorMsg || "Terjadi kesalahan saat menyimpan perubahan.",
+        }),
+      }
+    );
   };
 
   const initialLetter = formData.fullName ? formData.fullName.charAt(0).toUpperCase() : "U";
@@ -134,17 +148,6 @@ export default function SettingsContent() {
               Brief description for your profile. URLs and @mentions are allowed.
             </p>
           </div>
-
-          {successMsg && (
-            <p className="text-xs text-green-600 bg-green-50 p-2 rounded-md font-medium">
-              {successMsg}
-            </p>
-          )}
-          {errorMsg && (
-            <p className="text-xs text-red-600 bg-red-50 p-2 rounded-md font-medium">
-              {errorMsg}
-            </p>
-          )}
 
           {/* Form Action Footer Row */}
           <div className="flex justify-end pt-2">

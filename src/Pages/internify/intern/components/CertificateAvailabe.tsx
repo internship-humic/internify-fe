@@ -21,8 +21,15 @@ export default function CertificateAvailable({ project, certificate, templateUrl
 
   useEffect(() => {
     if (!templateUrl) return;
+    const verifyUrl = `${window.location.origin}/verify-certificate/${certificate.uuid}`;
 
-    generateCertificate(resolveImageUrl(templateUrl), certificate.user.full_name, certificate.project.project_name, certificate.certificate_no, certificate.uuid)
+    generateCertificate(
+      resolveImageUrl(templateUrl), 
+      certificate.user.full_name, 
+      certificate.project.project_name, 
+      certificate.certificate_no, 
+      verifyUrl, 
+      "20 Juni 2024 - 20 September 2024") //placeholder karena saya butuh data durasi certificate
       .then((blob) => {
         const url = URL.createObjectURL(blob);
         setPreviewUrl(url);
@@ -104,8 +111,8 @@ export default function CertificateAvailable({ project, certificate, templateUrl
                 key={row.label}
                 className="flex justify-between items-center text-sm border-b border-card-outline pb-2 last:border-0"
               >
-                <span className="text-gray-500">{row.label}</span>
-                <span className="text-gray-800 font-medium">{row.value}</span>
+                <span className="text-font">{row.label}</span>
+                <span className="text-font-shade font-bold">{row.value}</span>
               </div>
             ))}
           </div>
