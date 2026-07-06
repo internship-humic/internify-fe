@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Check, Download, Info } from "lucide-react";
 import { LuFileSpreadsheet } from "react-icons/lu";
 import { io } from "socket.io-client";
@@ -14,6 +15,23 @@ const getCookieToken = () => {
 
 export default function NotificationList() {
   const [notifications, setNotifications] = useState<UINotification[]>([]);
+  const navigate = useNavigate();
+
+  const handleNotificationClick = async (item: UINotification) => {
+    if (item.isNew) {
+      try {
+        await NotificationService.markAsRead(item.id);
+        setNotifications(prev =>
+          prev.map(n => (n.id === item.id ? { ...n, isNew: false } : n))
+        );
+      } catch (err) {
+        console.error("Failed to mark notification as read:", err);
+      }
+    }
+    if (item.link) {
+      navigate(item.link);
+    }
+  };
 
   useEffect(() => {
     const loadNotifications = async () => {
@@ -102,7 +120,8 @@ export default function NotificationList() {
           {notifications.filter(n => n.group === "TODAY").map((item) => (
             <div
               key={item.id}
-              className={`relative flex items-start gap-4 p-5 bg-white border border-gray-100 rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.01)] ${item.type === 'new-task' ? 'border-l-4 border-l-[#B30000]' : ''
+              onClick={() => handleNotificationClick(item)}
+              className={`relative flex items-start gap-4 p-5 bg-white border border-gray-100 rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.01)] cursor-pointer hover:bg-gray-50/70 transition-all ${item.type === 'new-task' ? 'border-l-4 border-l-[#B30000]' : ''
                 }`}
             >
               {/* Icon Container */}
@@ -134,7 +153,10 @@ export default function NotificationList() {
                     <button className="px-4 py-1.5 bg-[#B30000] hover:bg-[#990000] text-white text-xs font-bold rounded-lg shadow-sm transition-colors">
                       View Task
                     </button>
-                    <button className="px-4 py-1.5 border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 text-xs font-semibold rounded-lg transition-colors">
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); }}
+                      className="px-4 py-1.5 border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 text-xs font-semibold rounded-lg transition-colors"
+                    >
                       Later
                     </button>
                   </div>
@@ -165,7 +187,8 @@ export default function NotificationList() {
           {notifications.filter(n => n.group === "YESTERDAY").map((item) => (
             <div
               key={item.id}
-              className="relative flex items-start gap-4 p-5 bg-gray-50 border border-gray-100 rounded-xl"
+              onClick={() => handleNotificationClick(item)}
+              className="relative flex items-start gap-4 p-5 bg-gray-50 border border-gray-100 rounded-xl cursor-pointer hover:bg-gray-100/70 transition-all"
             >
               <div className="p-2.5 bg-gray-200 text-gray-500 rounded-xl">
                 <Info className="w-5 h-5" />
