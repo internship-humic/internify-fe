@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useCurrentUser, useUpdateProfile } from "../../../hooks/useUser";
+import { customToast } from "../../utils/showToast";
 
 export default function MentorSettingsPage() {
   const { user, loading: userLoading } = useCurrentUser();
@@ -59,20 +60,28 @@ export default function MentorSettingsPage() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const handleSaveChanges = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await save({
-      full_name: formData.fullName,
-      email: formData.email,
-      professional_bio: formData.bio,
-      ...(photoFile ? { profile_picture: photoFile } : {}),
-    });
-    // Reset file state setelah berhasil save
-    if (!errorMsg) {
-      setPhotoFile(null);
-      setImageError(false);
-    }
-  };
+   const handleSaveChanges = async (e: React.FormEvent) => {
+      e.preventDefault();
+      
+      await customToast.promise(     
+        save({
+          full_name: formData.fullName,
+          email: formData.email,
+          professional_bio: formData.bio,
+        }),
+        {
+          loading: "Menyimpan perubahan...",
+          success: () => ({
+            title: "Perubahan berhasil disimpan!",
+            description: successMsg || "",
+          }),
+          error: () => ({
+            title: "Gagal menyimpan perubahan!",
+            description: errorMsg || "",
+          }),
+        }
+      );
+    };
 
   const initialLetter = formData.fullName ? formData.fullName.charAt(0).toUpperCase() : "U";
 
@@ -223,7 +232,7 @@ export default function MentorSettingsPage() {
             </p>
           </div>
 
-          {/* Feedback Messages */}
+          {/* Feedback Messages
           {successMsg && (
             <p className="text-xs text-green-600 bg-green-50 p-2 rounded-md font-medium">
               {successMsg}
@@ -233,7 +242,7 @@ export default function MentorSettingsPage() {
             <p className="text-xs text-red-600 bg-red-50 p-2 rounded-md font-medium">
               {errorMsg}
             </p>
-          )}
+          )} */}
 
           {/* Footer Action */}
           <div className="flex justify-end pt-2">

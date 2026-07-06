@@ -1,9 +1,11 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import { X } from "lucide-react";
 import { PROJECT_ICON_MAP, PROJECT_ICON_CODES } from "../../../../lib/ProjectIcons";
 import { LuSendHorizontal, LuMail } from "react-icons/lu";
 import { useCreateProject } from "../../../../hooks/useProjects";
 import type { CreateProjectPayload } from "../../../../types/project.types";
+import { useAssignableInterns } from "../../../../hooks/useProjects";
+import { customToast } from "../../../utils/showToast";
 
 interface CreateProjectModalProps {
   isOpen: boolean;
@@ -21,6 +23,21 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const { create, loading, error } = useCreateProject();
+  const { interns: assignableInterns, loading: loadingInterns } = useAssignableInterns();
+  const [showDropdown, setShowDropdown] = useState(false);
+  const emailSectionRef = useRef<HTMLDivElement>(null);
+
+  // Tutup dropdown saat klik di luar area input
+  const handleClickOutside = useCallback((e: MouseEvent) => {
+    if (emailSectionRef.current && !emailSectionRef.current.contains(e.target as Node)) {
+      setShowDropdown(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [handleClickOutside]);
 
   const projectIcons = PROJECT_ICON_CODES.map((id) => ({
     id,
@@ -51,13 +68,19 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
     };
   }, [isOpen, onClose]);
 
-  const handleAddEmail = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (emailInput.trim() && !invitedEmails.includes(emailInput.trim())) {
-      setInvitedEmails([...invitedEmails, emailInput.trim()]);
+  const handleAddEmail = (emailToAdd?: string) => {
+    const email = (emailToAdd ?? emailInput).trim();
+    if (email && !invitedEmails.includes(email)) {
+      setInvitedEmails([...invitedEmails, email]);
       setEmailInput("");
+      setShowDropdown(false);
     }
   };
+
+  // const handleAddEmailFromForm = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   handleAddEmail();
+  // };
 
   const handleRemoveEmail = (emailToRemove: string) => {
     setInvitedEmails(invitedEmails.filter(email => email !== emailToRemove));
@@ -79,8 +102,12 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
 
     const result = await create(payload);
     if (result) {
-      onSuccess?.();  // panggil refetch di parent (kalau ada)
+      onSuccess?.();
       onClose();
+      customToast.success(
+        "Project berhasil dibuat!",
+        `${projectName} sudah aktif dan siap dikelola.`
+      );
     }
   };
 
@@ -167,30 +194,71 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
           <label className="text-xs font-bold text-gray-700 tracking-wide">
             Invite via Gmail
           </label>
-          <div className="relative flex items-center">
-            <span className="absolute left-3.5 text-gray-400">
-              <LuMail className="w-4 h-4 stroke-[2.5]" />
-            </span>
-            <input
-              type="email"
-              placeholder="intern.name@gmail.com"
-              value={emailInput}
-              onChange={(e) => setEmailInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  handleAddEmail(e);
-                }
-              }}
-              className="w-full pl-10 pr-20 py-2.5 bg-white border border-gray-200 rounded-lg text-sm placeholder-gray-400 text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium"
-            />
-            <button
-              type="button"
-              onClick={handleAddEmail}
-              className="absolute right-2 px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-800 text-[11px] font-bold rounded-md transition-colors tracking-wider uppercase"
-            >
-              ADD
-            </button>
+          {/* Input email + dropdown sugesti intern */}
+          <div ref={emailSectionRef} className="relative">
+            <div className="relative flex items-center">
+              <span className="absolute left-3.5 text-gray-400">
+                <LuMail className="w-4 h-4 stroke-[2.5]" />
+              </span>
+              <input
+                type="email"
+                placeholder="intern.name@gmail.com"
+                value={emailInput}
+                onChange={(e) => { setEmailInput(e.target.value); setShowDropdown(true); }}
+                onFocus={() => setShowDropdown(true)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddEmail();
+                  }
+                  if (e.key === 'Escape') setShowDropdown(false);
+                }}
+                className="w-full pl-10 pr-20 py-2.5 bg-white border border-gray-200 rounded-lg text-sm placeholder-gray-400 text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium"
+              />
+              <button
+                type="button"
+                onClick={() => handleAddEmail()}
+                className="absolute right-2 px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-800 text-[11px] font-bold rounded-md transition-colors tracking-wider uppercase"
+              >
+                ADD
+              </button>
+            </div>
+
+            {/* Dropdown daftar intern */}
+            {showDropdown && (
+              <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-44 overflow-y-auto">
+                {loadingInterns ? (
+                  <p className="text-xs text-gray-400 text-center py-3">Memuat data intern...</p>
+                ) : (() => {
+                  const filtered = assignableInterns.filter(
+                    (i) =>
+                      !invitedEmails.includes(i.email) &&
+                      (i.email.toLowerCase().includes(emailInput.toLowerCase()) ||
+                        i.full_name.toLowerCase().includes(emailInput.toLowerCase()))
+                  );
+                  return filtered.length === 0 ? (
+                    <p className="text-xs text-gray-400 text-center py-3">Tidak ada intern ditemukan.</p>
+                  ) : (
+                    filtered.map((intern) => (
+                      <button
+                        key={intern.id}
+                        type="button"
+                        onMouseDown={(e) => { e.preventDefault(); handleAddEmail(intern.email); }}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors text-left"
+                      >
+                        <div className="w-7 h-7 rounded-full bg-red-100 text-red-700 flex items-center justify-center text-[10px] font-bold shrink-0">
+                          {intern.full_name.split(' ').slice(0, 2).map((n) => n[0]).join('').toUpperCase()}
+                        </div>
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-xs font-semibold text-gray-800 truncate">{intern.full_name}</span>
+                          <span className="text-[11px] text-gray-400 truncate">{intern.email}</span>
+                        </div>
+                      </button>
+                    ))
+                  );
+                })()}
+              </div>
+            )}
           </div>
 
           {/* Badges List Email */}

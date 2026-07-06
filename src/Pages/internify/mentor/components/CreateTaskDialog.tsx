@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import { X, FileText, Link } from "lucide-react";
 import { useCreateTask } from '../../../../hooks/useTasks';
 import type { SubmissionType } from '../../../../types/task.types';
+import { customToast } from '../../../utils/showToast';
 
 interface CreateTaskModalProps {
   isOpen: boolean;
@@ -39,7 +40,12 @@ export default function CreateTaskModal({ isOpen, onClose, projectId, onSuccess 
       specific_time: specificTime,
       submission_type: submissionType,
     });
-    if (result) onSuccess();
+    if (result) {
+      customToast.success('Task created', `"${taskTitle}" has been successfully added to the project.`);
+      onSuccess();
+    } else {
+      customToast.error('Failed to create task', 'An error occurred while saving the task. Please try again.');
+    }
   };
   return (
     <dialog ref={dialogRef} className="custom-dialog p-[1.5rem]">

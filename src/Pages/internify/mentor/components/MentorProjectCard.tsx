@@ -4,6 +4,7 @@ import * as LucideIcons from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
 import type { Project } from '../../../../types/project.types';
 import { useArchiveProject } from '../../../../hooks/useProjects';
+import { customToast } from '../../../utils/showToast';
 
 const getDynamicIcon = (iconName: string) => {
   const formatted = iconName.charAt(0).toUpperCase() + iconName.slice(1);
@@ -11,14 +12,16 @@ const getDynamicIcon = (iconName: string) => {
   return Icon ?? LucideIcons.FolderOpen;
 };
 
-const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
+interface MentorProjectCardProps extends Project {
+  onArchived?: () => void;
+}
 
-export default function MentorProjectCard(project: Project) {
+export default function MentorProjectCard({ onArchived, ...project} : MentorProjectCardProps) {
   const navigate = useNavigate();
   const { archive, loading } = useArchiveProject();
 
   const handleCardClick = () => {
-    navigate(`/mentor/projects/${toSlug(project.slug)}`)
+    navigate(`/mentor/projects/${project.slug}`)
   };
   const Icon = getDynamicIcon(project.project_icon);
 
@@ -31,12 +34,19 @@ export default function MentorProjectCard(project: Project) {
     const result = await archive(project.id);
 
     if (result) {
-      window.alert("Project berhasil diarsipkan.");
-      window.location.reload();
+      customToast.success(
+        "Berhasil!",
+        "Projek Berhasil Diarsipkan (archived)"
+      )
+      onArchived?.();
     } else {
-      window.alert("Gagal mengarsipkan project.");
+      customToast.error(
+        "Gagal!",
+        "Projek gagal diarsipkan (archived)"
+      )
     }
   };
+
   return (
     <div
       onClick={handleCardClick}

@@ -27,7 +27,7 @@ import { useCurrentUser } from "./useUser";
 import { useMyTasks } from "./useProjects";
 
 // GET /task-api/projects/{id_project}/tasks
-export const useProjectTasks = (projectId: string) => {
+export const useProjectTasks = (projectId: number) => {
   const [tasks, setTasks] = useState<ProjectTask[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -180,8 +180,9 @@ export const useSubmission = (
       const res = await submitTaskFile(taskId, files, projectId);
       if (res) setSubmission(res);
       return res;
-    } catch {
+    } catch (err){
       setError("Gagal submit file.");
+      throw error;
       return null;
     } finally {
       setLoading(false);
@@ -195,9 +196,9 @@ export const useSubmission = (
       const res = await submitTaskLink(taskId, url, projectId);
       if (res) setSubmission(res);
       return res;
-    } catch {
+    } catch (err){
       setError("Gagal submit link.");
-      return null;
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -210,9 +211,9 @@ export const useSubmission = (
       const res = await updateSubmissionFile(submissionId, files);
       if (res) setSubmission(res);
       return res;
-    } catch {
+    } catch (err){
       setError("Gagal update submission.");
-      return null;
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -225,9 +226,9 @@ export const useSubmission = (
       const res = await updateSubmissionLink(submissionId, url);
       if (res) setSubmission(res);
       return res;
-    } catch {
+    } catch (err){
       setError("Gagal update submission.");
-      return null;
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -240,9 +241,9 @@ export const useSubmission = (
       await deleteSubmission(submissionId);
       setSubmission(null);
       return true;
-    } catch {
+    } catch (err) {
       setError("Gagal hapus submission.");
-      return false;
+      throw err;
     } finally {
       setLoading(false);
     }

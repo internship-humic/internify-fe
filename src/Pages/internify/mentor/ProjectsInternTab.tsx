@@ -3,18 +3,20 @@ import { Plus } from 'lucide-react';
 import ManageInternsModal from './components/AddInternsDialog';
 import type { ProjectDetail, ProjectMember } from '../../../types/project.types';
 import { useRemoveMember } from '../../../hooks/useProjects';
+import { customToast } from '../../utils/showToast';
 
 export default function InternsTab({ project }: { project: ProjectDetail }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [members, setMembers] = useState<ProjectMember[]>(project.members);
   const { remove, loading } = useRemoveMember();
 
   const handleRemove = async (id_user: number) => {
-    if (window.confirm('Are you sure you want to remove this member?')) {
-      const res = await remove({ id_project: project.id, id_user });
-      if (res !== null) {
-        alert('Member removed successfully');
-        window.location.reload();
-      }
+    const res = await remove({ id_project: project.id, id_user });
+    if (res !== null) {
+      setMembers(prev => prev.filter(m => m.id !== id_user));
+      customToast.success('Member removed', 'The intern has been successfully removed from this project.');
+    } else {
+      customToast.error('Failed to remove', 'An error occurred while removing the member. Please try again.');
     }
   };
 
@@ -51,32 +53,32 @@ export default function InternsTab({ project }: { project: ProjectDetail }) {
           </h3>
           <button 
             onClick={() => setIsModalOpen(true)}
-            className='bg-gray-300 border border-gray-500 px-2 py-1 rounded-xl hover:bg-gray-400 transition-colors'
+            className='bg-gray-300 border border-gray-500 px-2 py-1 rounded-md hover:bg-gray-400 transition-colors'
           >
-            <span className='flex items-center gap-3 text-[14px]'>
+            <span className='flex items-center gap-3 text-[11px]'>
               <Plus className='w-3 h-3'/>Add
             </span>
           </button>
         </div>
-        {project.members.map((member: ProjectMember, idx) => (
+        {members.map((member: ProjectMember, idx) => (
           <div
             key={idx}
-            className={`flex items-center justify-between py-3 ${idx < project.members.length - 1 ? 'border-b border-gray-300' : ''
+            className={`flex items-center justify-between py-3 ${idx < members.length - 1 ? 'border-b border-gray-300' : ''
               }`}
           >
             <div className="flex items-center gap-3">
-              <span className=" text-sm text-[#333]">
+              <span className=" text-sm text-font">
                 {member.email}
               </span>
             </div>
-            <span className=" text-[13px] text-[#555] font-semibold">
+            <span className=" text-[13px] text-font font-semibold">
               {member.position}
             </span>
             <div>
               <button 
                 onClick={() => handleRemove(member.id)}
                 disabled={loading}
-                className='flex items-center gap-1 text-[14px] bg-red-600 text-white p-1 rounded-xl disabled:opacity-50 hover:bg-red-700 transition-colors'
+                className='flex items-center gap-1 text-[11px] bg-red-600 text-white py-1 px-2 rounded-md disabled:opacity-50 hover:bg-red-700 transition-colors'
               >
                 <Plus className='w-4 h-4'/>Delete
               </button>
@@ -88,7 +90,8 @@ export default function InternsTab({ project }: { project: ProjectDetail }) {
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)}
         projectId={project.id}
-        initialMembers={project.members}
+        initialMembers={members}
+        onMembersChange={(updated) => setMembers(updated)}
       />}
     </div>
   );

@@ -3,13 +3,13 @@ import type { Project } from "../../../../types/project.types";
 
 // ─── StatusBadge ─────────────────────────────────────────────────────────────
 function StatusBadge({ status }: { status: string }) {
-  const isCompleted = status === "archived";
+  const isCompleted = status === "active";
   return (
     <span
       className={`text-[10px] font-extrabold tracking-wider px-2.5 py-1 rounded-full border ${
         isCompleted
           ? "bg-green-50 text-green-600 border-green-200"
-          : "bg-yellow-50 text-yellow-600 border-yellow-200"
+          : "bg-red-50 text-red-600 border-red-200"
       }`}
     >
       {status}

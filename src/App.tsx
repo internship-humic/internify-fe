@@ -135,7 +135,7 @@ function App() {
               <Route path="projects/:slug/:taskSlug/:nameIntern" element={<ViewInternSubmission />} />
               <Route path="faq" element={<FAQPage />} />
               <Route path="notifications" element={<NotificationList />} />
-              <Route path="settings" element={<MentorSettingsPage />} />
+              <Route path="settings" element={<SettingsContent />} />
             </Route>
           </Route>
 

@@ -16,7 +16,7 @@ export default function FAQPage() {
     setLoading(true);
     api.get("/faq-api/get")
       .then((res) => {
-        setFaq(res.data.data); // ambil array dari field "data"
+        setFaq(res.data.data);
       })
       .catch((err) => {
         console.error("Gagal fetch FAQ:", err);
@@ -41,14 +41,14 @@ export default function FAQPage() {
       ) : (
         <div className="space-y-8 max-w-auto">
           {faq.map((item) => (
-            <div key={item.id} className="relative shadow-md group py-5 px-10 rounded-md bg-white">
+            <div key={item.id} className="relative shadow-md group py-5 px-10 rounded-md bg-white border-l-6 border-red hover:shadow-xl">
               
               {/* Item Question */}
-              <h2 className="text-[17px] font-bold text-[#8A0000] tracking-tight leading-snug mb-2 border-l-4 border-[#8A0000] pl-3">
+              <h2 className="text-[17px] font-bold text-red tracking-tight leading-snug mb-2">
                 {item.pertanyaan}
               </h2>
 
-              <p className="text-[14px] pl-8 text-[#8A0000] font-light leading-relaxed tracking-normal">
+              <p className="text-[14px] pl-8 text-redfont-light leading-relaxed tracking-normal">
                 {item.jawaban}
               </p>
             </div>

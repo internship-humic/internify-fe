@@ -70,17 +70,13 @@ const Faq = () => {
     fetchFaq();
   }, []);
 
-  // Auto-scroll ke section FAQ kalau ada #faq
   useEffect(() => {
     if (location.hash === "#faq") {
-      // wrapper ada di Landing: <div id="faq"><Faq/></div>
-      // ini memastikan scroll halus
       const el = document.getElementById("faq");
       el?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }, [location.hash]);
 
-  // Auto-open FAQ tertentu kalau ?faq=ID ada dan data sudah ke-load
   useEffect(() => {
     if (!faqIdFromUrl) return;
     if (faqData.length === 0) return;
@@ -88,8 +84,6 @@ const Faq = () => {
     const idx = faqData.findIndex((f) => f.id === faqIdFromUrl);
     if (idx !== -1) {
       setOpenIndex(idx);
-
-      // Optional: setelah open, pastikan tetap terlihat
       setTimeout(() => {
         const el = document.getElementById("faq");
         el?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -99,7 +93,6 @@ const Faq = () => {
 
   return (
     <div className="hero-5-section flex flex-col lg:flex-row items-start lg:items-center justify-between mt-25 px-6 md:px-16 lg:px-[150px] pb-[60px] gap-10">
-      {/* UI tetap sama persis */}
       <div className="content-of-5 w-full lg:w-[610px]">
         <h2 className="font-bold text-2xl md:text-3xl">
           Frequently Asked Questions
@@ -117,7 +110,7 @@ const Faq = () => {
 
       <div className="faq-content-list space-y-6 w-full lg:w-[700px]">
         {!loading && !error && faqData.length === 0 && (
-          <div className="bg-[#FAF0EF] shadow-md rounded-sm p-4">
+          <div className="bg-card shadow-md rounded-sm p-4">
             <p className="text-sm text-gray-700">Belum ada FAQ.</p>
           </div>
         )}
@@ -125,7 +118,7 @@ const Faq = () => {
         {faqData.map((faq, index) => (
           <div
             key={faq.id ?? index}
-            className="bg-[#FAF0EF] shadow-md rounded-sm"
+            className="bg-cardshadow-md rounded-sm"
           >
             <button
               onClick={() => toggleItem(index)}

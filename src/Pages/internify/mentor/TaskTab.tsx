@@ -1,21 +1,30 @@
-import { useProjectTasks, useCreateTask, useDeleteTask } from '../../../hooks/useTasks';
+import { useProjectTasks, useDeleteTask } from '../../../hooks/useTasks';
 import type { ProjectDetail } from '../../../types/project.types';
 import type { ProjectTask } from '../../../types/task.types';
 import { ClipboardList, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import CreateTaskModal from './components/CreateTaskDialog';
 import EditTaskModal from './components/EditTaskDialog';
+import { customToast } from '../../utils/showToast';
 
 export default function TaskTab({ project }: { project: ProjectDetail }) {
-  const { tasks, loading, error, refetch } = useProjectTasks(String(project.id));
+  const { tasks, loading, error, refetch } = useProjectTasks(project.id);
   const { remove } = useDeleteTask();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<ProjectTask | null>(null);
 
-  const handleDeleteTask = async (taskId: number) => {
-    const ok = await remove(taskId, String(project.id));
-    if (ok) refetch();
+  const handleDeleteTask = async (taskId: number,taskTitle: string) => {
+    const del = await remove(taskId, String(project.id));
+    if (del) {
+      try {
+        customToast.success("Berhasil", `Task ${taskTitle} berhasil dihapus`)
+      } catch (error) {
+        customToast.error("Gagal", `Task ${taskTitle} gagal dihapus`)
+      } finally {
+        refetch();
+      }
+    }
   };
 
   if (loading) return (
@@ -61,7 +70,7 @@ export default function TaskTab({ project }: { project: ProjectDetail }) {
                   <Pencil size={20} />
                 </button>
                 <button
-                  onClick={() => handleDeleteTask(task.id)}
+                  onClick={() => handleDeleteTask(task.id, task.title)}
                   className="hover:text-red-600 transition-colors p-1"
                 >
                   <Trash2 size={20} />

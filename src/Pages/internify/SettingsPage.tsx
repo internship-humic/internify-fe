@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useCurrentUser, useUpdateProfile } from "../../hooks/useUser";
 import { customToast } from "../utils/showToast";
+import { Pen } from "lucide-react";
 
-export default function SettingsContent() {
-  const { user, loading } = useCurrentUser();
+export default function MentorSettingsPage() {
+  const { user, loading: userLoading } = useCurrentUser();
   const { save, loading: saving, error: errorMsg, successMsg } = useUpdateProfile();
+  const isIntern = user?.role === "intern";
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -12,13 +14,27 @@ export default function SettingsContent() {
     bio: "",
   });
 
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [imageError, setImageError] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (user) {
       setFormData({
-        fullName: user.full_name || "",
+        fullName:
+          user.full_name ||
+          `${user.nama_depan ?? ""} ${user.nama_belakang ?? ""}`.trim() ||
+          "",
         email: user.email || "",
         bio: user.professional_bio || "",
       });
+      if (user.profile_picture) {
+        setPhotoPreview(user.profile_picture);
+      } else {
+        setPhotoPreview(null);
+      }
+      setImageError(false);
     }
   }, [user]);
 
@@ -27,10 +43,27 @@ export default function SettingsContent() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPhotoFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setPhotoPreview(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    setPhotoFile(null);
+    setPhotoPreview(null);
+    setImageError(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const handleSaveChanges = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    await customToast.promise(     
+
+    await customToast.promise(
       save({
         full_name: formData.fullName,
         email: formData.email,
@@ -40,11 +73,11 @@ export default function SettingsContent() {
         loading: "Menyimpan perubahan...",
         success: () => ({
           title: "Perubahan berhasil disimpan!",
-          description: successMsg || "Profil Anda telah diperbarui.",
+          description: successMsg || "",
         }),
         error: () => ({
           title: "Gagal menyimpan perubahan!",
-          description: errorMsg || "Terjadi kesalahan saat menyimpan perubahan.",
+          description: errorMsg || "",
         }),
       }
     );
@@ -52,7 +85,7 @@ export default function SettingsContent() {
 
   const initialLetter = formData.fullName ? formData.fullName.charAt(0).toUpperCase() : "U";
 
-  if (loading) {
+  if (userLoading) {
     return (
       <div className="flex items-center justify-center h-40 text-sm text-gray-400">
         Loading profile...
@@ -61,8 +94,7 @@ export default function SettingsContent() {
   }
 
   return (
-    <div className="">
-
+    <div>
       {/* Header Title */}
       <div className="mb-6">
         <h1 className="page-title">Settings</h1>
@@ -72,12 +104,12 @@ export default function SettingsContent() {
       </div>
 
       {/* White Card Container */}
-      <div className="w-full bg-white rounded-xl border border-gray-100 shadow-lg overflow-hidden">
+      <div className="w-full bg-white rounded-xl border border-box-border shadow-lg overflow-hidden">
 
         {/* Card Header */}
-        <div className="p-6 border-b border-gray-100">
-          <h2 className="text-base font-bold text-gray-900">Profile Information</h2>
-          <p className="text-xs text-gray-400 mt-0.5">
+        <div className="p-6 border-b border-box-border">
+          <h2 className="text-[20px] font-bold text-foreground">Profile Information</h2>
+          <p className="text-xs text-foreground mt-0.5">
             Update your photo and personal details.
           </p>
         </div>
@@ -85,25 +117,80 @@ export default function SettingsContent() {
         {/* Card Body & Form */}
         <form onSubmit={handleSaveChanges} className="p-6 space-y-6">
 
-          {/* Profile Photo Display Row */}
-          <div className="flex items-center gap-4 py-2">
-            <div className="w-16 h-16 bg-gray-100 border border-gray-200 rounded-xl flex items-center justify-center shadow-sm">
-              <span className="text-2xl font-black text-gray-900 tracking-tighter">
-                {initialLetter}
-              </span>
+          {/* Profile Photo Row */}
+          <div className="flex items-center gap-5 py-2">
+            {/* Avatar dengan badge edit */}
+            <div className="relative flex-shrink-0">
+              <div className="w-20 h-20 rounded-xl border-2 border-red-100 overflow-hidden bg-gray-100 flex items-center justify-center shadow-sm">
+                {photoPreview && !imageError ? (
+                  <img
+                    src={photoPreview}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                    onError={() => setImageError(true)}
+                  />
+                ) : (
+                  <span className="text-3xl font-black text-gray-900">{initialLetter}</span>
+                )}
+              </div>
+              {/* Badge edit icon */}
+              {!isIntern &&
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="absolute -bottom-1.5 -right-1.5 w-6 h-6 bg-[#B30000] rounded-full flex items-center justify-center shadow border-2 border-white hover:bg-[#990000] transition-colors"
+                  title="Edit photo"
+                >
+                  <Pen className="text-white w-2.5 h-2.5" />
+                </button>
+              }
             </div>
-            <div>
-              <h3 className="text-xs font-bold text-gray-900">Profile Photo</h3>
-              <p className="text-sm text-gray-600 mt-0.5">{formData.fullName}</p>
-            </div>
+
+            {/* Info & Action Buttons */}
+            {!isIntern &&
+              <div>
+                <h3 className="text-sm font-bold text-gray-900 mb-0.5">Profile Photo</h3>
+                <p className="text-xs text-gray-400 mb-3">
+                  JPG, GIF or PNG. Recommended size 800x800px. Max size of 800K.
+                </p>
+                {photoFile && (
+                  <p className="text-xs text-blue-500 mb-2 font-medium">
+                    📎 {photoFile.name}
+                  </p>
+                )}
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="px-4 py-1.5 bg-[#B30000] hover:bg-[#990000] text-white text-xs font-bold rounded-lg shadow-sm transition-colors"
+                  >
+                    Upload New
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleRemovePhoto}
+                    className="px-4 py-1.5 bg-white border border-box-border text-gray-600 hover:bg-gray-50 text-xs font-bold rounded-lg transition-colors"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            }
+
+            {/* Hidden file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/png, image/jpeg, image/gif"
+              className="hidden"
+              onChange={handlePhotoUpload}
+            />
           </div>
 
-          <hr className="border-t border-dashed border-gray-200" />
+          <hr className="border-t border-dashed border-box-border" />
 
-          {/* Grid Inputs (Full Name & Email Address) */}
+          {/* Grid Inputs */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-            {/* Field: Full Name */}
             <div className="space-y-1">
               <label className="text-[10px] font-bold tracking-wider text-gray-700 uppercase block">
                 Full Name
@@ -113,11 +200,9 @@ export default function SettingsContent() {
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-colors bg-white font-medium"
+                className="w-full px-3 py-2 border border-box-border rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-colors bg-white font-medium"
               />
             </div>
-
-            {/* Field: Email Address */}
             <div className="space-y-1">
               <label className="text-[10px] font-bold tracking-wider text-gray-700 uppercase block">
                 Email Address
@@ -127,12 +212,12 @@ export default function SettingsContent() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-colors bg-white font-medium"
+                className="w-full px-3 py-2 border border-box-border rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-colors bg-white font-medium"
               />
             </div>
           </div>
 
-          {/* Field: Professional Bio */}
+          {/* Professional Bio */}
           <div className="space-y-1">
             <label className="text-[10px] font-bold tracking-wider text-gray-700 uppercase block">
               Professional Bio
@@ -142,19 +227,31 @@ export default function SettingsContent() {
               rows={4}
               value={formData.bio}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-colors bg-white font-medium resize-none"
+              className="w-full px-3 py-2 border border-box-border rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-colors bg-white font-medium resize-none"
             />
-            <p className="text-[11px] text-gray-700 font-normal pt-0.5">
+            <p className="text-[11px] text-gray-500 font-normal pt-0.5">
               Brief description for your profile. URLs and @mentions are allowed.
             </p>
           </div>
 
-          {/* Form Action Footer Row */}
+          {/* Feedback Messages
+          {successMsg && (
+            <p className="text-xs text-green-600 bg-green-50 p-2 rounded-md font-medium">
+              {successMsg}
+            </p>
+          )}
+          {errorMsg && (
+            <p className="text-xs text-red-600 bg-red-50 p-2 rounded-md font-medium">
+              {errorMsg}
+            </p>
+          )} */}
+
+          {/* Footer Action */}
           <div className="flex justify-end pt-2">
             <button
               type="submit"
               disabled={saving}
-              className="px-6 py-2 bg-[#B30000] hover:bg-[#990000] text-white font-bold text-xs rounded-lg shadow-sm transition-colors uppercase tracking-wider"
+              className="px-6 py-2 bg-[#B30000] hover:bg-[#990000] text-white font-bold text-xs rounded-lg shadow-sm transition-colors uppercase tracking-wider disabled:opacity-60"
             >
               {saving ? "Saving..." : "Save Changes"}
             </button>
