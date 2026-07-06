@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import { X, FileText, Link } from "lucide-react";
 import { useUpdateTask } from '../../../../hooks/useTasks';
 import type { ProjectTask, SubmissionType } from '../../../../types/task.types';
+import { customToast } from '../../../utils/showToast';
 
 interface EditTaskModalProps {
   isOpen: boolean;
@@ -48,7 +49,12 @@ export default function EditTaskModal({ isOpen, onClose, task, onSuccess }: Edit
       specific_time: specificTime,
       submission_type: submissionType,
     }, String(task.id_project));
-    if (result) onSuccess();
+    if (result) {
+      customToast.success('Task updated', `"${taskTitle}" has been successfully updated.`);
+      onSuccess();
+    } else {
+      customToast.error('Failed to update task', 'An error occurred while saving changes. Please try again.');
+    }
   };
 
   return (

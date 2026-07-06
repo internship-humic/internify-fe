@@ -39,6 +39,7 @@ export async function generateCertificate(
   internName: string,
   projectName: string,
   certificateNo: string,
+  ProjectDuration: string,
   verifyUrl: string,
 ): Promise<Blob> {
   // Pastikan font siap sebelum menggambar teks
@@ -78,8 +79,13 @@ export async function generateCertificate(
   ctx.fillStyle = "#800000";
   ctx.fillText(certificateNo, canvas.width * 0.825, canvas.height * 0.918);
 
+  //Durasi Project — besar (Grenze)
+  ctx.font = `50px "Grenze", serif`;
+  ctx.fillStyle = "#090909";
+  ctx.fillText(ProjectDuration, canvas.width * 0.57, canvas.height * 0.715);
+
   // QR code — kalau verifyUrl diisi
-  const qrDataUrl = await QRCode.toDataURL(verifyUrl, {
+  const qrDataUrl = await QRCode.toDataURL('http://localhost:5172/verify-certificate/' + verifyUrl, {
     width: 200,
     margin: 1,
   });
@@ -87,8 +93,8 @@ export async function generateCertificate(
   const qrSize = canvas.width * 0.103;
   ctx.drawImage(
     qrImg,
-    canvas.width * 0.77 - qrSize / 2, // posisi X — sesuaikan
-    canvas.height * 0.715 - qrSize / 2, // posisi Y — sesuaikan
+    canvas.width * 0.77 - qrSize,
+    canvas.height * 0.715 - qrSize,
     qrSize,
     qrSize,
   );

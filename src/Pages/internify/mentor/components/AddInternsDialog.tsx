@@ -5,21 +5,23 @@ import { useAssignableInterns } from "../../../../hooks/useProjects";
 import { useAssignMember } from '../../../../hooks/useProjects';
 import type { ProjectMember } from '../../../../types/project.types';
 import type { AssignableIntern } from '../../../../types/project.types';
+import { customToast } from "../../../utils/showToast";
 
 interface ManageInternsModalProps {
   isOpen: boolean;
   onClose: () => void;
   projectId: number;
   initialMembers: ProjectMember[];
+  onMembersChange?: (updated: ProjectMember[]) => void;
 }
 
-export default function ManageInternsModal({ isOpen, onClose, projectId, initialMembers }: ManageInternsModalProps) {
+export default function ManageInternsModal({ isOpen, onClose, projectId, initialMembers, onMembersChange }: ManageInternsModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [invitedList, setInvitedList] = useState<ProjectMember[]>(initialMembers);
 
   const { interns, loading: loadingAssignableInterns } = useAssignableInterns();
-  const { assign, loading: assigning, error } = useAssignMember();
+  const { assign, loading: assigning } = useAssignMember();
 
   // Sync saat modal dibuka
   useEffect(() => {
@@ -55,22 +57,27 @@ export default function ManageInternsModal({ isOpen, onClose, projectId, initial
   const handleAssign = async (intern: AssignableIntern) => {
     const result = await assign({ id_project: projectId, id_user: intern.id });
     if (result) {
-      setInvitedList(prev => [...prev, {
+      const newMember: ProjectMember = {
         id: intern.id,
         id_user: intern.id,
-        // full_name: `${intern.nama_depan} ${intern.nama_belakang}`,
         full_name: intern.full_name,
         email: intern.email,
         avatar: "",
         kelompok_peminatan: intern.kelompok_peminatan,
         professional_bio: "",
         position: intern.position,
-      } as ProjectMember]);
+      } as ProjectMember;
+      const updatedList = [...invitedList, newMember];
+      setInvitedList(updatedList);
+      onMembersChange?.(updatedList);
+      customToast.success('Intern added', `${intern.full_name} has been successfully added to the project.`);
+    } else {
+      customToast.error('Failed to add', 'An error occurred while adding the intern. Please try again.');
     }
   };
 
-  const getInitials = (m: AssignableIntern) =>
-    m.full_name.toUpperCase();
+  const getInitials = (m: AssignableIntern) => 
+    m.full_name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
 
   return (
     <dialog ref={dialogRef} className="custom-dialog">
@@ -85,11 +92,7 @@ export default function ManageInternsModal({ isOpen, onClose, projectId, initial
           />
           <Search className="absolute right-3.5 w-4 h-4 text-gray-400" />
         </div>
-        {error && 
-        <div className="p-1 flex justify-center bg-red-foreground border border-red text-sm text-red-500 font-light rounded-md">
-          {error}: Sudah berada di project lain
-        </div>
-        }
+
 
         <div className="overflow-y-auto space-y-3 pr-1 flex-1 h-[170px]">
           {/* Sudah jadi member */}
@@ -97,7 +100,7 @@ export default function ManageInternsModal({ isOpen, onClose, projectId, initial
             <div key={member.id} className="flex items-center justify-between p-2 rounded-xl hover:bg-gray-50 transition-colors">
               <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-full bg-gray-200 border border-gray-300 flex items-center justify-center text-xs font-bold text-gray-500">
-                    {member.full_name.slice(0, 2).toUpperCase()}
+                    {getInitials(member as unknown as AssignableIntern)}
                   </div>
                 <div className="flex flex-col">
                   <span className="text-sm font-medium text-gray-700">{member.full_name}</span>

@@ -4,6 +4,7 @@ import { LuSendHorizontal } from "react-icons/lu";
 import SubmitStatusTable from "./SubmissionStatusTable";
 import { useSubmission } from "../../../../hooks/useTasks";
 import type { TaskSubmissionData } from "../../../../types/task.types";
+import { customToast } from "../../../utils/showToast";
 
 interface TaskFormLinkProps {
   taskId: string;
@@ -19,18 +20,54 @@ export default function TaskFormLink({ taskId, projectId, deadline, initialSubmi
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputLink.trim()) return;
-    const res = isEditing
-      ? await updateLink(submission!.id, inputLink)
-      : await submitLink(inputLink);
-    if (res) { setIsEditing(false); }
+    if (!inputLink.trim()) {
+      customToast.error(
+        "Link belum dibuat",
+        "Masukkan link untuk mengirim submission"
+      );
+      return;
+    }
+
+    await customToast.promise(
+      isEditing ? updateLink(submission!.id, inputLink) : submitLink(inputLink),
+      {
+        loading: isEditing ? "Memperbarui Link..." : "Mengirim Link...",
+        success: () => ({
+          title: isEditing ? "Link diperbaharui" : "Link berhasil dikirim",
+          description: isEditing
+            ? "Perubahan submission Anda telah disimpan."
+            : "Submission Anda telah berhasil dikirim.",
+        }),
+        error: (err) => ({
+          title: isEditing ? "Gagal memperbarui link!" : "Gagal mengirim link!",
+          description:
+            err?.response?.data?.message ||
+            err?.message ||
+            "Link yang anda submit gagal dikirim",
+        }),
+      }
+    );
   };
 
   const handleDelete = async () => {
-  if (!confirm("Yakin ingin menghapus submission ini?")) return;
-  const ok = await remove(submission!.id);
-  if (ok) setInputLink("");
-};
+    if (!confirm("Yakin ingin menghapus submission ini?")) return;
+    try {
+      const ok = await remove(submission!.id);
+      if (ok) {
+        setInputLink("");
+        setIsEditing(false);
+        customToast.success(
+          "Submission berhasil dihapus!",
+          "Anda dapat mengirim submission baru kapan saja."
+        );
+      }
+    } catch (err: any) {
+      customToast.error(
+        "Gagal menghapus submission!",
+        err?.response?.data?.message || "Terjadi kesalahan saat menghapus submission."
+      );
+    }
+  };
 
   if (submission && !isEditing) {
     return (

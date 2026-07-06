@@ -4,7 +4,7 @@ import { resolveImageUrl } from "../../../utils/SertificateGenerator";
 
 interface SubmitStatusTableProps {
   type: "file" | "link";
-  filePath?: string | null;
+  files?: Array<{ id: number; file_path: string; original_name: string }>;
   link?: string;
   submittedAt?: Date;
   deadline?: Date;
@@ -26,7 +26,7 @@ function getTimeEarly(submittedAt: Date, deadline: Date): string {
 
 export default function SubmitStatusTable({
   type,
-  filePath,
+  files = [],
   link = "",
   submittedAt = new Date(),
   deadline,
@@ -116,20 +116,27 @@ export default function SubmitStatusTable({
 
         {/* File / Link row */}
         <div className="grid grid-cols-[180px_1fr]">
-          <div className="px-4 py-3 text-sm text-font border-r border-box-border">
+          <div className="px-4 py-3 text-sm flex flex-col gap-2 text-font border-r border-box-border">
             {type === "file" ? "File submission" : "Link submission"}
           </div>
           <div className="px-4 py-3 flex flex-col gap-2">
             {type === "file" ? (
-              <a
-                href={resolveImageUrl(filePath ?? "")}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-sm text-blue-600 hover:underline"
-              >
-                <FileText className="w-4 h-4 stroke-[2.5]" />
-                <span>{resolveImageUrl(filePath ?? "").split("/").pop()}</span>
-              </a>
+              files?.length > 0 ? (
+                files?.map((f) => (
+                  <a
+                    key={f.id}
+                    href={resolveImageUrl(f.file_path)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-blue-600 hover:underline"
+                  >
+                    <FileText className="w-4 h-4 stroke-[2.5]" />
+                    <span>{f.original_name}</span>
+                  </a>
+                ))
+              ) : (
+                <span className="text-sm text-gray-500">No file submitted</span>
+              )
             ) : (
               <a href={link} target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-1.5 text-sm text-blue-600 hover:underline break-all">

@@ -4,6 +4,7 @@ import { useAllInterns, useRemoveMember, useProjects } from "../../../hooks/useP
 import AddInternsModal from "./components/AddInternsToProjects";  
 import type { InternDetail } from "../../../types/project.types";
 import type { Project } from "../../../types/project.types";
+import { customToast } from "../../utils/showToast";
 
 export default function InternsManagement() {
   const [searchEmail, setSearchEmail] = useState("");
@@ -39,11 +40,16 @@ export default function InternsManagement() {
   const handleDeleteIntern = async (intern: InternDetail) => {
     const matchedProject = activeProjects.find((project: Project) => project.project_name === intern.projectName);
     if (!matchedProject) {
-      console.error("Project not found for intern:", intern);
+      customToast.error('Project not found', `Could not find a matching project for intern ${intern.name}.`);
       return;
     }
     const res = await remove({ id_project: matchedProject.id, id_user: intern.id });
-    if (res !== null) refetch();
+    if (res !== null) {
+      customToast.success('Intern removed', `${intern.name} has been successfully removed from the project.`);
+      refetch();
+    } else {
+      customToast.error('Failed to remove', 'An error occurred while removing the intern. Please try again.');
+    }
   };
 
   if (loading) return (

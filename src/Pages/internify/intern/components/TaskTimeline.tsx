@@ -19,24 +19,30 @@ const TaskTimeline = () => {
 
   return (
     <div>
-      <h2 className="font-semibold text-font-shade mb-5">Task Timeline</h2>
+      <h2 className="font-semibold text-font-shade mb-5">Timeline Tugas</h2>
       <div className="relative">
-        <div className="absolute left-1 top-2 bottom-2 w-px bg-gray-300" />
         <ul className="flex flex-col gap-5">
-          {tasks.map((item: InternTaskItem) => {
+          {tasks.map((item: InternTaskItem, index) => {
             const overdue = isOverdue(item.deadline_at);
             const deadlineDate = new Date(item.deadline_at);
+            const isLast = index === tasks.length - 1;
+
             return (
-              <li key={item.id} className="flex gap-4 pl-0">
+              <li key={item.id} className="relative flex gap-4 pl-0">
+                {/* Vertical line ke bawah, kecuali item terakhir */}
+                {!isLast && (
+                  <div className="absolute left-[3px] top-3 w-px h-full bg-[#ddd]" />
+                )}
+
                 <div className="relative flex-shrink-0 mt-1">
                   <span
-                    className={`block w-2 h-2 rounded-full z-10 relative ${
-                      overdue ? "bg-primary" : "bg-gray-500"
-                    }`}
+                    className={`block w-3 h-3 rounded-full z-10 relative border-2 right-0.5 border-white ${overdue ? "bg-primary" : "bg-gray-500"
+                      }`}
                   />
                 </div>
+
                 <div className="flex flex-col gap-0.5 min-w-0">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">
+                  <p className="text-[10px] font-semibold text-font-shade uppercase tracking-widest">
                     {deadlineDate.toLocaleDateString("id-ID")} AT{" "}
                     {deadlineDate.toLocaleTimeString("id-ID", {
                       hour: "2-digit",

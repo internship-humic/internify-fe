@@ -91,11 +91,11 @@ export const getAllMentorTasks = async (): Promise<MentorTaskItem[]> => {
 
 export const submitTaskFile = async (
   taskId: string | number,
-  file: File,
+  files: File[],
   projectId?: string | number
 ): Promise<TaskSubmissionData> => {
   const formData = new FormData();
-  formData.append("submission_file", file);
+  files.forEach((file) => formData.append("submission_files", file));
   const res = await api.post(`/task-api/tasks/${taskId}/submissions`, formData, {
     params: projectId ? { project: projectId } : undefined,
   });
@@ -117,10 +117,10 @@ export const submitTaskLink = async (
 
 export const updateSubmissionFile = async (
   submissionId: number,
-  file: File
+  files: File[]
 ): Promise<TaskSubmissionData> => {
   const formData = new FormData();
-  formData.append("submission_file", file);
+  files.forEach((file) => formData.append("submission_files", file));
   const res = await api.patch(`/task-api/submissions/${submissionId}`, formData);
   return res.data.data;
 };

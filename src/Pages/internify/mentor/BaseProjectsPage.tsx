@@ -2,8 +2,8 @@ import MentorProjectCard from './components/MentorProjectCard';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import CreateProjectModal from './components/CreateProjectDialog';
+import { customToast } from '../../utils/showToast';
 import { useProjectsByRole } from '../../../hooks/useListProjects';
-
 
 export default function MentorProjectsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,7 +38,6 @@ export default function MentorProjectsPage() {
           <p className="page-title-desc">Create, manage, and monitor ongoing projects and assignments.</p>
         </div>
         <div>
-          {/* Tombol pemicu buka modal */}
           <button
             onClick={openDialog}
             className="flex items-center gap-2 px-4 py-1 bg-[#C0392B] text-white rounded-lg hover:bg-[#A93226] transition-colors duration-150"

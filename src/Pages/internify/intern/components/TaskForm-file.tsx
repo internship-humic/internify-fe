@@ -4,6 +4,7 @@ import { LuSendHorizontal } from "react-icons/lu";
 import SubmitStatusTable from "./SubmissionStatusTable";
 import { useSubmission } from "../../../../hooks/useTasks";
 import type { TaskSubmissionData } from "../../../../types/task.types";
+import { customToast } from "../../../utils/showToast";
 
 interface TaskFormFileProps {
   taskId: string;
@@ -20,15 +21,12 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const validateAndAddFiles = (selectedFiles: File[]) => {
-    const allowedExtensions = ["pdf", "docx", "zip"];
+    const allowedExtensions = ["pdf"];
     const validFiles: File[] = [];
     selectedFiles.forEach((file) => {
       const ext = file.name.split(".").pop()?.toLowerCase();
       if (ext && allowedExtensions.includes(ext)) {
-        if (file.size <= 10 * 1024 * 1024) validFiles.push(file);
-        else alert(`Ukuran file ${file.name} melebihi 10MB.`);
-      } else {
-        alert(`Format ${file.name} tidak didukung. Gunakan PDF, DOCX, atau ZIP.`);
+        if (file.size <= 5 * 1024 * 1024) validFiles.push(file);
       }
     });
     if (validFiles.length > 0) setFiles((prev) => [...prev, ...validFiles]);
@@ -52,20 +50,61 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (files.length === 0) { alert("Pilih file terlebih dahulu."); return; }
-    const res = isEditing
-      ? await updateFile(submission!.id, files[0])
-      : await submitFile(files[0]);
-    if (res) { setIsEditing(false); setFiles([]); }
+    if (files.length === 0) {
+      customToast.error(
+        "File belum dipilih!",
+        "Silakan pilih file terlebih dahulu sebelum mengirim."
+      );
+      return;
+    }
+
+    const res = await customToast.promise(
+      isEditing ? updateFile(submission!.id, files) : submitFile(files),
+      {
+        loading: isEditing ? "Memperbarui file..." : "Mengirim file...",
+        success: () => ({
+          title: isEditing ? "File berhasil diperbarui!" : "File berhasil dikirim!",
+          description: isEditing
+            ? "Perubahan submission Anda telah disimpan."
+            : "Submission Anda telah berhasil dikirim.",
+        }),
+        error: (err) => ({
+          title: isEditing ? "Gagal memperbarui file!" : "Gagal mengirim file!",
+          description:
+            err?.response?.data?.message ||
+            err?.message ||
+            "Terjadi kesalahan saat memproses file Anda.",
+        }),
+      }
+    );
+
+    if (res) {
+      setIsEditing(false);
+      setFiles([]);
+    }
   };
 
   const handleDelete = async () => {
     if (!confirm("Yakin ingin menghapus submission ini?")) return;
-    const ok = await remove(submission!.id);
-    if (ok) { setFiles([]); setIsEditing(false); }
+
+    try {
+      const ok = await remove(submission!.id);
+      if (ok) {
+        setFiles([]);
+        setIsEditing(false);
+        customToast.success(
+          "Submission berhasil dihapus!",
+          "Anda dapat mengirim submission baru kapan saja."
+        );
+      }
+    } catch (err: any) {
+      customToast.error(
+        "Gagal menghapus submission!",
+        err?.response?.data?.message || "Terjadi kesalahan saat menghapus submission."
+      );
+    }
   };
 
-  // Batal edit — kembali ke tampilan status tanpa kehilangan submission lama
   const handleCancelEdit = () => {
     setFiles([]);
     setIsEditing(false);
@@ -75,7 +114,7 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
     return (
       <SubmitStatusTable
         type="file"
-        filePath={submission.file_path}
+        files={submission.files}
         submittedAt={new Date(submission.submitted_at)}
         deadline={deadline}
         onEdit={() => setIsEditing(true)}
@@ -84,8 +123,6 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
     );
   }
 
-  const currentFileName = submission?.file_path?.split("/").pop();
-
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <input
@@ -93,7 +130,7 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
         multiple
         ref={fileInputRef}
         onChange={(e) => e.target.files && validateAndAddFiles(Array.from(e.target.files))}
-        accept=".pdf,.docx,.zip"
+        accept=".pdf"
         className="hidden"
       />
       <div
@@ -104,7 +141,6 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
           }`}
       >
         {files.length > 0 ? (
-          // File baru sudah dipilih — tampilkan itu (menggantikan file lama)
           <div className="space-y-2">
             {files.map((file, index) => (
               <div key={index} className="flex items-center justify-between text-sm font-medium text-gray-800" onClick={(e) => e.stopPropagation()}>
@@ -118,22 +154,25 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
               </div>
             ))}
           </div>
-        ) : isEditing && currentFileName ? (
-          // Mode edit, belum pilih file baru — tampilkan file submission lama sebagai referensi
+        ) : isEditing && submission?.files && submission.files.length > 0 ? (
           <div className="flex flex-col items-center justify-center h-full space-y-2 text-center py-6">
-            <FileText className="w-6 h-6 text-gray-400" />
-            <p className="text-sm font-semibold text-gray-700">
-              File saat ini: <span className="text-red-700">{currentFileName}</span>
-            </p>
-            <p className="text-[11px] text-gray-400 font-medium pointer-events-none">
-              Klik atau drag & drop untuk mengganti file
+            <div className="space-y-0.5">
+              {submission.files.map((f) => (
+                <div className="flex items-center gap-2 text-[11px]">
+                  <FileText className="w-4 h-4 text-red-700 stroke-[2.5]" />
+                  {f.original_name}
+                </div>
+              ))}
+            </div>
+            <p className="text-[14px] text-gray-400 font-medium pointer-events-none">
+              Upload ulang files yang akan diganti ke dalam submissions, atau klik batal
             </p>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center h-full space-y-2 pointer-events-none text-center py-6">
             <UploadCloud className="w-8 h-8 text-gray-400 mx-auto stroke-[1.5]" />
             <p className="text-sm font-bold text-gray-700">Click to upload <span className="font-medium text-gray-500">or drag & drop</span></p>
-            <p className="text-[11px] text-gray-400 font-semibold">PDF, DOCX, or ZIP (Max. 10MB)</p>
+            <p className="text-[11px] text-gray-400 font-semibold">PDF, DOCX, or ZIP (Max.5MB)</p>
           </div>
         )}
       </div>

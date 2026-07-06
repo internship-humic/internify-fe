@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import { LuUserPlus, LuUser, LuFolderOpen } from "react-icons/lu";
 import { useAssignMember, useProjects } from "../../../../hooks/useProjects";
 import { useAssignableInterns } from "../../../../hooks/useProjects";
+import { customToast } from "../../../utils/showToast";
 
 interface AddInternsModalProps {
   isOpen: boolean;
@@ -46,8 +47,6 @@ export default function AddInternsModal({ isOpen, onClose, userId }: AddInternsM
     };
   }, [isOpen, onClose]);
 
-  // Reset form saat modal dibuka kembali.
-  // Kalau userId diberikan, dropdown langsung ter-select ke intern tsb.
   useEffect(() => {
     if (isOpen) {
       setSelectedUserId(userId !== null ? String(userId) : "");
@@ -64,7 +63,10 @@ export default function AddInternsModal({ isOpen, onClose, userId }: AddInternsM
       id_user: Number(selectedUserId),
     });
     if (res !== null) {
+      customToast.success('Intern assigned', 'The intern has been successfully assigned to the project.');
       onClose();
+    } else {
+      customToast.error('Failed to assign', 'An error occurred while assigning the intern. Please try again.');
     }
   };
 

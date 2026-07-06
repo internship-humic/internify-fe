@@ -45,6 +45,7 @@ export default function EligibleInternTable({
   loading,
   eligibleCount,
   projectId
+  // Durasi tanggal Proyek
 }: EligibleInternTableProps) {
   const navigate = useNavigate();
   const { project } = useProjectDetail(String(projectId));
@@ -98,14 +99,15 @@ export default function EligibleInternTable({
 
       await Promise.all(
         result.map(async (cert) => {
-          const verifyUrl = `${window.location.origin}/verify/${cert.uuid}`;
+          const verifyUrl = `${window.location.origin}/verify-certificate/${cert.uuid}`;
 
           const blob = await generateCertificate(
           templateUrl,
           cert.user.full_name,
           cert.project.project_name,
           cert.certificate_no,
-          verifyUrl
+          verifyUrl,
+          "20 Juni 2024 - 20 September 2024" // Placeholder untuk durasi proyek
         );
 
           zip.file(`Sertifikat - ${cert.user.full_name}.png`, blob);
