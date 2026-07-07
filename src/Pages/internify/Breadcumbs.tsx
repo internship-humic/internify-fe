@@ -5,7 +5,7 @@ import { useMyProjects, useProjects } from "../../hooks/useProjects";
 import { useProjectTasks } from "../../hooks/useTasks";
 
 type BreadcrumbMatch = {
-  match: { params: { slug?: string; taskSlug?: string } };
+  match: { params: { slug?: string; taskSlug?: string; nameIntern?: string } };
 };
 
 const unslugify = (slug = '') =>
@@ -29,13 +29,27 @@ const TaskBreadcrumb = ({ match }: BreadcrumbMatch) => {
   return <>{task?.title ?? unslugify(taskSlug)}</>;
 };
 
+// Breadcrumb untuk halaman detail sertifikat (menggunakan nama project dari slug)
+const CertBreadcrumb = ({ match }: BreadcrumbMatch) => {
+  const { projects } = useProjects();
+  const slug = match.params.slug;
+  const project = projects?.find((p) => p.slug === slug);
+  return <>{project?.project_name ?? unslugify(slug)}</>;
+};
+
+// Breadcrumb untuk halaman submission intern (unslugify nameIntern)
+const NameInternBreadcrumb = ({ match }: BreadcrumbMatch) => {
+  return <>{unslugify(match.params.nameIntern)}</>;
+};
+
 const breadcrumbRoutes = [
   // --- AREA INTERN ---
   { path: '/intern', breadcrumb: 'Home' },
   { path: '/intern/projects', breadcrumb: 'Projects' },
   { path: '/intern/projects/:slug', breadcrumb: ProjectBreadcrumb },
+  { path: '/intern/projects/:slug/:taskSlug', breadcrumb: TaskBreadcrumb },
   { path: '/intern/certificates', breadcrumb: 'Certificates' },
-  { path: '/intern/projects/:slug/:taskSlug', breadcrumb: TaskBreadcrumb  },
+  { path: '/intern/certificates/:slug', breadcrumb: CertBreadcrumb },
   { path: '/intern/faq', breadcrumb: 'FAQ' },
   { path: '/intern/notifications', breadcrumb: 'Notifications' },
   { path: '/intern/settings', breadcrumb: 'Settings' },
@@ -45,7 +59,10 @@ const breadcrumbRoutes = [
   { path: '/mentor/projects', breadcrumb: 'List Projects' },
   { path: '/mentor/projects/:slug', breadcrumb: ProjectBreadcrumb },
   { path: '/mentor/projects/:slug/:taskSlug', breadcrumb: TaskBreadcrumb },
+  { path: '/mentor/projects/:slug/:taskSlug/:nameIntern', breadcrumb: NameInternBreadcrumb },
   { path: '/mentor/certificates', breadcrumb: 'Certificates' },
+  { path: '/mentor/certificates/:slug', breadcrumb: CertBreadcrumb },
+  { path: '/mentor/certificates/:slug/result', breadcrumb: 'Result' },
   { path: '/mentor/intern', breadcrumb: 'List Intern' },
   { path: '/mentor/faq', breadcrumb: 'FAQ' },
   { path: '/mentor/notifications', breadcrumb: 'Notifications' },
@@ -88,4 +105,4 @@ export default function Breadcrumbs(){
       })}
     </nav>
   );
-};
+};

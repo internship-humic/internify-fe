@@ -134,7 +134,7 @@ export default function NotificationList() {
                   <div className="flex items-center gap-2 pt-3">
                     <button
                       className="px-4 py-1.5 bg-[#B30000] hover:bg-[#990000] text-white text-xs font-bold rounded-lg shadow-sm transition-colors"
-                      onClick={() => navigate(`/projects/${item.link}`)}>
+                      onClick={() => navigate(`/${item.link}`)}>
                       View Task
                     </button>
                     <button className="px-4 py-1.5 border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 text-xs font-semibold rounded-lg transition-colors">
@@ -146,7 +146,7 @@ export default function NotificationList() {
                 {item.type === 'achievement' && (
                   <button
                     className="flex items-center gap-1 text-xs font-bold text-[#B30000] hover:underline pt-2"
-                    onClick={() => navigate(`/certificate`)}>
+                    onClick={() => navigate(`/certificates`)}>
                     <Download className="w-3.5 h-3.5" />
                     Download Certificate
                   </button>

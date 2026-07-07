@@ -12,19 +12,19 @@ import {
   Loader2
 } from "lucide-react";
 import type { InternSubmissionProgress } from "../../../../hooks/useInternProgress";
-import { useProjectDetail } from "../../../../hooks/useProjects";
 import JSZip from "jszip";
 import { generateCertificate, resolveImageUrl } from "../../../utils/SertificateGenerator";
 import { useGenerateCertificates } from "../../../../hooks/useCertificates";
 import Avatar from "../../Avatar";
 import ProgressBar from "../../ProgressBar";
 import { customToast } from "../../../utils/showToast";
+import type { Project } from "../../../../types/project.types";
 
 interface EligibleInternTableProps {
   interns: InternSubmissionProgress[];
   loading: boolean;
   eligibleCount: number;
-  projectId: number
+  project: Project
 }
 
 const PER_PAGE = 5;
@@ -45,11 +45,11 @@ export default function EligibleInternTable({
   interns,
   loading,
   eligibleCount,
-  projectId
+  project
   // Durasi tanggal Proyek
 }: EligibleInternTableProps) {
   const navigate = useNavigate();
-  const { project } = useProjectDetail(String(projectId));
+  // const { project } = useProjectDetail(String(projectId));
   const { generate: SubmitCertificates } = useGenerateCertificates();
 
   const initialSelected = new Set(
@@ -93,7 +93,7 @@ export default function EligibleInternTable({
 
     const ok = await customToast.promise(
       (async () => {
-        const result = await SubmitCertificates(projectId, Array.from(selected));
+        const result = await SubmitCertificates(project.id, Array.from(selected));
         if (!result) throw new Error("Tidak ada data sertifikat yang dikembalikan.");
 
         const zip = new JSZip();
@@ -128,7 +128,7 @@ export default function EligibleInternTable({
     ).then(() => true).catch(() => false);
 
     setGenerating(false);
-    if (ok) navigate(`/mentor/certificates/${projectId}/result`);
+    if (ok) navigate(`/mentor/certificates/${project.id}/result`);
   };
 
   if (loading) {

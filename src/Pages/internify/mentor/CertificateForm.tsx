@@ -11,7 +11,7 @@ import { customToast } from "../../utils/showToast";
 export default function CertificateDetail() {
   const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
-  const { project, loading, error } = useProjectDetail(slug ?? "");
+  const { project, loading, error, refetch } = useProjectDetail(slug ?? "");
   const { upload, loading: uploading, error: uploadError } = useUploadCertificateTemplate();
   const { data: internProgress, loading: progressLoading } = useProjectInternProgress(slug ?? "");
   const eligibleCount = internProgress.filter(i => i.is_eligible).length;
@@ -45,11 +45,12 @@ export default function CertificateDetail() {
           description: err instanceof Error ? err.message : "Terjadi kesalahan saat upload.",
         }),
       }
-    ).then((result) => {
+    ).then(async(result) => {
       if (result) {
         setUploadSuccess(true);
         setSelectedFile(null);
         if (fileInputRef.current) fileInputRef.current.value = "";
+        await refetch();
       }
     }).catch(() => {});
   };
@@ -143,7 +144,6 @@ export default function CertificateDetail() {
                   </>
                 )}
               </div>
-
               {/* Tombol Clear */}
               {selectedFile && (
                 <button
@@ -226,7 +226,7 @@ export default function CertificateDetail() {
           interns={internProgress}
           loading={progressLoading}
           eligibleCount={eligibleCount}
-          projectId={project.id}
+          project={project}
         />
       </div>
     </div>

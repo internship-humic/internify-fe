@@ -28,6 +28,7 @@ export interface Project {
   total_tasks: number;
   created_at: string;
   updated_at: string;
+  certificate_template: string | null;
 }
 
 // Detail project (includes members array)
