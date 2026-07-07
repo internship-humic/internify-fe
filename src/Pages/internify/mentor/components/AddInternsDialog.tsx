@@ -1,6 +1,6 @@
 // ManageInternsModal.tsx
 import { useRef, useEffect, useState } from "react";
-import { Search, Plus, Trash2 } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 import { useAssignableInterns } from "../../../../hooks/useProjects";
 import { useAssignMember } from '../../../../hooks/useProjects';
 import type { ProjectMember } from '../../../../types/project.types';
@@ -9,24 +9,24 @@ import { customToast } from "../../../utils/showToast";
 
 interface ManageInternsModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (finalMembers: ProjectMember[]) => void;
   projectId: number;
   initialMembers: ProjectMember[];
-  onMembersChange?: (updated: ProjectMember[]) => void;
 }
 
-export default function ManageInternsModal({ isOpen, onClose, projectId, initialMembers, onMembersChange }: ManageInternsModalProps) {
+export default function ManageInternsModal({ isOpen, onClose, projectId, initialMembers }: ManageInternsModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [invitedList, setInvitedList] = useState<ProjectMember[]>(initialMembers);
+  const [invitedList] = useState<ProjectMember[]>(initialMembers);
+  const [addedIds, setAddedIds] = useState<Set<number>>(new Set());
 
   const { interns, loading: loadingAssignableInterns } = useAssignableInterns();
   const { assign, loading: assigning } = useAssignMember();
 
-  // Sync saat modal dibuka
+  // Reset addedIds saat modal dibuka ulang
   useEffect(() => {
-    if (isOpen) setInvitedList(initialMembers);
-  }, [isOpen, initialMembers]);
+    if (isOpen) setAddedIds(new Set());
+  }, [isOpen]);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -38,38 +38,45 @@ export default function ManageInternsModal({ isOpen, onClose, projectId, initial
       dialog.close();
       document.body.style.overflow = "unset";
     }
-    const handleCancel = (e: Event) => { e.preventDefault(); onClose(); };
+    const handleCancel = (e: Event) => {
+      e.preventDefault();
+      onClose(finalMembers);
+    };
     dialog.addEventListener("cancel", handleCancel);
     return () => {
       dialog.removeEventListener("cancel", handleCancel);
       document.body.style.overflow = "unset";
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, addedIds]);
 
-  // Filter assignable interns yang belum jadi member & sesuai search
-  const invitedIds = new Set(invitedList.map(m => m.id));
+  // Semua ID yang sudah jadi member atau baru ditambahkan — tidak tampil di search
+  const excludedIds = new Set([...invitedList.map(m => m.id), ...addedIds]);
   const searchResult = interns.filter(m =>
-    !invitedIds.has(m.id) &&
+    !excludedIds.has(m.id) &&
     (m.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       `${m.full_name}`.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
+  // Gabungan member lama + yang baru ditambah — dikirim ke parent saat close
+  const newlyAddedMembers = interns
+    .filter(i => addedIds.has(i.id))
+    .map(i => ({
+      id: i.id,
+      id_user: i.id,
+      full_name: i.full_name,
+      email: i.email,
+      avatar: "",
+      kelompok_peminatan: i.kelompok_peminatan,
+      professional_bio: "",
+      position: i.position,
+    } as ProjectMember));
+  const finalMembers = [...invitedList, ...newlyAddedMembers];
+
   const handleAssign = async (intern: AssignableIntern) => {
     const result = await assign({ id_project: projectId, id_user: intern.id });
     if (result) {
-      const newMember: ProjectMember = {
-        id: intern.id,
-        id_user: intern.id,
-        full_name: intern.full_name,
-        email: intern.email,
-        avatar: "",
-        kelompok_peminatan: intern.kelompok_peminatan,
-        professional_bio: "",
-        position: intern.position,
-      } as ProjectMember;
-      const updatedList = [...invitedList, newMember];
-      setInvitedList(updatedList);
-      onMembersChange?.(updatedList);
+      // Tandai sebagai sudah ditambah — intern hilang dari dialog (tidak muncul lagi)
+      setAddedIds(prev => new Set([...prev, intern.id]));
       customToast.success('Intern added', `${intern.full_name} has been successfully added to the project.`);
     } else {
       customToast.error('Failed to add', 'An error occurred while adding the intern. Please try again.');
@@ -80,7 +87,13 @@ export default function ManageInternsModal({ isOpen, onClose, projectId, initial
     m.full_name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
 
   return (
-    <dialog ref={dialogRef} className="custom-dialog">
+    <dialog
+      ref={dialogRef}
+      className="custom-dialog"
+      onClick={(e) => {
+        if (e.target === dialogRef.current) onClose(finalMembers);
+      }}
+    >
       <div className="px-3 py-5">
         <div className="relative flex items-center mb-4">
           <input
@@ -95,24 +108,21 @@ export default function ManageInternsModal({ isOpen, onClose, projectId, initial
 
 
         <div className="overflow-y-auto space-y-3 pr-1 flex-1 h-[170px]">
-          {/* Sudah jadi member */}
+          {/* Member yang sudah ada — read-only, hapus dari tab Members */}
           {invitedList.map((member) => (
             <div key={member.id} className="flex items-center justify-between p-2 rounded-xl hover:bg-gray-50 transition-colors">
               <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-gray-200 border border-gray-300 flex items-center justify-center text-xs font-bold text-gray-500">
-                    {getInitials(member as unknown as AssignableIntern)}
-                  </div>
+                <div className="w-9 h-9 rounded-full bg-gray-200 border border-gray-300 flex items-center justify-center text-xs font-bold text-gray-500">
+                  {getInitials(member as unknown as AssignableIntern)}
+                </div>
                 <div className="flex flex-col">
                   <span className="text-sm font-medium text-gray-700">{member.full_name}</span>
                   <span className="text-xs text-gray-400">{member.email}</span>
                 </div>
               </div>
-              <button
-                onClick={() => setInvitedList(prev => prev.filter(i => i.id !== member.id))}
-                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
+              <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded-full uppercase tracking-wide">
+                Member
+              </span>
             </div>
           ))}
 

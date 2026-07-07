@@ -1,12 +1,12 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, FolderKanban, Award, Settings, HelpCircle, LogOut, X } from 'lucide-react';
+import { Home, FolderKanban, UsersRound, Medal, Settings, HelpCircle, LogOut, X } from 'lucide-react';
 
 const navItems = [
   // belum kutambahin
   { label: "Home", icon: Home, path: "/mentor" },
   { label: "List Projects", icon: FolderKanban, path: "/mentor/projects" },
-  { label: "Interns", icon: FolderKanban, path: "/mentor/intern" },
-  { label: "Certificates", icon: Award, path: "/mentor/certificates" },
+  { label: "Interns", icon: UsersRound, path: "/mentor/intern" },
+  { label: "Certificates", icon: Medal, path: "/mentor/certificates" },
 ];
 
 const prefItems = [
@@ -99,10 +99,8 @@ export default function SidebarMentor({ isOpen, closeSidebar }: SidebarProps) {
               onClick={() => isLogout ? handleLogout() : handleNav(path)}
               className={`flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-[13.5px] font-medium text-left transition-colors
                 ${isActive
-                  ? "bg-red-50 text-red-600 font-semibold border-l-6 border-red "
-                  : danger
-                    ? "text-font hover:bg-base-foreground"
-                    : "text-font hover:bg-red-foreground"
+                  ? "bg-red-foreground text-red font-semibold border-l-4 border-base "
+                  : "text-font hover:bg-red-foreground"
                 }`}
             >
               <Icon className="w-[18px] h-[18px] flex-shrink-0" />

@@ -42,7 +42,6 @@ import InternifyLogin from "./Pages/Internify/LoginInternify"
 import FAQPage from "./Pages/Internify/FAQpage";
 import NotificationList from "./Pages/Internify/NotificationList";
 import SettingsContent from "./Pages/Internify/SettingsPage";
-import MentorSettingsPage from "./Pages/Internify/mentor/MentorSettingsPage";
 import TaskSubmission from "./Pages/Internify/intern/TaskSubmission";
 import SertificateList from "./Pages/Internify/intern/InternCertList";
 import MentorProjectsDetailPage from "./Pages/Internify/mentor/MentorProjectDetailPage";

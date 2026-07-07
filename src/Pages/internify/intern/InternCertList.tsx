@@ -58,10 +58,13 @@ export default function SertificateList() {
                             {/* Thumbnail */}
                             <div className="p-6 pb-0">
                                 <div className="rounded-lg overflow-hidden">
-                                    <div className="w-full h-32 bg-gray-300 flex items-center justify-center">
+                                    <div
+                                        className="w-full h-32 flex items-center justify-center"
+                                        style={{ backgroundColor: item.background_color || '#403f3fff' }}
+                                    >
                                         {(() => {
                                             const Icon = getDynamicIcon(item.project_icon);
-                                            return <Icon className="w-10 h-10 text-primary" />;
+                                            return <Icon className="w-10 h-10 text-primary text-white" />;
                                         })()}
                                     </div>
                                 </div>
@@ -69,7 +72,7 @@ export default function SertificateList() {
 
                             {/* Info */}
                             <div className="px-4 py-3">
-                                <p className="text-xs text-gray-400 mb-0.5">
+                                <p className="text-xs text-font mb-0.5">
                                     {new Date(item.start_date).toLocaleDateString("id-ID", {
                                         year: "numeric",
                                         month: "long",
@@ -78,11 +81,11 @@ export default function SertificateList() {
                                         month: "long",
                                     })}
                                 </p>
-                                <p className="text-sm font-semibold text-gray-800 leading-snug">
+                                <p className="text-sm font-semibold text-font-shade leading-snug">
                                     {item.project_name}
                                 </p>
-                                <p className="text-xs text-gray-500 mt-1">
-                                    No: <span className="font-bold text-red-600">{item.status}</span>
+                                <p className="text-xs text-font mt-1">
+                                    Status Projek: <span className="font-bold text-red-600">{item.status}</span>
                                 </p>
                             </div>
                         </div>

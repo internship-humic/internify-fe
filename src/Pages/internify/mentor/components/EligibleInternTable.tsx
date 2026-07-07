@@ -18,6 +18,7 @@ import { generateCertificate, resolveImageUrl } from "../../../utils/Sertificate
 import { useGenerateCertificates } from "../../../../hooks/useCertificates";
 import Avatar from "../../Avatar";
 import ProgressBar from "../../ProgressBar";
+import { customToast } from "../../../utils/showToast";
 
 interface EligibleInternTableProps {
   interns: InternSubmissionProgress[];
@@ -79,51 +80,55 @@ export default function EligibleInternTable({
 
   const handleGenerate = async () => {
     if (!project?.certificate_template) {
-      setGenerateError("Template sertifikat belum diupload.");
+      customToast.error("Template belum ada", "Template sertifikat belum diupload.");
       return;
     }
     if (selected.size === 0) {
-      setGenerateError("Pilih minimal satu intern.");
+      customToast.error("Tidak ada intern dipilih", "Pilih minimal satu intern untuk generate sertifikat.");
       return;
     }
 
     setGenerating(true);
     setGenerateError(null);
 
-    try {
-      const result = await SubmitCertificates(projectId, Array.from(selected));
-      if (!result) return;
+    const ok = await customToast.promise(
+      (async () => {
+        const result = await SubmitCertificates(projectId, Array.from(selected));
+        if (!result) throw new Error("Tidak ada data sertifikat yang dikembalikan.");
 
-      const zip = new JSZip();
-      const templateUrl = resolveImageUrl(project.certificate_template);
+        const zip = new JSZip();
+        const templateUrl = resolveImageUrl(project.certificate_template!);
 
-      await Promise.all(
-        result.map(async (cert) => {
-          const verifyUrl = `${window.location.origin}/verify-certificate/${cert.uuid}`;
-
-          const blob = await generateCertificate(
-          templateUrl,
-          cert.user.full_name,
-          cert.project.project_name,
-          cert.certificate_no,
-          verifyUrl,
-          "20 Juni 2024 - 20 September 2024" // Placeholder untuk durasi proyek
+        await Promise.all(
+          result.map(async (cert) => {
+            const verifyUrl = `${window.location.origin}/verify-certificate/${cert.uuid}`;
+            const blob = await generateCertificate(
+              templateUrl,
+              cert.user.full_name,
+              cert.project.project_name,
+              cert.certificate_no,
+              verifyUrl,
+              "20 Juni 2024 - 20 September 2024"
+            );
+            zip.file(`Sertifikat - ${cert.user.full_name}.png`, blob);
+          })
         );
+      })(),
+      {
+        loading: "Generating sertifikat...",
+        success: () => ({
+          title: "Sertifikat berhasil dibuat",
+          description: `${selected.size} sertifikat berhasil digenerate.`,
+        }),
+        error: (err) => ({
+          title: "Gagal generate sertifikat",
+          description: err instanceof Error ? err.message : "Terjadi kesalahan, coba lagi.",
+        }),
+      }
+    ).then(() => true).catch(() => false);
 
-          zip.file(`Sertifikat - ${cert.user.full_name}.png`, blob);
-        })
-      );
-
-      // 3. Navigasi ke result page
-      navigate(`/mentor/certificates/${projectId}/result`);
-    } catch (err) {
-      console.error(err);
-      setGenerateError(
-        err instanceof Error ? err.message : "Gagal generate sertifikat."
-      );
-    } finally {
-      setGenerating(false);
-    }
+    setGenerating(false);
+    if (ok) navigate(`/mentor/certificates/${projectId}/result`);
   };
 
   if (loading) {

@@ -5,6 +5,7 @@ import type { ProjectDetail } from "../../../../types/project.types";
 import type { Certificate } from "../../../../types/certificate.types";
 import { downloadCertificatePdf, downloadCertificateImage } from "../../../utils/Certificates";
 import { generateCertificate, resolveImageUrl } from "../../../utils/SertificateGenerator";
+import { customToast } from "../../../utils/showToast";
 
 interface CertificateAvailableProps {
   project: ProjectDetail | null;
@@ -18,29 +19,6 @@ export default function CertificateAvailable({ project, certificate, templateUrl
   const [downloadingPdf, setDownloadingPdf] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loadingPreview, setLoadingPreview] = useState(true);
-
-  useEffect(() => {
-    if (!templateUrl) return;
-    const verifyUrl = `${window.location.origin}/verify-certificate/${certificate.uuid}`;
-
-    generateCertificate(
-      resolveImageUrl(templateUrl), 
-      certificate.user.full_name, 
-      certificate.project.project_name, 
-      certificate.certificate_no, 
-      verifyUrl, 
-      "20 Juni 2024 - 20 September 2024") //placeholder karena saya butuh data durasi certificate
-      .then((blob) => {
-        const url = URL.createObjectURL(blob);
-        setPreviewUrl(url);
-      })
-      .finally(() => setLoadingPreview(false));
-
-    // Cleanup supaya tidak memory leak
-    return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-    };
-  }, [templateUrl, certificate.user.full_name]);
 
   const duration = project
     ? (() => {
@@ -56,10 +34,37 @@ export default function CertificateAvailable({ project, certificate, templateUrl
     })()
     : "-";
 
+
+  useEffect(() => {
+    if (!templateUrl) return;
+    const verifyUrl = `${window.location.origin}/verify-certificate/${certificate.uuid}`;
+
+    generateCertificate(
+      resolveImageUrl(templateUrl),
+      certificate.user.full_name,
+      certificate.project.project_name,
+      certificate.certificate_no,
+      verifyUrl,
+      duration)
+      .then((blob) => {
+        const url = URL.createObjectURL(blob);
+        setPreviewUrl(url);
+      })
+      .finally(() => setLoadingPreview(false));
+
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [templateUrl, certificate.user.full_name]);
+
+
   const handleDownloadImage = async () => {
     setDownloadingImg(true);
     try {
       await downloadCertificateImage(certificate, templateUrl, "png");
+      customToast.success("Sertifikat berhasil diunduh!");
+    } catch {
+      customToast.error("Gagal mengunduh sertifikat!");
     } finally {
       setDownloadingImg(false);
     }
@@ -69,6 +74,9 @@ export default function CertificateAvailable({ project, certificate, templateUrl
     setDownloadingPdf(true);
     try {
       await downloadCertificatePdf(certificate, templateUrl);
+      customToast.success("Sertifikat berhasil diunduh!");
+    } catch {
+      customToast.error("Gagal mengunduh sertifikat!");
     } finally {
       setDownloadingPdf(false);
     }
@@ -147,9 +155,13 @@ export default function CertificateAvailable({ project, certificate, templateUrl
               <button
                 // onClick={handleCopyLink}
                 className="flex flex-col items-center justify-center gap-1.5 border border-card-outline hover:bg-gray-50 active:scale-95 transition-all text-red-700 font-medium py-3.5 rounded-xl text-sm"
+                onClick={() => {
+                  navigator.clipboard.writeText(`${window.location.origin}/verify-certificate/${certificate.uuid}`);
+                  customToast.success("Link berhasil disalin!");
+                }}
               >
                 <Link className="w-5 h-5" />
-                  Salin Link
+                Salin Link
               </button>
             </div>
           </div>

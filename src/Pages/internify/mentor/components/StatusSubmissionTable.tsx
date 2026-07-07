@@ -59,22 +59,35 @@ export function StatusTable({ status, submission }: StatusTableProps) {
     {
       label: "Submitted at",
       value: submission?.submitted_at
-        ? <span className="text-sm text-gray-700">{new Date(submission.submitted_at).toLocaleString("id-ID")}</span>
+        ? <span className="text-sm text-gray-700">
+          {new Date(submission.submitted_at).toLocaleString("id-ID", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </span>
         : <span className="text-sm text-gray-400">-</span>,
     },
     {
       label: "File submission",
-      value: hasSubmission && submission?.file_path
+      value: hasSubmission && submission?.files && submission.files.length > 0
         ? (
-          <a
-            href={resolveImageUrl(submission.file_path)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 text-sm text-blue-600 hover:underline"
-          >
-            <FileText className="w-4 h-4 stroke-[2.5]" />
-            <span>{submission.file_path.split("/").pop()}</span>
-          </a>
+          <div className="flex flex-col gap-1.5">
+            {submission.files.map((f) => (
+              <a
+                key={f.id}
+                href={resolveImageUrl(f.file_path)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-blue-600 hover:underline"
+              >
+                <FileText className="w-4 h-4 stroke-[2.5]" />
+                <span>{f.original_name}</span>
+              </a>
+            ))}
+          </div>
         )
         : hasSubmission && submission?.url_link
           ? (

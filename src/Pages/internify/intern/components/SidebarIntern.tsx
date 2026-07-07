@@ -98,10 +98,8 @@ export default function SidebarIntern({ isOpen, closeSidebar }: SidebarProps) {
               onClick={() => isLogout ? handleLogout() : handleNav(path)}
               className={`flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-[13.5px] font-medium text-left transition-colors
                 ${isActive
-                  ? "bg-red-50 text-red-600 font-semibold"
-                  : danger
-                    ? "text-font hover:bg-base-foreground"
-                    : "text-font hover:bg-red-foreground"
+                  ? "bg-red-foreground text-red font-semibold border-l-4 border-base"
+                  : "text-font hover:bg-red-foreground"
                 }`}
             >
               <Icon className="w-[18px] h-[18px] flex-shrink-0" />

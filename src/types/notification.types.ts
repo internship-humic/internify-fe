@@ -16,4 +16,5 @@ export interface UINotification {
   isNew: boolean;
   group: "TODAY" | "YESTERDAY";
   description: string;
+  link: string;
 }

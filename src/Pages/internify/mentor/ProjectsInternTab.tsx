@@ -10,6 +10,11 @@ export default function InternsTab({ project }: { project: ProjectDetail }) {
   const [members, setMembers] = useState<ProjectMember[]>(project.members);
   const { remove, loading } = useRemoveMember();
 
+  const handleModalClose = (finalMembers: ProjectMember[]) => {
+    setMembers(finalMembers);
+    setIsModalOpen(false);
+  };
+
   const handleRemove = async (id_user: number) => {
     const res = await remove({ id_project: project.id, id_user });
     if (res !== null) {
@@ -88,10 +93,9 @@ export default function InternsTab({ project }: { project: ProjectDetail }) {
       </div>
       {isModalOpen && <ManageInternsModal 
         isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)}
+        onClose={handleModalClose}
         projectId={project.id}
         initialMembers={members}
-        onMembersChange={(updated) => setMembers(updated)}
       />}
     </div>
   );

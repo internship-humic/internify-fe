@@ -6,6 +6,7 @@ import { useProjectDetail } from "../../../hooks/useProjects";
 import EligibleInternTable from "./components/EligibleInternTable";
 import { useProjectInternProgress } from "../../../hooks/useInternProgress";
 import { resolveImageUrl } from "../../utils/SertificateGenerator";
+import { customToast } from "../../utils/showToast";
 
 export default function CertificateDetail() {
   const navigate = useNavigate();
@@ -25,20 +26,32 @@ export default function CertificateDetail() {
     if (!file) return;
     setSelectedFile(file);
     setUploadSuccess(false);
-
-    // Revoke object URL lama biar tidak memory leak
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(URL.createObjectURL(file));
   };
 
   const handleUpload = async () => {
     if (!selectedFile || !project) return;
-    const result = await upload(project.id, selectedFile);
-    if (result) {
-      setUploadSuccess(true);
-      setSelectedFile(null);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    }
+    await customToast.promise(
+      upload(project.id, selectedFile),
+      {
+        loading: "Mengupload template...",
+        success: () => ({
+          title: "Upload berhasil",
+          description: "Template sertifikat berhasil disimpan.",
+        }),
+        error: (err) => ({
+          title: "Upload gagal",
+          description: err instanceof Error ? err.message : "Terjadi kesalahan saat upload.",
+        }),
+      }
+    ).then((result) => {
+      if (result) {
+        setUploadSuccess(true);
+        setSelectedFile(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      }
+    }).catch(() => {});
   };
 
   const handleClearFile = () => {

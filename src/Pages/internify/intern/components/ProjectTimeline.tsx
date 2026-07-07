@@ -1,9 +1,9 @@
-import type { InternTaskItem } from "../../../../types/project.types";
+import type { ProjectTask } from "../../../../types/task.types";
 
 const formatDate = (dateStr: string) =>
   new Date(dateStr).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
 
-export default function ProjectTimeline({ tasks }: { tasks: InternTaskItem[] }) {
+export default function ProjectTimeline({ tasks }: { tasks: ProjectTask[] }) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   return (

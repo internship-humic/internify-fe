@@ -1,7 +1,8 @@
 import { useState, useMemo } from "react";
-import { Search, SlidersHorizontal, Plus, Trash2 } from "lucide-react";
+import { Search, Plus, ChevronDown, SortAsc, SortDesc } from "lucide-react";
 import { useAllInterns, useRemoveMember, useProjects } from "../../../hooks/useProjects";
-import AddInternsModal from "./components/AddInternsToProjects";  
+import AddInternsModal from "./components/AddInternsToProjects";
+import InternsTable from "./components/InternsTable";
 import type { InternDetail } from "../../../types/project.types";
 import type { Project } from "../../../types/project.types";
 import { customToast } from "../../utils/showToast";
@@ -11,32 +12,45 @@ export default function InternsManagement() {
   const [selectedProject, setSelectedProject] = useState("All Projects");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
 
   const { interns, loading, error, refetch } = useAllInterns();
   const { remove, loading: removing } = useRemoveMember();
   const { projects: activeProjects } = useProjects("active");
 
-  // Filter data berdasarkan email dan nama project
   const filteredInterns = useMemo(() => {
-    return interns.filter((intern) => {
+    const filtered = interns.filter((intern) => {
       const matchesEmail = intern.email.toLowerCase().includes(searchEmail.toLowerCase());
       const matchesProject =
         selectedProject === "All Projects" ||
         (intern.projectName || "Unassigned").toLowerCase() === selectedProject.toLowerCase();
       return matchesEmail && matchesProject;
     });
-  }, [interns, searchEmail, selectedProject]);
+
+    if (sortOrder === "asc") {
+      return [...filtered].sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortOrder === "desc") {
+      return [...filtered].sort((a, b) => b.name.localeCompare(a.name));
+    }
+    return filtered;
+  }, [interns, searchEmail, selectedProject, sortOrder]);
 
   const totalInterns = interns.length;
   const activeAssignments = activeProjects.length;
 
-  // Buka modal untuk assign intern tertentu (dari tombol + di baris)
   const openAssignFor = (userId: number | null) => {
     setSelectedUserId(userId);
     setIsModalOpen(true);
   };
 
-  // Handler hapus intern dari project
+  const handleToggleSort = () => {
+    setSortOrder((prev) => {
+      if (prev === null) return "asc";
+      if (prev === "asc") return "desc";
+      return null;
+    });
+  };
+
   const handleDeleteIntern = async (intern: InternDetail) => {
     const matchedProject = activeProjects.find((project: Project) => project.project_name === intern.projectName);
     if (!matchedProject) {
@@ -75,7 +89,7 @@ export default function InternsManagement() {
       {/* Filter Row & Stats Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-center mb-6">
         {/* Left Control Inputs */}
-        <div className="lg:col-span-2 flex flex-col sm:flex-row items-center gap-3 border border-gray-300 p-4 rounded-xl">
+        <div className="lg:col-span-2 flex flex-col sm:flex-row items-center gap-3 border border-card-outline p-4 rounded-xl">
           {/* Search Box Input */}
           <div className="relative w-full sm:max-w-xs">
             <span className="absolute inset-y-0 left-3 flex items-center text-gray-400">
@@ -86,7 +100,7 @@ export default function InternsManagement() {
               placeholder="Filter by email"
               value={searchEmail}
               onChange={(e) => setSearchEmail(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-gray-100 border border-transparent rounded-lg text-sm placeholder-gray-400 text-gray-800 focus:outline-none focus:bg-white focus:border-gray-200 font-medium"
+              className="w-full pl-9 pr-4 py-2 shadow-sm border border-card-outline rounded-lg text-sm placeholder-gray-400 text-gray-800 focus:outline-none focus:bg-card focus:border-gray-200 font-medium"
             />
           </div>
 
@@ -95,26 +109,44 @@ export default function InternsManagement() {
             <select
               value={selectedProject}
               onChange={(e) => setSelectedProject(e.target.value)}
-              className="w-full pl-3 pr-8 py-2 bg-gray-100 border border-transparent rounded-lg text-sm text-gray-700 font-medium appearance-none focus:outline-none focus:bg-white focus:border-gray-200"
+              className="w-full pl-3 pr-8 py-2 shadow-sm border border-card-outline rounded-lg text-sm text-gray-700 font-medium appearance-none focus:outline-none focus:bg-card focus:border-gray-200"
             >
               <option value="All Projects">All Projects</option>
               <option value="Unassigned">Unassigned</option>
+              {activeProjects.map((project) => (
+                <option key={project.id} value={project.project_name}>
+                  {project.project_name}
+                </option>
+              ))}
             </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-              <svg className="fill-current h-4 w-4" viewBox="0 0 20 20">
-                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-              </svg>
+            <div 
+              className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500"
+            >
+              <ChevronDown className="w-4 h-4" />
             </div>
           </div>
 
-          {/* Icon Sliders / Filter Button */}
-          <button className="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors hidden sm:block">
-            <SlidersHorizontal className="w-4 h-4" />
+          {/* Sort A-Z / Z-A Toggle Button */}
+          <button
+            onClick={handleToggleSort}
+            title={sortOrder === "asc" ? "Sort Z–A" : sortOrder === "desc" ? "Clear sort" : "Sort A–Z"}
+            className={`p-2 shadow-sm rounded-lg transition-colors hidden sm:flex items-center gap-1 text-xs font-semibold ${
+              sortOrder
+                ? "bg-[#B30000] text-white hover:bg-[#990000]"
+                : "bg-card text-gray-600 hover:bg-gray-200"
+            }`}
+          >
+            {sortOrder === "desc" ? (
+              <SortDesc className="w-4 h-4" />
+            ) : (
+              <SortAsc className="w-4 h-4" />
+            )}
+            {sortOrder === "asc" ? "A–Z" : sortOrder === "desc" ? "Z–A" : "Sort"}
           </button>
         </div>
 
         {/* Right Info Box Stats — data real dari API */}
-        <div className="bg-white border border-gray-100 rounded-xl px-6 py-2.5 flex items-center justify-around text-center shadow-[0_2px_10px_rgba(0,0,0,0.01)] w-full lg:max-w-sm ml-auto">
+        <div className="bg-white border border-card-outline rounded-xl px-6 py-2.5 flex items-center justify-around text-center shadow-md w-full lg:max-w-sm ml-auto">
           <div>
             <span className="block text-xl font-bold text-red-600 leading-none">
               {totalInterns}
@@ -123,7 +155,7 @@ export default function InternsManagement() {
               TOTAL INTERNS
             </span>
           </div>
-          <div className="h-8 w-px bg-gray-100 mx-2"></div>
+          <div className="h-8 w-px bg-card-outline mx-2"></div>
           <div>
             <span className="block text-xl font-bold text-green-600 leading-none">
               {activeAssignments}
@@ -145,101 +177,16 @@ export default function InternsManagement() {
         </button>
       </div>
 
-      {/* Main Table Container Block */}
-      <div className="w-full mt-3 bg-white rounded-xl border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] overflow-hidden">
-
-        {/* Red Table Header Block */}
-        <div className="bg-[#B30000] text-white px-6 py-3.5 flex items-center text-xs font-bold uppercase tracking-wider">
-          <div className="w-1/2">Intern Details</div>
-          <div className="w-1/3">Current Project</div>
-          <div className="w-1/6 text-right pr-4">Actions</div>
-        </div>
-
-        {/* Table Body Iteration Rows */}
-        <div className="divide-y divide-gray-100">
-          {filteredInterns.length > 0 ? (
-            filteredInterns.map((intern, index) => {
-              const isUnassigned = !intern.projectName || intern.projectName === "Unassigned";
-
-              return (
-                <div key={`${intern.id}-${index}`} className="px-6 py-4 flex items-center hover:bg-gray-50/60 transition-colors">
-
-                  {/* Column 1: Intern Details (Avatar + Name & Email) */}
-                  <div className="w-1/2 flex items-center gap-3">
-                    {intern.avatar ? (
-                      <img
-                        src={intern.avatar}
-                        alt={intern.name}
-                        className="w-10 h-10 rounded-full object-cover border border-gray-100 shadow-sm"
-                      />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 flex items-center justify-center border border-gray-100 shadow-sm text-white text-xs font-bold">
-                        {intern.name.charAt(0)}
-                      </div>
-                    )}
-                    <div>
-                      <h4 className="text-sm font-bold text-gray-900 leading-tight">{intern.name}</h4>
-                      <p className="text-xs text-gray-400 font-medium mt-0.5">{intern.email}</p>
-                    </div>
-                  </div>
-
-                  {/* Column 2: Current Project Title & Role Accent */}
-                  <div className="w-1/3">
-                    <h5 className={`text-sm font-semibold leading-tight ${isUnassigned ? 'text-gray-500 italic' : 'text-gray-900'}`}>
-                      {intern.projectName || "Unassigned"}
-                    </h5>
-                    <p className={`text-xs font-bold mt-0.5 ${isUnassigned ? 'text-red-500' : 'text-red-600'}`}>
-                      {intern.role}
-                    </p>
-                  </div>
-
-                  {/* Column 3: Action Buttons Block Right aligned */}
-                  <div className="w-1/6 flex items-center justify-end gap-3.5 pr-2">
-                    {/* Tombol Add: membuka modal assign member untuk intern ini */}
-                    <button
-                      onClick={() => openAssignFor(intern.id)}
-                      className="p-1.5 bg-[#B30000] hover:bg-[#990000] text-white rounded-lg transition-colors shadow-sm"
-                      title="Assign ke project"
-                    >
-                      <Plus className="w-4 h-4 stroke-[3]" />
-                    </button>
-                    {/* Tombol Delete: remove intern dari project */}
-                    <button
-                      onClick={() => handleDeleteIntern(intern)}
-                      disabled={removing}
-                      className="p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
-                      title="Hapus dari project"
-                    >
-                      <Trash2 className="w-4 h-4 stroke-[2]" />
-                    </button>
-                  </div>
-
-                </div>
-              );
-            })
-          ) : (
-            <div className="text-center py-12 text-sm text-gray-400 font-medium">
-              No interns found matching the filter criteria.
-            </div>
-          )}
-        </div>
-
-        {/* Red Table Pagination Bar Footer */}
-        <div className="bg-[#B30000] text-white px-6 py-3.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs font-medium">
-          <div>
-            Showing <span className="font-bold">{filteredInterns.length}</span> of {totalInterns} interns
-          </div>
-
-          <div className="flex items-center gap-2 self-end sm:self-auto">
-            <button className="px-3 py-1.5 bg-black/20 hover:bg-black/30 rounded-md font-semibold opacity-50 cursor-not-allowed transition-colors">
-              Previous
-            </button>
-            <button className="px-4 py-1.5 bg-white text-gray-900 hover:bg-gray-100 rounded-md font-bold shadow-sm transition-colors">
-              Next
-            </button>
-          </div>
-        </div>
-      </div>
+      <InternsTable
+        key={`${searchEmail}-${selectedProject}`}
+        interns={filteredInterns}
+        totalInterns={totalInterns}
+        removing={removing}
+        sortOrder={sortOrder}
+        onSort={handleToggleSort}
+        onAssign={(userId) => openAssignFor(userId)}
+        onDelete={handleDeleteIntern}
+      />
 
       {isModalOpen &&
         <AddInternsModal
@@ -247,7 +194,7 @@ export default function InternsManagement() {
           userId={selectedUserId}
           onClose={() => {
             setIsModalOpen(false);
-            refetch(); // Refresh data setelah modal assign ditutup
+            refetch();
           }}
         />
       }
