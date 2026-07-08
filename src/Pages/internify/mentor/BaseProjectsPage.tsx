@@ -2,7 +2,6 @@ import MentorProjectCard from './components/MentorProjectCard';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import CreateProjectModal from './components/CreateProjectDialog';
-import { customToast } from '../../utils/showToast';
 import { useProjectsByRole } from '../../../hooks/useListProjects';
 
 export default function MentorProjectsPage() {
@@ -50,7 +49,12 @@ export default function MentorProjectsPage() {
 
       <div className="flex flex-wrap gap-4 items-stretch">
         {projects.map(project => (
-          <MentorProjectCard key={project.id} {...project} />
+          <MentorProjectCard 
+          key={project.id}
+          {...project}
+          onArchived={refetch}
+          onCompleted={refetch}
+         />
         ))}
       </div>
 

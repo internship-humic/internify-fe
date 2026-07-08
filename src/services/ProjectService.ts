@@ -89,7 +89,7 @@ export const archiveProject = async (
 export const completeProject = async (
   id: string | number
 ): Promise<ProjectDetail> => {
-  const res = await api.post(`/project-api/complete/${id}`);
+  const res = await api.patch(`/project-api/complete/${id}`);
   return res.data.data;
 }; 
 

@@ -82,10 +82,10 @@ export async function generateCertificate(
   //Durasi Project — besar (Grenze)
   ctx.font = `400 48px "Grenze", serif`;
   ctx.fillStyle = "#090909";
-  ctx.fillText("20 April - 20 Juni 2025", canvas.width * 0.68, canvas.height * 0.66);
+  ctx.fillText(ProjectDuration, canvas.width * 0.68, canvas.height * 0.66);
 
   // QR code — kalau verifyUrl diisi
-  const qrDataUrl = await QRCode.toDataURL('http://localhost:5172/verify-certificate/' + verifyUrl, {
+  const qrDataUrl = await QRCode.toDataURL('http://localhost:5173/verify-certificate/' + verifyUrl, {
     width: 200,
     margin: 1,
   });

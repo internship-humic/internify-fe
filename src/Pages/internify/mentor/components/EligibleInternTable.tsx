@@ -185,10 +185,10 @@ export default function EligibleInternTable({
         {/* Column Headers */}
         <div className="grid grid-cols-[16px_1fr_96px_88px_60px] items-center gap-x-3 px-5 py-2.5 bg-gray-50/70 border-b border-gray-100">
           <div />
-          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Intern Name</span>
-          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider text-center">Task Progress</span>
-          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider text-center">Status</span>
-          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider text-center">Action</span>
+          <span className="text-[10px] font-bold text-gray-400 uppercase">Intern Name</span>
+          <span className="text-[10px] font-bold text-gray-400 uppercase text-center">Task Progress</span>
+          <span className="text-[10px] font-bold text-gray-400 uppercase text-center">Status</span>
+          <span className="text-[10px] font-bold text-gray-400 uppercase text-center">Action</span>
         </div>
 
         {/* Rows */}

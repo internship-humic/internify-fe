@@ -57,10 +57,11 @@ const Landing = () => {
     return feedbacks[displayIndex];
   }, [feedbacks, displayIndex]);
 
-  const currentImgUrl = useMemo(() => {
-    if (!currentFeedback) return "";
-    return getFeedbackImageUrl(currentFeedback.image_path);
-  }, [currentFeedback]);
+  // Gambar statis: selalu pakai foto dari feedback pertama
+  const staticImgUrl = useMemo(() => {
+    if (feedbacks.length === 0) return "";
+    return getFeedbackImageUrl(feedbacks[0].image_path);
+  }, [feedbacks]);
 
   useEffect(() => {
     // Fetch internships
@@ -217,17 +218,11 @@ const Landing = () => {
               <div
                 className={`w-[230px] h-[320px] sm:w-[260px] sm:h-[340px] lg:w-[280px] lg:h-[360px]
                             rounded-xl shadow-xl bg-white/70 backdrop-blur p-3 flex items-center justify-center
-                            transition-opacity duration-[450ms] ease-in-out
-                            ${fadeIn ? "opacity-100" : "opacity-0"}`}
+                            `}
               >
                 <img
-                  key={currentImgUrl}
-                  src={currentImgUrl}
-                  alt={currentFeedback.nama}
-                  loading="eager"
-                  decoding="async"
-                  // @ts-ignore
-                  fetchpriority="high"
+                  src={staticImgUrl}
+                  alt="Humic Internship"
                   className="w-full h-full object-contain rounded-lg"
                 />
               </div>

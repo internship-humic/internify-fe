@@ -14,7 +14,6 @@ interface CreateTaskModalProps {
 export default function CreateTaskModal({ isOpen, onClose, projectId, onSuccess }: CreateTaskModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const { create, loading } = useCreateTask(projectId);
-
   const [taskTitle, setTaskTitle] = useState("");
   const [description, setDescription] = useState("");
   const [deadlineDate, setDeadlineDate] = useState("");
@@ -24,11 +23,30 @@ export default function CreateTaskModal({ isOpen, onClose, projectId, onSuccess 
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
-    if (isOpen) { dialog.showModal(); document.body.style.overflow = "hidden"; }
-    else { dialog.close(); document.body.style.overflow = "unset"; }
-    const handleCancel = (e: Event) => { e.preventDefault(); onClose(); };
+
+    if (isOpen) { 
+      dialog.showModal(); 
+      document.body.style.overflow = "hidden";
+    }
+
+    else { 
+      dialog.close(); 
+      document.body.style.overflow = "unset";
+    }
+    
+    const handleCancel = (e: Event) => {
+      e.preventDefault();
+      onClose();
+    };
+    
     dialog.addEventListener("cancel", handleCancel);
-    return () => { dialog.removeEventListener("cancel", handleCancel); document.body.style.overflow = "unset"; };
+    
+    return () => {
+      dialog.removeEventListener(
+        "cancel", handleCancel
+      ); 
+      document.body.style.overflow = "unset"; 
+    };
   }, [isOpen, onClose]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,11 +58,17 @@ export default function CreateTaskModal({ isOpen, onClose, projectId, onSuccess 
       specific_time: specificTime,
       submission_type: submissionType,
     });
+
     if (result) {
-      customToast.success('Task created', `"${taskTitle}" has been successfully added to the project.`);
+      customToast.success(
+        'Task created',
+        `"${taskTitle}" has been successfully added to the project.`);
       onSuccess();
+
     } else {
-      customToast.error('Failed to create task', 'An error occurred while saving the task. Please try again.');
+      customToast.error(
+        'Failed to create task',
+        'An error occurred while saving the task. Please try again.');
     }
   };
   return (

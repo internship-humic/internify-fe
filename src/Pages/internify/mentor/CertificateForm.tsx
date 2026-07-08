@@ -45,14 +45,14 @@ export default function CertificateDetail() {
           description: err instanceof Error ? err.message : "Terjadi kesalahan saat upload.",
         }),
       }
-    ).then(async(result) => {
+    ).then(async (result) => {
       if (result) {
         setUploadSuccess(true);
         setSelectedFile(null);
         if (fileInputRef.current) fileInputRef.current.value = "";
         await refetch();
       }
-    }).catch(() => {});
+    }).catch(() => { });
   };
 
   const handleClearFile = () => {
@@ -97,23 +97,28 @@ export default function CertificateDetail() {
           Administrate, issue, and track professional certifications for all interns.
         </p>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-8 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-8 gap-5 items-start">
         {/* Left Column */}
         <div className="space-y-4 lg:col-span-3">
           <h2 className="text-3xl font-extrabold text-gray-900 leading-tight">
             {project.project_name}
           </h2>
-          <div className="flex items-center gap-2 text-sm text-gray-400 font-medium">
-            <CalendarDays className="w-4 h-4 flex-shrink-0" />
-            {new Date(project.start_date).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
-            {" - "}
-            {new Date(project.end_date).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+          <div className="flex items-center justify-between gap-2 text-sm text-gray-400 font-medium">
+            <div className="flex  items-center  gap-2">
+              <CalendarDays className="w-4 h-4 flex-shrink-0" />
+              {new Date(project.start_date).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+              {" - "}
+              {new Date(project.end_date).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+            </div>
+            <h4 className="text-[8px] w-fit p-2 font-bold text-font tracking-wide uppercase rounded-xl border border-card-outline">
+              Status: {project.status}
+            </h4>
           </div>
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-700 tracking-wide">
+
+          <div className="space-y-3">
+            <label className="text-xs font-bold text-gray-700 tracking-wide mt-1">
               Certificate Template
             </label>
-
             {/* Drop Zone */}
             <div className="relative">
               <div

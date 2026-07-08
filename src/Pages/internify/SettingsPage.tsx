@@ -155,7 +155,7 @@ export default function MentorSettingsPage() {
                 </p>
                 {photoFile && (
                   <p className="text-xs text-blue-500 mb-2 font-medium">
-                    📎 {photoFile.name}
+                    {photoFile.name}
                   </p>
                 )}
                 <div className="flex items-center gap-2">

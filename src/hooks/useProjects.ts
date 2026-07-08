@@ -268,10 +268,10 @@ export const useCompleteProject = () => {
     } finally {
       setLoading(false);
     }
+  };
 
-    return { complete, loading, error };
-  }
-}
+  return { complete, loading, error };
+};
 
 // POST /project-api/assign-member
 export const useAssignMember = () => {

@@ -13,7 +13,12 @@ interface TaskFormLinkProps {
   initialSubmission?: TaskSubmissionData | null;
 }
 
-export default function TaskFormLink({ taskId, projectId, deadline, initialSubmission }: TaskFormLinkProps) {
+export default function TaskFormLink({
+  taskId,
+  projectId,
+  deadline,
+  initialSubmission
+}: TaskFormLinkProps) {
   const { submission, loading, submitLink, updateLink, remove } = useSubmission(taskId, initialSubmission, projectId);
   const [inputLink, setInputLink] = useState(initialSubmission?.url_link ?? "");
   const [isEditing, setIsEditing] = useState(false);
@@ -28,25 +33,30 @@ export default function TaskFormLink({ taskId, projectId, deadline, initialSubmi
       return;
     }
 
-    await customToast.promise(
-      isEditing ? updateLink(submission!.id, inputLink) : submitLink(inputLink),
-      {
-        loading: isEditing ? "Memperbarui Link..." : "Mengirim Link...",
-        success: () => ({
-          title: isEditing ? "Link diperbaharui" : "Link berhasil dikirim",
-          description: isEditing
-            ? "Perubahan submission Anda telah disimpan."
-            : "Submission Anda telah berhasil dikirim.",
-        }),
-        error: (err) => ({
-          title: isEditing ? "Gagal memperbarui link!" : "Gagal mengirim link!",
-          description:
-            err?.response?.data?.message ||
-            err?.message ||
-            "Link yang anda submit gagal dikirim",
-        }),
-      }
-    );
+    try {
+      await customToast.promise(
+        isEditing ? updateLink(submission!.id, inputLink) : submitLink(inputLink),
+        {
+          loading: isEditing ? "Memperbarui Link..." : "Mengirim Link...",
+          success: () => ({
+            title: isEditing ? "Link diperbaharui" : "Link berhasil dikirim",
+            description: isEditing
+              ? "Perubahan submission Anda telah disimpan."
+              : "Submission Anda telah berhasil dikirim.",
+          }),
+          error: (err) => ({
+            title: isEditing ? "Gagal memperbarui link!" : "Gagal mengirim link!",
+            description:
+              err?.response?.data?.message ||
+              err?.message ||
+              "Link yang anda submit gagal dikirim",
+          }),
+        }
+      );
+      setIsEditing(false);
+    } catch {
+      // error sudah ditangani toast, tetap di form
+    }
   };
 
   const handleDelete = async () => {
