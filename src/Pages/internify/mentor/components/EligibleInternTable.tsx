@@ -29,6 +29,20 @@ interface EligibleInternTableProps {
 
 const PER_PAGE = 5;
 
+const BULAN_ID = [
+  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+  "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+];
+
+function formatDateIndo(dateStr: string): string {
+  const [year, month, day] = dateStr.split("-").map(Number);
+  return `${day} ${BULAN_ID[month - 1]} ${year}`;
+}
+
+function formatDateRange(startDate: string, endDate: string): string {
+  return `${formatDateIndo(startDate)} - ${formatDateIndo(endDate)}`;
+}
+
 function StatusBadge({ status }: { status: boolean }) {
   return (
     <div className={`flex items-center gap-1 text-[11px] font-extrabold tracking-wide ${status ? "text-green-600" : "text-orange-500"}`}>
@@ -49,7 +63,6 @@ export default function EligibleInternTable({
   // Durasi tanggal Proyek
 }: EligibleInternTableProps) {
   const navigate = useNavigate();
-  // const { project } = useProjectDetail(String(projectId));
   const { generate: SubmitCertificates } = useGenerateCertificates();
 
   const initialSelected = new Set(
@@ -99,6 +112,8 @@ export default function EligibleInternTable({
         const zip = new JSZip();
         const templateUrl = resolveImageUrl(project.certificate_template!);
 
+        const duration = formatDateRange(project.start_date, project.end_date);
+        
         await Promise.all(
           result.map(async (cert) => {
             const verifyUrl = `${window.location.origin}/verify-certificate/${cert.uuid}`;
@@ -108,7 +123,7 @@ export default function EligibleInternTable({
               cert.project.project_name,
               cert.certificate_no,
               verifyUrl,
-              "20 Juni 2024 - 20 September 2024"
+              duration
             );
             zip.file(`Sertifikat - ${cert.user.full_name}.png`, blob);
           })

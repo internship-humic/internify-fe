@@ -80,9 +80,9 @@ export async function generateCertificate(
   ctx.fillText(certificateNo, canvas.width * 0.825, canvas.height * 0.918);
 
   //Durasi Project — besar (Grenze)
-  ctx.font = `50px "Grenze", serif`;
+  ctx.font = `400 48px "Grenze", serif`;
   ctx.fillStyle = "#090909";
-  ctx.fillText(ProjectDuration, canvas.width * 0.57, canvas.height * 0.715);
+  ctx.fillText("20 April - 20 Juni 2025", canvas.width * 0.68, canvas.height * 0.66);
 
   // QR code — kalau verifyUrl diisi
   const qrDataUrl = await QRCode.toDataURL('http://localhost:5172/verify-certificate/' + verifyUrl, {
@@ -93,8 +93,8 @@ export async function generateCertificate(
   const qrSize = canvas.width * 0.103;
   ctx.drawImage(
     qrImg,
-    canvas.width * 0.77 - qrSize,
-    canvas.height * 0.715 - qrSize,
+    canvas.width * 0.8 - qrSize,
+    canvas.height * 0.75 - qrSize,
     qrSize,
     qrSize,
   );

@@ -20,7 +20,8 @@ export default function NotificationList() {
     const loadNotifications = async () => {
       try {
         const data = await NotificationService.getNotifications();
-        const mapped = data.map(NotificationService.mapNotificationToUI);
+        const unread = data.filter((n) => !n.is_read);
+        const mapped = unread.map(NotificationService.mapNotificationToUI);
         setNotifications(mapped);
       } catch (err) {
         console.error("Failed to load notifications:", err);
@@ -44,6 +45,7 @@ export default function NotificationList() {
 
     socket.on("notification", (notif: BackendNotification) => {
       console.log("New realtime notification received:", notif);
+      if (notif.is_read) return;
       const mapped = NotificationService.mapNotificationToUI(notif);
       setNotifications(prev => {
         if (prev.some(p => p.id === mapped.id)) {
@@ -66,7 +68,7 @@ export default function NotificationList() {
   const handleMarkAllRead = async () => {
     try {
       await NotificationService.markAllAsRead();
-      setNotifications(prev => prev.map(n => ({ ...n, isNew: false })));
+      setNotifications([]);
       alert("All notifications marked as read!");
     } catch (err) {
       console.error("Failed to mark all as read:", err);
@@ -130,16 +132,16 @@ export default function NotificationList() {
                 </p>
 
                 {/* Conditional Actions */}
-                {item.type === 'new-task' && (
+                {item.type === 'new-task' && item.link  &&(
                   <div className="flex items-center gap-2 pt-3">
                     <button
                       className="px-4 py-1.5 bg-[#B30000] hover:bg-[#990000] text-white text-xs font-bold rounded-lg shadow-sm transition-colors"
-                      onClick={() => navigate(`/${item.link}`)}>
+                      onClick={() => navigate(`${item.link}`)}>
                       View Task
                     </button>
-                    <button className="px-4 py-1.5 border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 text-xs font-semibold rounded-lg transition-colors">
+                    {/* <button className="px-4 py-1.5 border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 text-xs font-semibold rounded-lg transition-colors">
                       Later
-                    </button>
+                    </button> */}
                   </div>
                 )}
 
@@ -148,7 +150,7 @@ export default function NotificationList() {
                     className="flex items-center gap-1 text-xs font-bold text-[#B30000] hover:underline pt-2"
                     onClick={() => navigate(`/certificates`)}>
                     <Download className="w-3.5 h-3.5" />
-                    Download Certificate
+                    Ke Halaman
                   </button>
                 )}
               </div>

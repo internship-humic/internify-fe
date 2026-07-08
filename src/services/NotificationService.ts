@@ -90,6 +90,7 @@ export const mapNotificationToUI = (notif: BackendNotification): UINotification 
     title: notif.title,
     time: formatRelativeTime(notif.created_at),
     isNew: !notif.is_read,
+    link: notif.link ?? "",
     group: mapGroup(notif.created_at),
     description: notif.message,
   };
