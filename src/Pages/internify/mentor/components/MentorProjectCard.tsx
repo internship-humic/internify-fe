@@ -1,19 +1,12 @@
 import { useState } from 'react';
 import { ClipboardCheck, Trash2, UsersRound } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import * as LucideIcons from 'lucide-react';
-import type { LucideProps } from 'lucide-react';
 import type { Project } from '../../../../types/project.types';
 import { useArchiveProject, useCompleteProject } from '../../../../hooks/useProjects';
 import { customToast } from '../../../utils/showToast';
 import ArchiveProjectDialog from './ArchiveProjectDialog';
 import CompleteProjectDialog from './CompleteProjectDialog';
-
-const getDynamicIcon = (iconName: string) => {
-  const formatted = iconName.charAt(0).toUpperCase() + iconName.slice(1);
-  const Icon = (LucideIcons as unknown as Record<string, React.ComponentType<LucideProps>>)[formatted];
-  return Icon ?? LucideIcons.FolderOpen;
-};
+import { getProjectIcon } from '../../../../lib/ProjectIcons';
 
 interface MentorProjectCardProps extends Project {
   onArchived?: () => void;
@@ -32,7 +25,7 @@ export default function MentorProjectCard({ onArchived, onCompleted, ...project 
     navigate(`/mentor/projects/${project.slug}`);
   };
 
-  const Icon = getDynamicIcon(project.project_icon);
+ const Icon = getProjectIcon(project.project_icon); 
 
   /* ── Archive ─────────────────────────────────────────────── */
   const handleArchiveButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {

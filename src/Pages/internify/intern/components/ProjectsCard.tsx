@@ -1,17 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import * as LucideIcons from 'lucide-react';
-import type { LucideProps } from 'lucide-react';
+import { getProjectIcon } from '../../../../lib/ProjectIcons';
 import type { Project } from '../../../../types/project.types';
-
-const getDynamicIcon = (iconName: string) => {
-  const formatted = iconName.charAt(0).toUpperCase() + iconName.slice(1);
-  const Icon = (LucideIcons as unknown as Record<string, React.ComponentType<LucideProps>>)[formatted];
-  return Icon ?? LucideIcons.FolderOpen;
-};
 
 const ProjectCard = (project: Project) => {
   const navigate = useNavigate();
-  const Icon = getDynamicIcon(project.project_icon);
+  const Icon = getProjectIcon(project.project_icon);
 
 
   const tasksDone = project.task_done; 

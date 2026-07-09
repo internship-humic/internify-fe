@@ -35,7 +35,7 @@ const HomeMentorProject = () => {
                     </span>
                 </button>
             </div>
-            <div className="flex flex-col max-h-[210px] overflow-y-auto gap-3 pr-1">
+            <div className="flex flex-col max-h-[160px] overflow-y-auto gap-3 pr-1">
                 {loading && <p className="text-sm text-gray-400 px-5">Memuat...</p>}
                 {error && <p className="text-sm text-red-500 px-5">{error}</p>}
                 {projects.map((project) => (

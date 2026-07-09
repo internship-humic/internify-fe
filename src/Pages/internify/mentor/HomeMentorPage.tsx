@@ -11,7 +11,6 @@ const HomeMentorPage = () => {
           <div className="bg-white border border-box-border rounded-xl p-6">
             <HomeMentorProject />
           </div>
-
         </div>
         <div className="bg-white  rounded-xl">
           <HomeCalendar />

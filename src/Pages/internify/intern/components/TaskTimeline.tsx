@@ -20,7 +20,7 @@ const TaskTimeline = () => {
   return (
     <div>
       <h2 className="font-semibold text-font-shade mb-5">Timeline Tugas</h2>
-      <div className="relative">
+      <div className="relative overflow-y-auto max-h-[190px]">
         <ul className="flex flex-col gap-5">
           {tasks.map((item: InternTaskItem, index) => {
             const overdue = isOverdue(item.deadline_at);

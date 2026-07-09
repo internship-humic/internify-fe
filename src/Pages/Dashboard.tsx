@@ -66,7 +66,7 @@ type CountryStatsResponse = {
 };
 
 type BatchResponse = {
-  success: boolean;
+  status: boolean;
   message: string;
   data: Array<{
     id: number;
@@ -84,6 +84,26 @@ type ApplicationsListResponse = {
   }>;
   message?: string;
   code?: number;
+};
+
+//type baru untuk menyesuaikan perubahan pada batch
+type LamaranItem = {
+  id: number;
+  id_mahasiswa: number;
+  id_lowongan_magang: string;
+  status: string;
+  batch: number;
+  batch_data: { id: number; batch_number: number; is_active: boolean };
+  lowongan_magang: { posisi: string; kelompok_peminatan: string };
+  mahasiswa: { nama_depan: string; nama_belakang: string };
+  created_at: string;
+  update_at: string;
+};
+
+type LamaranListResponse = {
+  status: boolean;
+  data: LamaranItem[];
+  message?: string;
 };
 
 const CATEGORY_COLORS = [
@@ -113,6 +133,9 @@ function groupCount(list: Array<string>) {
     .sort((a, b) => b.value - a.value);
 }
 
+const EMPTY_PIE = [{ name: "Tidak ada data", value: 1 }];
+const EMPTY_COLOR = ["#e5e7eb"]
+
 function PieLegend({
   data,
   colors,
@@ -120,6 +143,11 @@ function PieLegend({
   data: ChartDataItem[];
   colors: string[];
 }) {
+  if (data.length === 0) {
+    return (
+      <p className="text-center text-sm text-gray-400">Tidak ada data</p>
+    )
+  }
   return (
     <div className="space-y-3 text-sm">
       {data.map((item, index) => (
@@ -154,7 +182,12 @@ const Dashboard: React.FC = () => {
   const [penerimaanData, setPenerimaanData] = useState<ChartDataItem[]>([]);
   const [negaraData, setNegaraData] = useState<ChartDataItem[]>([]);
 
-  const [, setBatches] = useState<BatchResponse["data"]>([]);
+  const [batches, setBatches] = useState<BatchResponse["data"]>([]);
+  const [selectedBatchId, setSelectedBatchId] = useState<number | null>(null);
+  const [batchDropdownOpen, setBatchDropdownOpen] = useState(false);
+
+  const selectedBatch =
+    batches.find((b) => b.id === selectedBatchId) ?? null;
 
   const getTokenFromCookie = () => {
     return document.cookie
@@ -203,6 +236,32 @@ const Dashboard: React.FC = () => {
   };
 
   useEffect(() => {
+    const fetchBatches = async () => {
+      try {
+        const res = await api.get<BatchResponse>("/batch-api/");
+        if (res.data?.status) {
+          const list = res.data.data || [];
+          setBatches(list);
+          const defaultBatch = list.find((b) => b.is_active) ?? list[0];
+          if (defaultBatch) setSelectedBatchId(defaultBatch.id);
+        } else {
+          setErrorMessage("Gagal mengambil daftar batch.");
+          setLoading(false);
+        }
+      } catch (err) {
+        setErrorMessage(getAxiosErrorMessage(err));
+        setLoading(false);
+      }
+    };
+    fetchBatches();
+  }, [api]);
+
+  useEffect(() => {
+    if (selectedBatchId === null) return;
+    const batch = batches.find((b) => b.id === selectedBatchId);
+    if (!batch) return;
+    const batchNumber = batch.batch_number;
+
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
@@ -215,148 +274,95 @@ const Dashboard: React.FC = () => {
           return;
         }
 
-        const [statsRes, positionRes, countryRes, batchRes, appsRes] =
-          await Promise.all([
-            api.get<DashboardStatsResponse>(
-              "/lamaran-magang-api/statistics/dashboard"
-            ),
-            api.get<PositionStatsResponse>(
-              "/lamaran-magang-api/statistics/position"
-            ),
-            api.get<CountryStatsResponse>(
-              "/lamaran-magang-api/statistics/country"
-            ),
-            api.get<BatchResponse>("/batch-api"),
-            api.get<ApplicationsListResponse>("/lamaran-magang-api/statistics/university"),
-          ]);
+        const batchParams = { params: { batch: batchNumber } };
 
-        const statsJson = statsRes.data;
-        const positionJson = positionRes.data;
-        const countryJson = countryRes.data;
-        const batchJson = batchRes.data;
-        const appsJson = appsRes.data;
+        const handle404 = (err: unknown) => {
+          if (axios.isAxiosError(err) && err.response?.status === 404) {
+            return { data: { status: true, data: [] } } as any;
+          }
+          throw err;
+        };
 
-        if (!statsJson?.status) {
-          setErrorMessage(
-            statsJson?.message ||
-              "Gagal mengambil data dashboard (statistics/dashboard)."
-          );
-          setLoading(false);
-          return;
-        }
+        const [lamaranRes, countryRes, uniRes] = await Promise.all([
+          api.get<LamaranListResponse>("/lamaran-magang-api/get", {
+            params: { limit: 9999, page: 1 },
+          }),
+          api
+            .get<CountryStatsResponse>("/lamaran-magang-api/statistics/country", batchParams)
+            .catch(handle404),
+          api
+            .get<ApplicationsListResponse>("/lamaran-magang-api/statistics/university", batchParams)
+            .catch(handle404),
+        ]);
 
-        if (!positionJson?.status) {
-          setErrorMessage(
-            positionJson?.message ||
-              "Gagal mengambil data dashboard (statistics/position)."
-          );
-          setLoading(false);
-          return;
-        }
+        const all = lamaranRes.data?.data ?? [];
 
-        if (!countryJson?.status) {
-          setErrorMessage(
-            countryJson?.message ||
-              "Gagal mengambil data dashboard (statistics/country)."
-          );
-          setLoading(false);
-          return;
-        }
+        // filter manual per batch
+        const rows = all.filter((r) => Number(r.batch) === Number(batchNumber));
 
-        if (batchJson?.success) {
-          setBatches(batchJson.data || []);
-        } else {
-          console.warn("Fetch batch gagal:", batchJson?.message);
-        }
-
-        if (!appsJson?.status) {
-          console.warn(
-            "Fetch applicants list gagal (untuk universitas chart):",
-            appsJson?.message
-          );
-        }
-
-        const stats = statsJson.data;
-        const positions = positionJson.data || [];
-        const countries = countryJson.data || [];
+        const norm = (s?: string) => (s ?? "").toLowerCase().trim();
 
         // === Stat Cards ===
+        const totalPendaftar = rows.length;
+        const totalDiterima = rows.filter((r) => norm(r.status) === "diterima").length;
+        const totalDitolak = rows.filter((r) => norm(r.status) === "ditolak").length;
+        const sedangDiproses = rows.filter((r) => norm(r.status) === "diproses").length;
+
         const statCardsFromApi: StatCard[] = [
-          {
-            title: "Total Pendaftar",
-            value: stats.total_pendaftar,
-            icon: <Users size={24} />,
-            iconColor: "#0088ff",
-          },
-          {
-            title: "Total Diterima",
-            value: stats.total_diterima,
-            icon: <UserCheck size={24} />,
-            iconColor: "#00cc00",
-          },
-          {
-            title: "Total Ditolak",
-            value: stats.total_ditolak,
-            icon: <UserX size={24} />,
-            iconColor: "#ff3333",
-          },
-          {
-            title: "Sedang Diproses",
-            value: stats.sedang_diproses,
-            icon: <Clock size={24} />,
-            iconColor: "#ffaa00",
-          },
+          { title: "Total Pendaftar", value: totalPendaftar, icon: <Users size={24} />, iconColor: "#0088ff" },
+          { title: "Total Diterima", value: totalDiterima, icon: <UserCheck size={24} />, iconColor: "#00cc00" },
+          { title: "Total Ditolak", value: totalDitolak, icon: <UserX size={24} />, iconColor: "#ff3333" },
+          { title: "Sedang Diproses", value: sedangDiproses, icon: <Clock size={24} />, iconColor: "#ffaa00" },
         ];
 
-        // === Position ===
-        const positionCounts: ChartDataItem[] = positions.map((p) => ({
-          name: p.posisi,
-          value: p.total,
-        }));
-
-        // === Universitas ===
-        const applicants = appsJson?.status ? appsJson.data || [] : [];
-        const uniCountsRaw = groupCount(
-          applicants.map((a) => (a.universitas ?? "").toString())
+        // === Position (dari nested lowongan_magang.posisi) ===
+        const positionCounts = groupCount(
+          rows.map((r) => (r.lowongan_magang?.posisi ?? "").trim())
         );
 
-        // Top 5 + Lainnya
-        const topN = 5;
-        const top = uniCountsRaw.slice(0, topN);
-        const rest = uniCountsRaw.slice(topN);
-        const othersValue = rest.reduce((acc, x) => acc + x.value, 0);
-        const uniCounts: ChartDataItem[] =
-          othersValue > 0 ? [...top, { name: "Lainnya", value: othersValue }] : top;
-
-        // === Negara ===
+        // === Penerimaan ===
+        // hanya isi kalau ada data, biar fallback EMPTY_PIE aktif saat kosong
+        const penerimaanCounts: ChartDataItem[] = totalPendaftar > 0
+          ? [
+            { name: "Total Pendaftar", value: totalPendaftar },
+            { name: "Total Diterima", value: totalDiterima },
+            { name: "Total Ditolak", value: totalDitolak },
+          ]
+          : [];
+        // === Negara (dari /statistics/country?batch=batchNumber) ===
+        const countries = countryRes.data?.data ?? [];
         const negaraCounts: ChartDataItem[] = countries.map((c) => ({
           name: c.negara,
           value: c.total,
         }));
 
-        // === Penerimaan ===
-        const penerimaanCounts: ChartDataItem[] = [
-          { name: "Total Pendaftar", value: stats.total_pendaftar },
-          { name: "Total Diterima", value: stats.total_diterima },
-          { name: "Total Ditolak", value: stats.total_ditolak },
+        // === Universitas (dari /statistics/university?batch=batchNumber) ===
+        const uniRaw: Array<{ universitas: string; total: number }> =
+          (uniRes.data as any)?.data ?? [];
+        const uniSorted = [...uniRaw].sort((a, b) => b.total - a.total);
+        const top = uniSorted.slice(0, 5);
+        const othersValue = uniSorted.slice(5).reduce((acc, x) => acc + x.total, 0);
+        const uniCounts: ChartDataItem[] = [
+          ...top.map((u) => ({ name: u.universitas, value: u.total })),
+          ...(othersValue > 0 ? [{ name: "Lainnya", value: othersValue }] : []),
         ];
 
         setStatCards(statCardsFromApi);
         setPositionData(positionCounts);
-        setUniversitasData(uniCounts);
-        setNegaraData(negaraCounts);
         setPenerimaanData(penerimaanCounts);
+        setNegaraData(negaraCounts);
+        setUniversitasData(uniCounts);
 
         setLoading(false);
       } catch (err) {
-        console.error("Terjadi kesalahan saat mengambil data dashboard:", err);
+        console.error("Error fetching dashboard:", err);
         setErrorMessage(getAxiosErrorMessage(err));
         setLoading(false);
       }
     };
 
     fetchDashboardData();
-  }, [api]);
+  }, [api, selectedBatchId, batches]);
 
   return (
     <div className="min-h-screen w-full overflow-hidden">
@@ -371,20 +377,53 @@ const Dashboard: React.FC = () => {
             <h2 className="text-[24px] font-semibold">Dashboard</h2>
 
             <div className="flex items-center gap-4">
-              {/* Batch Filter */}
-              <button className="flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-[20px] py-[10px] text-gray-700 hover:bg-gray-50">
-                Batch 3 - 2025
-                <ChevronDown size={18} />
-              </button>
+              <div className="relative">
+                {/* Batch Filter */}
+                <button
+                  onClick={() => setBatchDropdownOpen((o) => !o)}
+                  className="flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-[20px] py-[10px] text-gray-700 hover:bg-gray-50">
+                  {selectedBatch
+                    ? `Batch ${selectedBatch.batch_number} - ${new Date(selectedBatch.created_at).getFullYear()}`
+                    : "Pilih Batch"}
+                  <ChevronDown size={18} />
+                </button>
 
-              {/* Search Box */}
-              <div className="flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-[20px] py-[10px]">
-                <Search size={18} className="text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Nama, Jurusan,"
-                  className="w-52 text-sm text-gray-700 placeholder-gray-400 outline-none"
-                />
+                {batchDropdownOpen && (
+                  <div className="absolute right-0 z-10 mt-2 w-56 rounded-xl border border-gray-200 bg-white py-1 shadow-lg">
+                    {batches.map((b) => (
+                      <button
+                        key={b.id}
+                        onClick={() => {
+                          setSelectedBatchId(b.id);
+                          setBatchDropdownOpen(false);
+                        }}
+                        className={`flex w-full items-center justify-between px-4 py-2 text-left text-sm hover:bg-gray-50 ${b.id === selectedBatchId
+                          ? "font-semibold text-blue-600"
+                          : "text-gray-700"
+                          }`}
+                      >
+                        <span>
+                          Batch {b.batch_number} - {new Date(b.created_at).getFullYear()}
+                        </span>
+                        {b.is_active && (
+                          <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-700">
+                            Aktif
+                          </span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Search Box */}
+                {/* <div className="flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-[20px] py-[10px]">
+                  <Search size={18} className="text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Nama, Jurusan,"
+                    className="w-52 text-sm text-gray-700 placeholder-gray-400 outline-none"
+                  />
+                </div> */}
               </div>
             </div>
           </div>
@@ -438,7 +477,7 @@ const Dashboard: React.FC = () => {
                     <ResponsiveContainer width="100%" height={220}>
                       <PieChart>
                         <Pie
-                          data={positionData}
+                          data={positionData.length > 0 ? positionData : EMPTY_PIE}
                           cx="50%"
                           cy="50%"
                           innerRadius={0}
@@ -446,13 +485,13 @@ const Dashboard: React.FC = () => {
                           paddingAngle={2}
                           dataKey="value"
                         >
-                          {positionData.map((_, index) => (
+                          {(positionData.length > 0 ? positionData : EMPTY_PIE).map((_, index) => (
                             <Cell
                               key={`position-cell-${index}`}
                               fill={
-                                CATEGORY_COLORS[
-                                  index % CATEGORY_COLORS.length
-                                ]
+                                positionData.length > 0
+                                  ? CATEGORY_COLORS[index % CATEGORY_COLORS.length]
+                                  : EMPTY_COLOR[0]
                               }
                             />
                           ))}
@@ -474,7 +513,7 @@ const Dashboard: React.FC = () => {
                     <ResponsiveContainer width="100%" height={220}>
                       <PieChart>
                         <Pie
-                          data={universitasData}
+                          data={universitasData.length > 0 ? universitasData : EMPTY_PIE}
                           cx="50%"
                           cy="50%"
                           innerRadius={0}
@@ -482,13 +521,13 @@ const Dashboard: React.FC = () => {
                           paddingAngle={2}
                           dataKey="value"
                         >
-                          {universitasData.map((_, index) => (
+                          {(universitasData.length > 0 ? universitasData : EMPTY_PIE).map((_, index) => (
                             <Cell
                               key={`universitas-cell-${index}`}
                               fill={
-                                CATEGORY_COLORS[
-                                  index % CATEGORY_COLORS.length
-                                ]
+                                universitasData.length > 0
+                                  ? CATEGORY_COLORS[index % CATEGORY_COLORS.length]
+                                  : EMPTY_COLOR[0]
                               }
                             />
                           ))}
@@ -513,7 +552,7 @@ const Dashboard: React.FC = () => {
                     <ResponsiveContainer width="100%" height={220}>
                       <PieChart>
                         <Pie
-                          data={negaraData}
+                          data={negaraData.length > 0 ? negaraData : EMPTY_PIE}
                           cx="50%"
                           cy="50%"
                           innerRadius={0}
@@ -521,10 +560,14 @@ const Dashboard: React.FC = () => {
                           paddingAngle={2}
                           dataKey="value"
                         >
-                          {negaraData.map((_, index) => (
+                          {(negaraData.length > 0 ? negaraData : EMPTY_PIE).map((_, index) => (
                             <Cell
                               key={`negara-cell-${index}`}
-                              fill={CATEGORY_COLORS[index % CATEGORY_COLORS.length]}
+                              fill={
+                                negaraData.length > 0
+                                  ? CATEGORY_COLORS[index % CATEGORY_COLORS.length]
+                                  : EMPTY_COLOR[0]
+                              }
                             />
                           ))}
                         </Pie>
@@ -545,7 +588,7 @@ const Dashboard: React.FC = () => {
                     <ResponsiveContainer width="100%" height={220}>
                       <PieChart>
                         <Pie
-                          data={penerimaanData}
+                          data={penerimaanData.length > 0 ? penerimaanData : EMPTY_PIE}
                           cx="50%"
                           cy="50%"
                           innerRadius={0}
@@ -553,13 +596,13 @@ const Dashboard: React.FC = () => {
                           paddingAngle={2}
                           dataKey="value"
                         >
-                          {penerimaanData.map((_, index) => (
+                          {(penerimaanData.length > 0 ? penerimaanData : EMPTY_PIE).map((_, index) => (
                             <Cell
                               key={`penerimaan-cell-${index}`}
                               fill={
-                                CATEGORY_COLORS[
-                                  index % CATEGORY_COLORS.length
-                                ]
+                                penerimaanData.length > 0
+                                  ? CATEGORY_COLORS[index % CATEGORY_COLORS.length]
+                                  : EMPTY_COLOR[0]
                               }
                             />
                           ))}
