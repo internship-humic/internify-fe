@@ -6,7 +6,7 @@ import { useProjectsByRole } from '../../../hooks/useListProjects';
 
 export default function MentorProjectsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { projects, loading, error, refetch } = useProjectsByRole();
+  const { projects, loading, error, refetch } = useProjectsByRole("active");
 
   const openDialog = () => {
     setIsModalOpen(true);
@@ -49,12 +49,12 @@ export default function MentorProjectsPage() {
 
       <div className="flex flex-wrap gap-4 items-stretch">
         {projects.map(project => (
-          <MentorProjectCard 
-          key={project.id}
-          {...project}
-          onArchived={refetch}
-          onCompleted={refetch}
-         />
+          <MentorProjectCard
+            key={project.id}
+            {...project}
+            onArchived={refetch}
+            onCompleted={refetch}
+          />
         ))}
       </div>
 

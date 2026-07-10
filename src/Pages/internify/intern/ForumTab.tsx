@@ -12,19 +12,17 @@ export default function ForumTab({ project }: { project: Project }) {
       <HeroProject title={project.project_name} description={project.description} />
 
       {/* Loading skeleton */}
-      {/* {loading && (
+      {loading && (
         <div className="flex flex-col gap-3 mt-5">
           {[...Array(3)].map((_, i) => (
             <div key={i} className="h-24 bg-gray-100 rounded-xl animate-pulse" />
           ))}
         </div>
-      )} */}
+      )}
 
       {/* Error */}
       {error && <p className="text-red-500 text-sm mt-5">{error}</p>}
 
-      {/* Timeline + Task list — hanya tampil jika ada task */}
-      {/* {!loading && tasks.length === 0 ? ( */}
       {tasks.length === 0 ? (
         <p className="text-md text-font-shade mt-5">Belum ada tugas yang dapat dikerjakan.</p>
       ) : (

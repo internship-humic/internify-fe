@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import type { ProjectTask } from "../../../../types/task.types";
+import type { InternTaskItem } from "../../../../types/project.types";
 
 const formatDate = (date: string) =>
   new Date(date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -7,7 +7,7 @@ const formatDate = (date: string) =>
 const formatTime = (dateStr: string) =>
   new Date(dateStr).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
-export default function MentorTaskCard({ task }: {task: ProjectTask}) {
+export default function MentorTaskCard({ task }: {task: InternTaskItem}) {
   const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
 

@@ -4,6 +4,7 @@ import { Calendar, Edit } from "lucide-react";
 import EditSubmissionModal from "./components/EditSubmissionTask";
 import { useTaskSubmissions } from "../../../hooks/useTasks";
 import type { ProjectTask } from "../../../types/task.types";
+import { useProjectDetail } from "../../../hooks/useProjects";
 
 const toSlug = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
 
@@ -12,14 +13,13 @@ export default function MentorProjectsDetailPage() {
   const { slug, taskSlug } = useParams<{ slug: string; taskSlug: string }>();
   const { task, loading, error, refetch } = useTaskSubmissions(taskSlug!, slug);
   const [openModal, setOpenModal] = useState(false);
+  const { project } = useProjectDetail(slug!);
+  const isProjectActive = project?.status === "active"
 
-  // Di MentorProjectsDetailPage
   const handleEditSuccess = (updatedTask: ProjectTask) => {
     if (updatedTask.slug !== taskSlug) {
-      // Slug berubah, navigate ke URL baru
       navigate(`/mentor/projects/${slug}/${updatedTask.slug}`, { replace: true });
     } else {
-      // Slug sama, cukup refetch
       refetch();
     }
   };
@@ -50,8 +50,9 @@ export default function MentorProjectsDetailPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-[#1a1a1a]">{task.title}</h1>
         <button
-          className="flex items-center gap-2 border border-gray-400 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-all"
+          className="flex items-center gap-2 border border-gray-400 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={() => setOpenModal(true)}
+          disabled={!isProjectActive}
         >
           <Edit size={16} />
           Edit Task

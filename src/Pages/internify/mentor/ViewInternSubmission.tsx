@@ -42,7 +42,7 @@ export default function ViewInternSubmission() {
     );
 
   return (
-    <div className="space-y-4">
+    <div className="pt-8 space-y-4">
       {/* Header */}
       <div className="w-full bg-box-secondary rounded-2xl border border-box-border p-6">
         <div className="space-y-1">

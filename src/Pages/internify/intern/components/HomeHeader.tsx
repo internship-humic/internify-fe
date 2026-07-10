@@ -7,7 +7,7 @@ const HomeHeader = () => {
   useEffect(() => {
   api.get("/auth-api/me")
     .then((res) => {
-      setName(res.data.data.full_name || res.data.data.nama_depan);
+      setName(res.data.data.full_name || (res.data.data.nama_depan + " " + res.data.data.nama_belakang));
     })
     .catch((err) => {
       console.error("Failed to fetch user:", err);

@@ -27,18 +27,6 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
   const [showDropdown, setShowDropdown] = useState(false);
   const emailSectionRef = useRef<HTMLDivElement>(null);
 
-  // Tutup dropdown saat klik di luar area input
-  const handleClickOutside = useCallback((e: MouseEvent) => {
-    if (emailSectionRef.current && !emailSectionRef.current.contains(e.target as Node)) {
-      setShowDropdown(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [handleClickOutside]);
-
   const projectIcons = PROJECT_ICON_CODES.map((id) => ({
     id,
     icon: PROJECT_ICON_MAP[id],
@@ -76,11 +64,6 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
       setShowDropdown(false);
     }
   };
-
-  // const handleAddEmailFromForm = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   handleAddEmail();
-  // };
 
   const handleRemoveEmail = (emailToRemove: string) => {
     setInvitedEmails(invitedEmails.filter(email => email !== emailToRemove));
@@ -171,7 +154,7 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
             placeholder="e.g., Q3 Infrastructure Upgrade"
             value={projectName}
             onChange={(e) => setProjectName(e.target.value)}
-            className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm placeholder-gray-400 text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium"
+            className="w-full px-4 py-2.5 bg-white border border-card-outline rounded-lg text-sm placeholder-gray-400 text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium"
           />
         </div>
 
@@ -185,7 +168,7 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
             placeholder="Outline the project goals, deliverables, and technical requirements..."
             value={projectDescription}
             onChange={(e) => setProjectDescription(e.target.value)}
-            className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm placeholder-gray-400 text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium resize-none leading-relaxed"
+            className="w-full px-4 py-2.5 bg-white border border-card-outline rounded-lg text-sm placeholder-gray-400 text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium resize-none leading-relaxed"
           />
         </div>
 
@@ -213,12 +196,12 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
                   }
                   if (e.key === 'Escape') setShowDropdown(false);
                 }}
-                className="w-full pl-10 pr-20 py-2.5 bg-white border border-gray-200 rounded-lg text-sm placeholder-gray-400 text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium"
+                className="w-full pl-10 pr-20 py-2.5 bg-white border border-card-outline rounded-lg text-sm placeholder-gray-400 text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium"
               />
               <button
                 type="button"
                 onClick={() => handleAddEmail()}
-                className="absolute right-2 px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-800 text-[11px] font-bold rounded-md transition-colors tracking-wider uppercase"
+                className="absolute right-2 px-3 py-1 bg-card hover:bg-card-hover border border-card-outline text-font-shade text-[11px] font-bold rounded-md transition-colors tracking-wider uppercase"
               >
                 ADD
               </button>
@@ -226,7 +209,7 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
 
             {/* Dropdown daftar intern */}
             {showDropdown && (
-              <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-44 overflow-y-auto">
+              <div className="absolute z-10 mt-1 w-full bg-white border border-card-outline rounded-xl shadow-lg max-h-44 overflow-y-auto">
                 {loadingInterns ? (
                   <p className="text-xs text-gray-400 text-center py-3">Memuat data intern...</p>
                 ) : (() => {
@@ -244,13 +227,10 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
                         key={intern.id}
                         type="button"
                         onMouseDown={(e) => { e.preventDefault(); handleAddEmail(intern.email); }}
-                        className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors text-left"
+                        className="w-full flex items-center gap-3 px-6 py-2.5 hover:bg-gray-50 transition-colors text-left"
                       >
-                        <div className="w-7 h-7 rounded-full bg-red-100 text-red-700 flex items-center justify-center text-[10px] font-bold shrink-0">
-                          {intern.full_name.split(' ').slice(0, 2).map((n) => n[0]).join('').toUpperCase()}
-                        </div>
                         <div className="flex flex-col min-w-0">
-                          <span className="text-xs font-semibold text-gray-800 truncate">{intern.full_name}</span>
+                          <span className="text-[13px] font-semibold text-gray-800 truncate">{intern.full_name}</span>
                           <span className="text-[11px] text-gray-400 truncate">{intern.email}</span>
                         </div>
                       </button>
@@ -294,7 +274,7 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
                 required
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium appearance-none"
+                className="w-full px-3 py-2.5 bg-white border border-card-outline rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium appearance-none"
               />
               <span className="absolute right-3.5 top-3 text-gray-400 pointer-events-none">
               </span>
@@ -312,7 +292,7 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
                 required
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium appearance-none"
+                className="w-full px-3 py-2.5 bg-white border border-card-outline rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium appearance-none"
               />
               <span className="absolute right-3.5 top-3 text-gray-400 pointer-events-none">
               </span>
@@ -329,7 +309,7 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
           <button
             type="button"
             onClick={onClose}
-            className="w-full sm:w-[150px] py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors"
+            className="w-full sm:w-[150px] py-2.5 border border-card-outline rounded-xl text-sm font-semibold text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors"
           >
             Cancel
           </button>

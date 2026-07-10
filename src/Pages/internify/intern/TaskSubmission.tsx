@@ -3,12 +3,16 @@ import { FileText, Info } from "lucide-react";
 import TaskFormFile from "./components/TaskForm-file";
 import TaskFormLink from "./components/TaskForm-link";
 import { useTaskDetail } from "../../../hooks/useTasks";
+import { useProjectDetail } from "../../../hooks/useProjects";
 
 export default function TaskSubmission() {
   const [searchParams] = useSearchParams();
   const { slug, taskSlug } = useParams<{ slug: string; taskSlug: string }>();
   const submissionType = (searchParams.get("type") ?? "file") as "file_upload" | "url_link";
   const { task, loading, error } = useTaskDetail(taskSlug!, slug);
+  const { project } = useProjectDetail(slug!);
+
+  const isProjectActive = project?.status === "active";
 
   const formatDeadline = (dateStr: string) =>
     new Date(dateStr).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
@@ -53,6 +57,7 @@ export default function TaskSubmission() {
             projectId={String(task.project.id)}
             deadline={new Date(task.deadline_at)}
             initialSubmission={task.my_submission}
+            isProjectActive={isProjectActive}
           />
         ) : (
           <TaskFormLink
@@ -60,6 +65,7 @@ export default function TaskSubmission() {
             projectId={String(task.project.id)}
             deadline={new Date(task.deadline_at)}
             initialSubmission={task.my_submission}
+            isProjectActive={isProjectActive}
           />
         )}
 

@@ -1,13 +1,14 @@
 import { useRef, useEffect, useState } from "react";
 import { X, FileText, Link } from "lucide-react";
 import { useUpdateTask } from '../../../../hooks/useTasks';
-import type { ProjectTask, SubmissionType } from '../../../../types/task.types';
+import type { SubmissionType } from '../../../../types/task.types';
 import { customToast } from '../../../utils/showToast';
+import type { InternTaskItem } from "../../../../types/project.types";
 
 interface EditTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
-  task: ProjectTask;
+  task: InternTaskItem;
   onSuccess: () => void;
 }
 

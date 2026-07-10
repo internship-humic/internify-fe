@@ -11,9 +11,10 @@ interface TaskFormFileProps {
   projectId?: string;
   deadline?: Date;
   initialSubmission?: TaskSubmissionData | null;
+  isProjectActive?: boolean;
 }
 
-export default function TaskFormFile({ taskId, projectId, deadline, initialSubmission }: TaskFormFileProps) {
+export default function TaskFormFile({ taskId, projectId, deadline, initialSubmission, isProjectActive = true }: TaskFormFileProps) {
   const { submission, loading, submitFile, updateFile, remove } = useSubmission(taskId, initialSubmission, projectId);
   const [files, setFiles] = useState<File[]>([]);
   const [isDragActive, setIsDragActive] = useState(false);
@@ -119,6 +120,7 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
         deadline={deadline}
         onEdit={() => setIsEditing(true)}
         onDelete={handleDelete}
+        disabled={!isProjectActive} 
       />
     );
   }
@@ -188,8 +190,8 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
           </button>
         )}
         <button
-          type="submit" disabled={loading}
-          className="w-full bg-[#B30000] hover:bg-[#990000] disabled:opacity-60 text-white font-bold py-3 rounded-xl transition-colors shadow-md flex items-center justify-center gap-2 tracking-wide cursor-pointer"
+          type="submit" disabled={loading || !isProjectActive}
+          className="w-full bg-[#B30000] hover:bg-[#990000] disabled:opacity-60 text-white font-bold py-3 rounded-xl transition-colors shadow-md flex items-center justify-center gap-2 tracking-wide cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-[#990000]"
         >
           {loading ? "Mengirim..." : isEditing ? "Update Submission" : "Save Changes"}
           <LuSendHorizontal className="w-4 h-4 stroke-[2.5]" />

@@ -119,7 +119,7 @@ export default function MentorProjectCard({ onArchived, onCompleted, ...project 
             ) : project.status === "completed" ? (
               <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full">Completed</span>
             ) : project.status === "archived" ? (
-              <span className="px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded-full">Archived</span>
+              <span className="px-2 py-0.5 bg-red-100 text-red-800 rounded-full">Archived</span>
             ) : (
               <span className="px-2 py-0.5 bg-gray-100 text-gray-800 rounded-full">Inactive</span>
             )}
@@ -132,7 +132,7 @@ export default function MentorProjectCard({ onArchived, onCompleted, ...project 
           <button
             onClick={handleCompleteButtonClick}
             disabled={completeLoading}
-            className="p-1 rounded hover:text-green-600 hover:bg-green-50 transition-colors disabled:opacity-50"
+            className="p-1 rounded hover:text-blue-600 hover:bg-blue-50 transition-colors disabled:opacity-50"
             aria-label={`Selesaikan ${project.project_name}`}
             title="Selesaikan project"
           >
@@ -143,7 +143,7 @@ export default function MentorProjectCard({ onArchived, onCompleted, ...project 
           <button
             onClick={handleArchiveButtonClick}
             disabled={archiveLoading}
-            className="p-1 rounded hover:text-yellow-600 hover:bg-yellow-50 transition-colors disabled:opacity-50"
+            className="p-1 rounded hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
             aria-label={`Arsipkan ${project.project_name}`}
             title="Arsipkan project"
           >

@@ -10,6 +10,7 @@ interface SubmitStatusTableProps {
   deadline?: Date;
   onEdit: () => void;
   onDelete: () => void;
+  disabled: boolean;
 }
 
 function getTimeEarly(submittedAt: Date, deadline: Date): string {
@@ -32,6 +33,7 @@ export default function SubmitStatusTable({
   deadline,
   onEdit,
   onDelete,
+  disabled = false,
 }: SubmitStatusTableProps) {
   const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -86,13 +88,15 @@ export default function SubmitStatusTable({
           <div className="flex gap-2">
             <button
               onClick={onEdit}
-              className="text-xs font-medium px-4 py-1.5 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+              disabled={disabled}
+              className="text-xs font-medium px-4 py-1.5 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
             >
               Edit Submission
             </button>
             <button
               onClick={() => setConfirmDelete(true)}
-              className="text-xs font-medium px-4 py-1.5 rounded-lg bg-white border border-gray-300 text-gray-700 hover:text-red-700 hover:bg-red-50 hover:border-red-200 transition-colors"
+              disabled={disabled}
+              className="text-xs font-medium px-4 py-1.5 rounded-lg bg-white border border-gray-300 text-gray-700 hover:text-red-700 hover:bg-red-50 hover:border-red-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
             >
               Delete Submission
             </button>

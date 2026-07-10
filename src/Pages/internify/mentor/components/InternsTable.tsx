@@ -82,31 +82,31 @@ export default function InternsTable({
                     <img
                       src={intern.avatar}
                       alt={intern.name}
-                      className="w-10 h-10 rounded-full object-cover border border-gray-100 shadow-sm"
+                      className="w-10 h-10 rounded-full object-cover border border-gray-100 shadow-sm hidden md:block"
                     />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 flex items-center justify-center border border-gray-100 shadow-sm text-white text-xs font-bold">
+                    <div className=" w-10 h-10 rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 items-center justify-center border border-gray-100 shadow-sm text-white text-xs font-bold hidden md:flex">
                       {intern.name.charAt(0)}
                     </div>
                   )}
                   <div>
-                    <h4 className="text-sm font-bold text-gray-900 leading-tight">{intern.name}</h4>
-                    <p className="text-xs text-gray-400 font-medium mt-0.5">{intern.email}</p>
+                    <h4 className="text-xs md:text-sm font-bold text-gray-900 leading-tight">{intern.name}</h4>
+                    <p className="text-[10px] md:text-xs text-gray-400 font-medium mt-0.5">{intern.email}</p>
                   </div>
                 </div>
 
                 {/* Column 2: Current Project Title & Role Accent */}
                 <div className="w-1/3">
-                  <h5 className={`text-sm font-semibold leading-tight ${isUnassigned ? "text-gray-500 italic" : "text-gray-900"}`}>
+                  <h5 className={`text-xs md:text-sm font-semibold leading-tight ${isUnassigned ? "text-gray-500 italic" : "text-gray-900"}`}>
                     {intern.projectName || "Unassigned"}
                   </h5>
-                  <p className={`text-xs font-bold mt-0.5 ${isUnassigned ? "text-red-500" : "text-red-600"}`}>
+                  <p className={`text-[10px] md:text-xs font-bold mt-0.5 ${isUnassigned ? "text-red-500" : "text-red-600"}`}>
                     {intern.role}
                   </p>
                 </div>
 
                 {/* Column 3: Action Buttons Block Right aligned */}
-                <div className="w-1/6 flex items-center justify-end gap-3.5 pr-2">
+                <div className="w-1/6 flex flex-col md:flex-row items-center justify-end gap-3.5 pr-2">
                   {/* Tombol Add: membuka modal assign member untuk intern ini */}
                   <button
                     onClick={() => onAssign(intern.id)}

@@ -3,29 +3,23 @@ import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import CreateProjectModal from './CreateProjectDialog';
 import { useProjects } from '../../../../hooks/useProjects';
-import * as LucideIcons from 'lucide-react';
-import type { LucideProps } from 'lucide-react';
-
-const getDynamicIcon = (iconName: string) => {
-    const formatted = iconName.charAt(0).toUpperCase() + iconName.slice(1);
-    const Icon = (LucideIcons as unknown as Record<string, React.ComponentType<LucideProps>>)[formatted];
-    return Icon ?? LucideIcons.FolderOpen;
-};
+import { getProjectIcon } from '../../../../lib/ProjectIcons';
 
 const HomeMentorProject = () => {
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const { projects, loading, error } = useProjects();
-    const openDialog = () => {
-        setIsModalOpen(true);
-    };
-    const closeDialog = () => {
-        setIsModalOpen(false);
-    };
+    const { projects, loading, error, refetch } = useProjects();
+    const openDialog = () => { setIsModalOpen(true) };
+    const closeDialog = () => { setIsModalOpen(false) };
+
+    const handleRefetch = () => {
+        closeDialog();
+        refetch();
+    }
     return (
         <div className='flex flex-col'>
-            <div className='flex flex-row justify-between mb-3 px-5 items-center'>
-                <h2 className="text-lg font-semibold text-gray-800 mb-4">Projects</h2>
+            <div className='flex flex-row justify-between mb-3 items-center'>
+                <h2 className="text-lg font-semibold text-gray-800">Projects</h2>
                 <button
                     className='bg-card p-1.5 rounded-lg font-bold hover:bg-card-hover border border-card-outline'
                     onClick={openDialog} >
@@ -46,7 +40,7 @@ const HomeMentorProject = () => {
                     >
                         <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: project.background_color ?? '#dc2626' }}>
                             {(() => {
-                                const Icon = getDynamicIcon(project.project_icon);
+                                const Icon = getProjectIcon(project.project_icon);
                                 return <Icon className="w-5 h-5 text-white" />;
                             })()}
                         </div>
@@ -60,6 +54,7 @@ const HomeMentorProject = () => {
                 <CreateProjectModal
                     isOpen={isModalOpen}
                     onClose={closeDialog}
+                    onSuccess={handleRefetch}
                 />
             )}
         </div>

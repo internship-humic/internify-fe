@@ -41,7 +41,7 @@ import MentorDetailProject from "./Pages/Internify/mentor/ProjectsPage";
 import InternifyLogin from "./Pages/Internify/LoginInternify"
 import FAQPage from "./Pages/Internify/FAQpage";
 import NotificationList from "./Pages/Internify/NotificationList";
-import SettingsContent from "./Pages/Internify/SettingsPage";
+import SettingsPage from "./Pages/Internify/SettingsPage";
 import TaskSubmission from "./Pages/Internify/intern/TaskSubmission";
 import SertificateList from "./Pages/Internify/intern/InternCertList";
 import MentorProjectsDetailPage from "./Pages/Internify/mentor/MentorProjectDetailPage";
@@ -116,7 +116,7 @@ function App() {
               <Route path="projects/:slug/:taskSlug" element={<TaskSubmission />} />
               <Route path="faq" element={<FAQPage />} />
               <Route path="notifications" element={<NotificationList />} />
-              <Route path="settings" element={<SettingsContent />} />
+              <Route path="settings" element={<SettingsPage />} />
             </Route>
           </Route>
 
@@ -134,7 +134,7 @@ function App() {
               <Route path="projects/:slug/:taskSlug/:nameIntern" element={<ViewInternSubmission />} />
               <Route path="faq" element={<FAQPage />} />
               <Route path="notifications" element={<NotificationList />} />
-              <Route path="settings" element={<SettingsContent />} />
+              <Route path="settings" element={<SettingsPage />} />
             </Route>
           </Route>
 

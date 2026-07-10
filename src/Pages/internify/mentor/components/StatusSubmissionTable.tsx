@@ -31,8 +31,6 @@ export function StatusBadge({ status }: { status: DisplayStatus }) {
   );
 }
 
-// StatusTable
-
 interface StatusTableProps {
   status: DisplayStatus;
   submission: TaskSubmissionData | null;
@@ -45,16 +43,6 @@ export function StatusTable({ status, submission }: StatusTableProps) {
     {
       label: "Submission status",
       value: <StatusBadge status={status} />,
-    },
-    {
-      label: "Grading status",
-      value: <span className="text-sm text-gray-400">-</span>,
-    },
-    {
-      label: "Time Remaining",
-      value: status === "overdue"
-        ? <span className="text-sm text-red-600 font-medium">Overdue</span>
-        : <span className="text-sm text-gray-400">-</span>,
     },
     {
       label: "Submitted at",

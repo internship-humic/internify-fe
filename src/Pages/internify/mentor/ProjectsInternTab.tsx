@@ -9,6 +9,7 @@ export default function InternsTab({ project }: { project: ProjectDetail }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [members, setMembers] = useState<ProjectMember[]>(project.members);
   const { remove, loading } = useRemoveMember();
+  const isProjectActive = project?.status === "active"
 
   const handleModalClose = (finalMembers: ProjectMember[]) => {
     setMembers(finalMembers);
@@ -58,7 +59,9 @@ export default function InternsTab({ project }: { project: ProjectDetail }) {
           </h3>
           <button 
             onClick={() => setIsModalOpen(true)}
-            className='bg-gray-300 border border-gray-500 px-2 py-1 rounded-md hover:bg-gray-400 transition-colors'
+            disabled={!isProjectActive}
+            className={`border border-gray-500 px-2 py-1 rounded-md transition-colors ${!isProjectActive ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-gray-300 hover:bg-gray-400'
+              }`}
           >
             <span className='flex items-center gap-3 text-[11px]'>
               <Plus className='w-3 h-3'/>Add
@@ -82,8 +85,8 @@ export default function InternsTab({ project }: { project: ProjectDetail }) {
             <div>
               <button 
                 onClick={() => handleRemove(member.id)}
-                disabled={loading}
-                className='flex items-center gap-1 text-[11px] bg-red-600 text-white py-1 px-2 rounded-md disabled:opacity-50 hover:bg-red-700 transition-colors'
+                disabled={loading || !isProjectActive}
+                className='flex items-center gap-1 text-[11px] bg-red-600 text-white py-1 px-2 rounded-md disabled:opacity-50 hover:bg-red-700 transition-colors disabled:cursor-not-allowed'
               >
                 <Plus className='w-4 h-4'/>Delete
               </button>

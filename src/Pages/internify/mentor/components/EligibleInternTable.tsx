@@ -19,6 +19,8 @@ import Avatar from "../../Avatar";
 import ProgressBar from "../../ProgressBar";
 import { customToast } from "../../../utils/showToast";
 import type { Project } from "../../../../types/project.types";
+import { previewCertificate } from "../../../utils/Certificates";
+import type { Certificate } from "../../../../types/certificate.types";
 
 interface EligibleInternTableProps {
   interns: InternSubmissionProgress[];
@@ -72,6 +74,32 @@ export default function EligibleInternTable({
   const [generating, setGenerating] = useState(false);
   const [generateError, setGenerateError] = useState<string | null>(null);
 
+  const handlePreview = (intern: InternSubmissionProgress) => {
+    if (!project?.certificate_template) {
+      customToast.error("Template belum ada", "Template sertifikat belum diupload.");
+      return;
+    }
+    const mockCert: Certificate = {
+      id: intern.id_user,
+      id_project: project.id,
+      id_user: intern.id_user,
+      certificate_no: "PREVIEW",
+      issued_at: new Date().toISOString(),
+      uuid: "preview-mode",
+      user: {
+        id: intern.id_user,
+        full_name: intern.full_name,
+        email: intern.email,
+      },
+      project: {
+        id: project.id,
+        project_name: project.project_name,
+        description: project.description,
+      },
+    };
+    previewCertificate(mockCert, project.certificate_template);
+  };
+
   const [page, setPage] = useState(1);
   const totalPages = Math.ceil(interns.length / PER_PAGE);
   const paginated = interns.slice((page - 1) * PER_PAGE, page * PER_PAGE);
@@ -113,7 +141,7 @@ export default function EligibleInternTable({
         const templateUrl = resolveImageUrl(project.certificate_template!);
 
         const duration = formatDateRange(project.start_date, project.end_date);
-        
+
         await Promise.all(
           result.map(async (cert) => {
             const verifyUrl = `${window.location.origin}/verify-certificate/${cert.uuid}`;
@@ -253,7 +281,11 @@ export default function EligibleInternTable({
                       Nag Intern
                     </button>
                   ) : (
-                    <button className="p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors" title="View">
+                    <button
+                      onClick={() => handlePreview(intern)}
+                      className="p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+                      title="Preview Certificate"
+                    >
                       <Eye className="w-4 h-4" />
                     </button>
                   )}

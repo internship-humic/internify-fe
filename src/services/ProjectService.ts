@@ -105,7 +105,7 @@ export const getMyTasks = async (): Promise<InternTaskItem[]> => {
   return res.data.data;
 };
 
-// GET /project-api/mentor-projects (admin/mentor only)
+// GET /project-api/mentor-projects (mentor only)
 export const getMentorProjects = async (): Promise<Project[]> => {
   const res = await api.get("/project-api/mentor-projects");
   return res.data.data;

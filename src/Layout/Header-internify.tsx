@@ -4,10 +4,6 @@ import humiclogo from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import { useCurrentUser } from "../hooks/useUser";
 
-/** Singkatan nama: ambil huruf pertama setiap kata, maksimal 2 huruf.
- *  "Andi Mahesa"        → "AM"
- *  "Andi Bayu Cendika"  → "AC"  (huruf pertama + huruf pertama kata terakhir)
- */
 function getInitials(fullName: string | undefined | null): string {
   if (!fullName) return "U";
   const parts = fullName.trim().split(/\s+/).filter(Boolean);
@@ -25,9 +21,8 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
     setImageError(false);
   }, [user?.profile_picture, user?.full_name]);
 
-  // Tentukan base path settings sesuai role
   const settingsPath =
-    user?.role === "intern" ? "/intern/settings" : "/mentor/settings";
+    user?.role === "intern" ? "/intern" : "/mentor";
 
   const initials = user?.full_name ? getInitials(user.full_name) : "U";
   const hasPhoto = !!user?.profile_picture && !imageError;

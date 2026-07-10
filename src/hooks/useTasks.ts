@@ -25,10 +25,11 @@ import {
 import type { MentorTaskItem } from "../types/task.types";
 import { useCurrentUser } from "./useUser";
 import { useMyTasks } from "./useProjects";
+import type { InternTaskItem } from "../types/project.types";
 
 // GET /task-api/projects/{id_project}/tasks
 export const useProjectTasks = (projectId: number) => {
-  const [tasks, setTasks] = useState<ProjectTask[]>([]);
+  const [tasks, setTasks] = useState<InternTaskItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

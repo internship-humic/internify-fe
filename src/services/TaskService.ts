@@ -7,7 +7,7 @@ import type {
   UpdateTaskPayload,
   TaskSubmissionData,
 } from "../types/task.types";
-import type { Project } from "../types/project.types";
+import type { InternTaskItem, Project } from "../types/project.types";
 import type { MentorTaskItem, AdminTaskDetail } from "../types/task.types";
 
 // ── Task ──────────────────────────────────────────────
@@ -22,7 +22,7 @@ export const createTask = async (
 
 export const getProjectTasks = async (
   projectId: string | number
-): Promise<ProjectTask[]> => {
+): Promise<InternTaskItem[]> => {
   const res = await api.get(`/task-api/projects/${projectId}/tasks`);
   return res.data.data;
 };

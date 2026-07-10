@@ -11,13 +11,15 @@ interface TaskFormLinkProps {
   projectId?: string;
   deadline?: Date;
   initialSubmission?: TaskSubmissionData | null;
+  isProjectActive?: boolean;
 }
 
 export default function TaskFormLink({
   taskId,
   projectId,
   deadline,
-  initialSubmission
+  initialSubmission,
+  isProjectActive = true,
 }: TaskFormLinkProps) {
   const { submission, loading, submitLink, updateLink, remove } = useSubmission(taskId, initialSubmission, projectId);
   const [inputLink, setInputLink] = useState(initialSubmission?.url_link ?? "");
@@ -88,6 +90,7 @@ export default function TaskFormLink({
         deadline={deadline}
         onEdit={() => setIsEditing(true)}
         onDelete={handleDelete}
+        disabled={!isProjectActive} 
       />
     );
   }
@@ -115,8 +118,8 @@ export default function TaskFormLink({
         </p>
       </div>
       <button
-        type="submit" disabled={loading}
-        className="w-full bg-[#B30000] hover:bg-[#990000] disabled:opacity-60 text-white font-bold py-3 rounded-xl transition-colors shadow-md flex items-center justify-center gap-2 tracking-wide cursor-pointer"
+        type="submit" disabled={loading || !isProjectActive}
+        className="w-full bg-[#B30000] hover:bg-[#990000] disabled:opacity-60 text-white font-bold py-3 rounded-xl transition-colors shadow-md flex items-center justify-center gap-2 tracking-wide cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-[#990000]"
       >
         {loading ? "Mengirim..." : isEditing ? "Update Submission" : "Submit Task"}
         <LuSendHorizontal className="w-4 h-4 stroke-[2.5]" />

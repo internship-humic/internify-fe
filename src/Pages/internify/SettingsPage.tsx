@@ -3,7 +3,7 @@ import { useCurrentUser, useUpdateProfile } from "../../hooks/useUser";
 import { customToast } from "../utils/showToast";
 import { Pen } from "lucide-react";
 
-export default function MentorSettingsPage() {
+export default function SettingsPage() {
   const { user, loading: userLoading } = useCurrentUser();
   const { save, loading: saving, error: errorMsg, successMsg } = useUpdateProfile();
   const isIntern = user?.role === "intern";
@@ -23,9 +23,7 @@ export default function MentorSettingsPage() {
     if (user) {
       setFormData({
         fullName:
-          user.full_name ||
-          `${user.nama_depan ?? ""} ${user.nama_belakang ?? ""}`.trim() ||
-          "",
+          user.full_name || "",
         email: user.email || "",
         bio: user.professional_bio || "",
       });
@@ -121,7 +119,7 @@ export default function MentorSettingsPage() {
           <div className="flex items-center gap-5 py-2">
             {/* Avatar dengan badge edit */}
             <div className="relative flex-shrink-0">
-              <div className="w-20 h-20 rounded-xl border-2 border-red-100 overflow-hidden bg-gray-100 flex items-center justify-center shadow-sm">
+              <div className="w-16 h-16 rounded-xl border-2 border-red-100 overflow-hidden bg-gray-100 flex items-center justify-center shadow-sm">
                 {photoPreview && !imageError ? (
                   <img
                     src={photoPreview}
@@ -147,7 +145,7 @@ export default function MentorSettingsPage() {
             </div>
 
             {/* Info & Action Buttons */}
-            {!isIntern &&
+            {!isIntern ? (
               <div>
                 <h3 className="text-sm font-bold text-gray-900 mb-0.5">Profile Photo</h3>
                 <p className="text-xs text-gray-400 mb-3">
@@ -175,7 +173,12 @@ export default function MentorSettingsPage() {
                   </button>
                 </div>
               </div>
-            }
+            ) : (
+              <div>
+                <h3 className="text-sm font-bold text-gray-900 mb-0.5">Nama</h3>
+                <p className="text-base text-gray-700 font-medium">{user?.full_name || formData.fullName || 'User'}</p>
+              </div>
+            )}
 
             {/* Hidden file input */}
             <input

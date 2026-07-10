@@ -1,6 +1,5 @@
 import { useProjectTasks, useDeleteTask } from '../../../hooks/useTasks';
-import type { ProjectDetail } from '../../../types/project.types';
-import type { ProjectTask } from '../../../types/task.types';
+import type { InternTaskItem, ProjectDetail } from '../../../types/project.types';
 import { ClipboardList, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import CreateTaskModal from './components/CreateTaskDialog';
@@ -12,9 +11,13 @@ export default function TaskTab({ project }: { project: ProjectDetail }) {
   const { remove } = useDeleteTask();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<ProjectTask | null>(null);
+  const [selectedTask, setSelectedTask] = useState<InternTaskItem | null>(null);
+  const isProjectActive = project?.status === "active"
 
-  const handleDeleteTask = async (taskId: number,taskTitle: string) => {
+  const handleDeleteTask = async (taskId: number, taskTitle: string) => {
+    const confirmed = window.confirm(`Yakin ingin menghapus task “${taskTitle}”?`);
+    if (!confirmed) return;
+
     const del = await remove(taskId, String(project.id));
     if (del) {
       try {
@@ -42,7 +45,8 @@ export default function TaskTab({ project }: { project: ProjectDetail }) {
         <h2 className="text-3xl font-bold text-slate-800 tracking-tight">Tasks</h2>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-[#C0392B] hover:bg-[#A93226] text-white px-6 py-2.5 rounded-full font-bold text-sm transition-colors shadow-sm"
+          disabled={!isProjectActive}
+          className="border border-gray-500 text-font-shade rounded-lg px-2 py-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Add Task
         </button>
@@ -65,13 +69,15 @@ export default function TaskTab({ project }: { project: ProjectDetail }) {
               <div className="flex items-center gap-4 text-slate-600 shrink-0">
                 <button
                   onClick={() => { setSelectedTask(task); setEditModalOpen(true); }}
-                  className="hover:text-blue-600 transition-colors p-1"
+                  disabled={!isProjectActive}
+                  className="border border-gray-500 text-font-shade rounded-lg px-2 py-1 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Pencil size={20} />
                 </button>
                 <button
                   onClick={() => handleDeleteTask(task.id, task.title)}
-                  className="hover:text-red-600 transition-colors p-1"
+                  disabled={!isProjectActive}
+                  className="border border-gray-500 text-font-shade rounded-lg px-2 py-1 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Trash2 size={20} />
                 </button>
