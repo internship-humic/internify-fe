@@ -7,18 +7,27 @@ const formatDate = (dateStr: string) =>
 const formatTime = (dateStr: string) =>
   new Date(dateStr).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
-const statusStyles: Record<InternTaskItem["submission_status"], string> = {
+type DisplayStatus = InternTaskItem["submission_status"] | "overdue";
+
+const statusStyles: Record<DisplayStatus, string> = {
   not_submitted: "bg-gray-50 text-gray-700 border-gray-200",
   submitted: "bg-green-50 text-green-700 border-green-200",
+  overdue: "bg-red-50 text-red-700 border-red-200",
 };
 
-const statusLabels: Record<InternTaskItem["submission_status"], string> = {
+const statusLabels: Record<DisplayStatus, string> = {
   not_submitted: "Pending",
   submitted: "Submitted",
+  overdue: "Overdue",
 };
 
 export default function TaskCard({ task }: { task: InternTaskItem }) {
   const navigate = useNavigate();
+  const displayStatus: DisplayStatus =
+    task.submission_status === "not_submitted" &&
+      new Date(task.deadline_at).getTime() < Date.now()
+      ? "overdue"
+      : task.submission_status;
   return (
     <div
       className="border border-card-outline rounded-xl px-6 py-4 mb-3 bg-white flex items-start justify-between gap-3 cursor-pointer hover:bg-gray-50 transition-colors"
@@ -43,7 +52,7 @@ export default function TaskCard({ task }: { task: InternTaskItem }) {
 
       <div className="shrink-0 hidden md:flex items-center border border-card-outline">
         <span
-          className={`font-semibold text-xs px-3.5 py-[5px] rounded-md whitespace-nowrap border ${statusStyles[task.submission_status]}`}>
+          className={`font-semibold text-xs px-3.5 py-[5px] rounded-md whitespace-nowrap border ${statusStyles[displayStatus]}`}>
           {statusLabels[task.submission_status]}
         </span>
       </div>
