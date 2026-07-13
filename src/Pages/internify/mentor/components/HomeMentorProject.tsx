@@ -4,6 +4,19 @@ import { Plus } from 'lucide-react';
 import CreateProjectModal from './CreateProjectDialog';
 import { useProjects } from '../../../../hooks/useProjects';
 import { getProjectIcon } from '../../../../lib/ProjectIcons';
+import { RiFileList2Fill } from 'react-icons/ri';
+
+function ProjectCardSkeleton() {
+    return (
+        <div className="flex items-center gap-4 border border-gray-200 rounded-lg px-4 py-3 bg-gray-50 animate-pulse">
+            <div className="w-10 h-10 rounded-lg bg-gray-300 flex-shrink-0" />
+            <div className="space-y-2">
+                <div className="h-4 bg-gray-300 rounded w-32" />
+                <div className="h-3 bg-gray-300 rounded w-40" />
+            </div>
+        </div>
+    );
+}
 
 const HomeMentorProject = () => {
     const navigate = useNavigate();
@@ -30,8 +43,23 @@ const HomeMentorProject = () => {
                 </button>
             </div>
             <div className="flex flex-col max-h-[160px] overflow-y-auto gap-3 pr-1">
-                {loading && <p className="text-sm text-gray-400 px-5">Memuat...</p>}
+                {loading && (
+                    <>
+                        {[...Array(2)].map((_, i) => (
+                            <ProjectCardSkeleton key={i} />
+                        ))}
+                    </>
+                )}
+
                 {error && <p className="text-sm text-red-500 px-5">{error}</p>}
+
+                {projects.length === 0 && !loading && (
+                    <div className="flex flex-col items-center justify-center gap-2">
+                        <RiFileList2Fill className="w-12 h-12 text-gray-400" />
+                        <p className="text-sm text-gray-400 text-center">Belum ada project</p>
+                    </div>
+                )}
+
                 {projects.map((project) => (
                     <div
                         key={project.id}

@@ -1,10 +1,30 @@
-import { Loader2, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { useMyProjects } from "../../../hooks/useProjects";
 import type { Project } from "../../../types/project.types";
 import { useNavigate } from "react-router-dom";
 import * as LucideIcons from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
+import emptyimage from '../../../assets/Learning-amico.svg'
 
+// Skeleton card that mirrors the real certificate card layout
+function CertCardSkeleton() {
+    return (
+        <div className="bg-white border border-card-outline rounded-xl overflow-hidden shadow-sm animate-pulse">
+            {/* Thumbnail */}
+            <div className="p-6 pb-0">
+                <div className="rounded-lg overflow-hidden">
+                    <div className="w-full h-32 bg-gray-200 rounded-lg" />
+                </div>
+            </div>
+            {/* Info */}
+            <div className="px-4 py-3 space-y-2">
+                <div className="h-3 bg-gray-200 rounded w-3/4" />
+                <div className="h-4 bg-gray-200 rounded w-5/6" />
+                <div className="h-3 bg-gray-200 rounded w-1/2" />
+            </div>
+        </div>
+    );
+}
 
 export default function SertificateList() {
     const { projects, loading, error } = useMyProjects();
@@ -23,11 +43,12 @@ export default function SertificateList() {
                 <p className="page-title-desc">All your earned internship certificates</p>
             </div>
 
-            {/* Loading */}
+            {/* Loading Skeleton */}
             {loading && (
-                <div className="flex items-center justify-center py-20 text-gray-400 gap-2">
-                    <Loader2 className="w-6 h-6 animate-spin" />
-                    <span className="text-sm">Loading certificates...</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {[...Array(6)].map((_, i) => (
+                        <CertCardSkeleton key={i} />
+                    ))}
                 </div>
             )}
 
@@ -41,8 +62,9 @@ export default function SertificateList() {
 
             {/* Empty */}
             {!loading && !error && projects.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-                    <p className="text-sm">No ongoing projects yet.</p>
+                <div className="flex flex-col items-center justify-center py-20 gap-5 text-font-shade">
+                    <img src={emptyimage} alt="empty image" className="w-64 h-64" />
+                    <p className="text-[18px]">Tidak ada projek yang berlangsung.</p>
                 </div>
             )}
 

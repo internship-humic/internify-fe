@@ -5,18 +5,12 @@ interface CertificateNotAvailableProps {
   progress: number;
   remainingTasks: number;
   allTasksDone?: boolean;
-  // onClaim: () => void;
-  // claiming: boolean;
-  // claimError: string | null;
 }
 
 export default function CertificateNotAvailable({
   progress,
   remainingTasks,
   allTasksDone = false,
-  // onClaim,
-  // claiming,
-  // claimError,
 }: CertificateNotAvailableProps) {
   return (
     <div className="bg-box-primary w-full h-full rounded-2xl border border-box-border shadow-sm px-24 py-12 flex flex-col items-center justify-center">
@@ -54,14 +48,6 @@ export default function CertificateNotAvailable({
               <div className="h-full bg-green-500 rounded-full transition-all duration-700 w-full" />
             </div>
           </div>
-          {/* <button
-            onClick={onClaim}
-            disabled={claiming}
-            className="mt-0 px-6 py-2.5 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors duration-200"
-          >
-            {claiming ? "Memproses..." : "Klaim Sertifikat"}
-          </button>
-          {claimError && <p className="text-red-500 text-sm mt-2">{claimError}</p>} */}
         </>
       ) : (
         <>

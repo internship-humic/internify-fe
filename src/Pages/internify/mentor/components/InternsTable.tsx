@@ -35,10 +35,6 @@ export default function InternsTable({
   const handlePrev = () => setCurrentPage((p) => Math.max(1, p - 1));
   const handleNext = () => setCurrentPage((p) => Math.min(totalPages, p + 1));
 
-  // Reset ke halaman 1 ketika filter berubah (melalui props interns)
-  // Gunakan useEffect agar reset terjadi saat props berubah
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-
   return (
     <div className="w-full mt-3 bg-white rounded-xl border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] overflow-hidden">
 
@@ -67,7 +63,7 @@ export default function InternsTable({
 
       {/* Table Body Iteration Rows */}
       <div className="divide-y divide-gray-100">
-        {paginatedInterns.length > 0 ? (
+        {paginatedInterns.length > 0  ? (
           paginatedInterns.map((intern, index) => {
             const isUnassigned = !intern.projectName || intern.projectName === "Unassigned";
 
@@ -128,9 +124,13 @@ export default function InternsTable({
               </div>
             );
           })
+        ) : totalInterns != 0 ? (
+          <div className="text-center py-12 text-md text-font font-medium">
+            Tidak ada intern yang sesuai dengan kriteria
+          </div>
         ) : (
-          <div className="text-center py-12 text-sm text-gray-400 font-medium">
-            No interns found matching the filter criteria.
+          <div className="text-center py-12 text-md text-font font-medium">
+            Tidak ada intern yang terdaftar
           </div>
         )}
       </div>

@@ -3,7 +3,7 @@ import QRCode from "qrcode";
 
 export function resolveImageUrl(path: string): string {
   if (!path) return "";
-  if (path.startsWith("data:")) return path; // untuk QR data URL
+  if (path.startsWith("data:")) return path;
   if (path.startsWith("http://") || path.startsWith("https://")) {
     return path;
   }
@@ -12,7 +12,6 @@ export function resolveImageUrl(path: string): string {
   return `${origin}${path.startsWith("/") ? "" : "/"}${path}`;
 }
 
-// Load Image dari URL
 export function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -23,9 +22,7 @@ export function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
-// Load kedua font dari Google Fonts (hanya sekali)
 export async function ensureFontsLoaded(): Promise<void> {
-  // Trigger & tunggu font yang sudah diload via <link> di index.html
   await Promise.all([
     document.fonts.load('105px "Great Vibes"'),
     document.fonts.load('54px "Grenze"'),
@@ -33,7 +30,6 @@ export async function ensureFontsLoaded(): Promise<void> {
   await document.fonts.ready;
 }
 
-// Generate satu sertifikat sebagai Blob
 export async function generateCertificate(
   templateUrl: string,
   internName: string,
@@ -42,7 +38,6 @@ export async function generateCertificate(
   ProjectDuration: string,
   verifyUrl: string,
 ): Promise<Blob> {
-  // Pastikan font siap sebelum menggambar teks
   await ensureFontsLoaded();
 
   const img = await loadImage(templateUrl);
@@ -84,17 +79,17 @@ export async function generateCertificate(
   ctx.fillStyle = "#090909";
   ctx.fillText(ProjectDuration, canvas.width * 0.68, canvas.height * 0.66);
 
-  // QR code — kalau verifyUrl diisi
+  // QR code — nanti akan diganti ke alamat domain
   const qrDataUrl = await QRCode.toDataURL('http://localhost:5173/verify-certificate/' + verifyUrl, {
     width: 200,
     margin: 1,
   });
   const qrImg = await loadImage(qrDataUrl);
-  const qrSize = canvas.width * 0.103;
+  const qrSize = canvas.width;
   ctx.drawImage(
     qrImg,
-    canvas.width * 0.8 - qrSize,
-    canvas.height * 0.75 - qrSize,
+    canvas.width * 0.855 - qrSize,
+    canvas.height * 0.85 - qrSize,
     qrSize,
     qrSize,
   );

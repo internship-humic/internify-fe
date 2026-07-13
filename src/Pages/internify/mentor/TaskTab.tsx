@@ -85,8 +85,9 @@ export default function TaskTab({ project }: { project: ProjectDetail }) {
             </div>
           ))
         ) : (
-          <div className="text-center py-10 text-gray-400 text-sm">
-            Belum ada tugas yang dibuat untuk proyek ini.
+          <div className='flex flex-col items-center justify-center py-16'>
+            <ClipboardList className='w-12 h-12 text-font-shade mx-auto'/>
+            <p className="text-sm text-font-shade mt-3">Belum ada tugas yang dibuat untuk proyek ini.</p>
           </div>
         )}
       </div>

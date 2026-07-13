@@ -5,7 +5,6 @@ import CertificateAvailable from "./components/CertificateAvailabe";
 import CertificateNotAvailable from "./components/CertificateNotAvailable";
 import SertificateHistory from "./components/CertificateHistory";
 
-// import { useClaimCertificate } from "../../../hooks/useCertificates";
 import { useProjectDetail } from "../../../hooks/useProjects";
 import { useMyCertificates } from "../../../hooks/useCertificates";
 import type { Project } from "../../../types/project.types";
@@ -17,7 +16,7 @@ export default function InternCertificateDetail () {
 
   const { project: projectDetail, loading: projectLoading } = useProjectDetail(slug ?? "");
   const { certificates, loading: certLoading, refetch: refetchCertificates } = useMyCertificates();
-  // const { claim, loading: claiming, error: claimError } = useClaimCertificate();
+
 
   const myCertificateForProject = useMemo(() => {
     if (!projectDetail) return null;
@@ -41,14 +40,6 @@ export default function InternCertificateDetail () {
       : 0;
   const remainingTasks = project ? project.total_tasks - project.task_done : 0;
   const isLoading = projectLoading || certLoading;
-
-  // const handleClaim = async () => {
-  //   if (!project?.id) return;
-  //   const result = await claim(project.id);
-  //   if (result) {
-  //     refetchCertificates();
-  //   }
-  // };
 
   if (isLoading) {
     return (
@@ -77,9 +68,6 @@ export default function InternCertificateDetail () {
               progress={progress}
               remainingTasks={remainingTasks}
               allTasksDone={allTasksDone}
-              // onClaim={handleClaim}
-              // claiming={claiming}
-              // claimError={claimError}
             />
           )}
         </div>

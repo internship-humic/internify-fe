@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from "react";
-import { useCurrentUser, useUpdateProfile } from "../../hooks/useUser";
+import { useCurrentUser, useUpdateProfile, resolveFileUrl, DEFAULT_AVATAR } from "../../hooks/useUser";
 import { customToast } from "../utils/showToast";
 import { Pen } from "lucide-react";
+import UpdateProfileDialog from "./UpdateProfileDialogue";
 
 export default function SettingsPage() {
   const { user, loading: userLoading } = useCurrentUser();
-  const { save, loading: saving, error: errorMsg, successMsg } = useUpdateProfile();
+  const { save, loading: saving, msgRef } = useUpdateProfile();
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const isIntern = user?.role === "intern";
 
   const [formData, setFormData] = useState({
@@ -16,24 +18,22 @@ export default function SettingsPage() {
 
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [removePhoto, setRemovePhoto] = useState(false);
   const [imageError, setImageError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (user) {
-      setFormData({
-        fullName:
-          user.full_name || "",
-        email: user.email || "",
-        bio: user.professional_bio || "",
-      });
-      if (user.profile_picture) {
-        setPhotoPreview(user.profile_picture);
-      } else {
-        setPhotoPreview(null);
-      }
-      setImageError(false);
-    }
+    if (!user) return;
+
+    setFormData({
+      fullName: user.full_name || `${user.nama_depan} ${user.nama_belakang}`.trim(),
+      email: user.email || "",
+      bio: user.professional_bio || "",
+    });
+
+    setPhotoPreview(resolveFileUrl(user.profile_picture) ?? DEFAULT_AVATAR);
+    setRemovePhoto(false);
+    setImageError(false);
   }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -43,45 +43,49 @@ export default function SettingsPage() {
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setPhotoFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => setPhotoPreview(reader.result as string);
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    setPhotoFile(file);
+    setRemovePhoto(false);
+    setImageError(false);
+
+    const reader = new FileReader();
+    reader.onloadend = () => setPhotoPreview(reader.result as string);
+    reader.readAsDataURL(file);
   };
 
   const handleRemovePhoto = () => {
     setPhotoFile(null);
-    setPhotoPreview(null);
+    setRemovePhoto(true);
+    setPhotoPreview(DEFAULT_AVATAR);
     setImageError(false);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const handleSaveChanges = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    await customToast.promise(
-      save({
-        full_name: formData.fullName,
-        email: formData.email,
-        professional_bio: formData.bio,
-      }),
-      {
-        loading: "Menyimpan perubahan...",
-        success: () => ({
-          title: "Perubahan berhasil disimpan!",
-          description: successMsg || "",
+  const handleSaveChanges = async () => {
+    setConfirmOpen(false);
+    try {
+      await customToast.promise(
+        save({
+          full_name: formData.fullName,
+          email: formData.email,
+          professional_bio: formData.bio,
+          profile_picture: photoFile ?? (removePhoto ? DEFAULT_AVATAR : undefined),
         }),
-        error: () => ({
-          title: "Gagal menyimpan perubahan!",
-          description: errorMsg || "",
-        }),
-      }
-    );
+        {
+          loading: "Menyimpan perubahan...",
+          success: () => ({
+            title: "Perubahan berhasil disimpan!",
+            description: msgRef.current.success ?? "",
+          }),
+          error: () => ({
+            title: "Gagal menyimpan perubahan!",
+            description: msgRef.current.error ?? "",
+          }),
+        }
+      );
+    } catch { }
   };
-
-  const initialLetter = formData.fullName ? formData.fullName.charAt(0).toUpperCase() : "U";
 
   if (userLoading) {
     return (
@@ -90,6 +94,11 @@ export default function SettingsPage() {
       </div>
     );
   }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setConfirmOpen(true);
+  };
 
   return (
     <div>
@@ -113,22 +122,20 @@ export default function SettingsPage() {
         </div>
 
         {/* Card Body & Form */}
-        <form onSubmit={handleSaveChanges} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
 
           {/* Profile Photo Row */}
           <div className="flex items-center gap-5 py-2">
             {/* Avatar dengan badge edit */}
             <div className="relative flex-shrink-0">
-              <div className="w-16 h-16 rounded-xl border-2 border-red-100 overflow-hidden bg-gray-100 flex items-center justify-center shadow-sm">
-                {photoPreview && !imageError ? (
+              <div className="w-16 h-16 rounded-xl border border-card-outline overflow-hidden bg-gray-100 flex items-center justify-center shadow-sm">
+                {photoPreview && !imageError && (
                   <img
                     src={photoPreview}
                     alt="Profile"
                     className="w-full h-full object-cover"
                     onError={() => setImageError(true)}
                   />
-                ) : (
-                  <span className="text-3xl font-black text-gray-900">{initialLetter}</span>
                 )}
               </div>
               {/* Badge edit icon */}
@@ -237,18 +244,6 @@ export default function SettingsPage() {
             </p>
           </div>
 
-          {/* Feedback Messages
-          {successMsg && (
-            <p className="text-xs text-green-600 bg-green-50 p-2 rounded-md font-medium">
-              {successMsg}
-            </p>
-          )}
-          {errorMsg && (
-            <p className="text-xs text-red-600 bg-red-50 p-2 rounded-md font-medium">
-              {errorMsg}
-            </p>
-          )} */}
-
           {/* Footer Action */}
           <div className="flex justify-end pt-2">
             <button
@@ -262,6 +257,13 @@ export default function SettingsPage() {
 
         </form>
       </div>
+      <UpdateProfileDialog
+        isOpen={confirmOpen}
+        isIntern={isIntern}
+        loading={saving}
+        onConfirm={handleSaveChanges}
+        onClose={() => setConfirmOpen(false)}
+      />
     </div>
   );
 }

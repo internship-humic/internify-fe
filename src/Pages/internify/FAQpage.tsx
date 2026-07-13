@@ -8,6 +8,21 @@ interface FAQ {
   created_at: string;
 }
 
+// Skeleton item that mirrors the real FAQ card shape
+function FAQSkeleton() {
+  return (
+    <div className="relative shadow-md py-5 px-10 rounded-md bg-white border-l-6 border-gray-200 animate-pulse">
+      {/* Question bar */}
+      <div className="h-5 bg-gray-200 rounded w-2/3 mb-3" />
+      {/* Answer bars */}
+      <div className="pl-8 space-y-2">
+        <div className="h-3 bg-gray-200 rounded w-full" />
+        <div className="h-3 bg-gray-200 rounded w-4/5" />
+      </div>
+    </div>
+  );
+}
+
 export default function FAQPage() {
   const [faq, setFaq] = useState<FAQ[]>([]);
   const [loading, setLoading] = useState(false);
@@ -37,7 +52,11 @@ export default function FAQPage() {
 
       {/* FAQ Lists */}
       {loading ? (
-        <p className="text-gray-500">Memuat FAQ...</p>
+        <div className="space-y-8 max-w-auto">
+          {[...Array(5)].map((_, i) => (
+            <FAQSkeleton key={i} />
+          ))}
+        </div>
       ) : (
         <div className="space-y-8 max-w-auto">
           {faq.map((item) => (
@@ -57,4 +76,4 @@ export default function FAQPage() {
       )}
     </div>
   );
-}
+}

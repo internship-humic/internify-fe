@@ -1,5 +1,6 @@
 import ProjectCard from './components/ProjectsCard'
 import { useMyProjects } from '../../../hooks/useProjects';
+import TeamPana from '../../../assets/Team-pana.svg'
 
 export default function ProjectsPage() {
   const { projects, loading, error } = useMyProjects();
@@ -21,12 +22,19 @@ export default function ProjectsPage() {
         <h1 className="page-title-desc">View assigned projects and track their progress.</h1>
       </div>
 
-      {/* Grid card */}
-      <div className="grid grid-cols-1 gap-4 md:gap-3 md:grid-cols-3 lg:grid-cols-5">
-        {projects.map(project => (
-          <ProjectCard key={project.id} {...project} />
-        ))}
-      </div>
+      {projects.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-2 gap-3 mt-19">
+          <img className='w-[440px]' src={TeamPana} alt="" />
+          <p className="text-[18px] text-font-shade">Kamu belum tergabung ke projek apapun</p>
+        </div>
+      ) : (
+        // Grid card
+        <div className="grid grid-cols-1 gap-4 md:gap-3 md:grid-cols-3 lg:grid-cols-5">
+          {projects.map(project => (
+            <ProjectCard key={project.id} {...project} />
+          ))}
+        </div>
+      )}
     </div>
   )
 }

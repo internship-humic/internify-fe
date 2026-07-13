@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, FolderKanban, UsersRound, Medal, Settings, HelpCircle, LogOut, X } from 'lucide-react';
+import { FaUserTie } from "react-icons/fa";
 
 const navItems = [
   // belum kutambahin
@@ -39,19 +40,21 @@ export default function SidebarMentor({ isOpen, closeSidebar }: SidebarProps) {
   return (
     <aside
       className={`
-        bg-white border-r border-gray-300 flex flex-col py-5 px-1 gap-1 overflow-y-auto flex-shrink-0 transition-transform duration-300 ease-in-out
+        bg-white border-r border-gray-300 flex flex-col py-5 px-3 gap-1 overflow-y-auto flex-shrink-0 transition-transform duration-300 ease-in-out
         lg:sticky lg:top-[50px] lg:h-[calc(100vh-73px)] lg:w-[250px] lg:translate-x-0 lg:z-8
-        fixed top-0 left-0 h-[calc(100vh-50px)] w-[270px] z-40 pt-5
+        fixed top-0 left-0 h-screen w-[270px] z-40 pt-5
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
       `}
     >
       {/* Brand & Tombol Close untuk Mobile */}
-      <div className="flex items-center justify-between px-2 pb-10">
+      <div className="flex items-center justify-between px-2 pb-6">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-[10px] bg-red-600 flex items-center justify-center flex-shrink-0"></div>
+          <div className="w-9 h-9 rounded-[10px] bg-red flex items-center justify-center flex-shrink-0">
+            <FaUserTie className="w-[18px] h-[18px] text-white"/>
+          </div>
           <div>
-            <p className="text-sm font-bold text-gray-900 leading-tight">Internify</p>
-            <p className="text-[11px] text-gray-400">LMS Portal</p>
+            <p className="text-[19px] font-bold text-font-shade leading-tight">Internify</p>
+            <p className="text-[14px] text-font">LMS Portal</p>
           </div>
         </div>
 
@@ -71,9 +74,9 @@ export default function SidebarMentor({ isOpen, closeSidebar }: SidebarProps) {
             <button
               key={path}
               onClick={() => handleNav(path)}
-              className={`flex items-center gap-2.5 w-full px-3 py-2 text-[13.5px] rounded-lg font-medium text-left transition-colors
+              className={`flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-[13.5px] font-medium text-left transition-colors
                 ${isActive
-                  ? "bg-red-foreground text-red font-semibold border-l-6 border-red"
+                  ? "bg-red-foreground text-red font-semibold border-l-4 border-base"
                   : "text-font hover:bg-red-foreground"
                 }`}
             >
@@ -84,14 +87,14 @@ export default function SidebarMentor({ isOpen, closeSidebar }: SidebarProps) {
         })}
       </nav>
 
-      <div className="h-px bg-gray-200 my-1" />
+      <div className="h-px bg-gray-300 my-1" />
 
       {/* Preferences */}
-      <p className="text-[10px] font-semibold tracking-widest text-gray-400 px-3 py-1.5">
+      <p className="text-[10px] font-semibold tracking-widest text-font px-3 py-1.5">
         PREFERENCES
       </p>
       <nav className="flex flex-col gap-0.5">
-        {prefItems.map(({ label, icon: Icon, path, danger, isLogout }) => {
+        {prefItems.map(({ label, icon: Icon, path, isLogout }) => {
           const isActive = location.pathname === path;
           return (
             <button

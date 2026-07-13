@@ -63,10 +63,9 @@
       ctx.fillStyle = "#800000";
       ctx.fillText("CERT/20260609/PRJ2/USR5", canvas.width * 0.825, canvas.height * 0.918);
 
-      // 5. QR code — posisi & ukuran pakai persentase, sama seperti elemen lain
-      const qrSize = canvas.width * 0.103; // atur besar-kecil di sini
-      const qrX = canvas.width * 0.77;     // titik kiri-atas QR (bukan tengah!)
-      const qrY = canvas.height * 0.715;
+      const qrSize = canvas.width * 0.103;
+      const qrX = canvas.width * 0.855;
+      const qrY = canvas.height * 0.85;
       ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
     }
 

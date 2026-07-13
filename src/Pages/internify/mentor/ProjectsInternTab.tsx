@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Users } from 'lucide-react';
 import ManageInternsModal from './components/AddInternsDialog';
 import type { ProjectDetail, ProjectMember } from '../../../types/project.types';
 import { useRemoveMember } from '../../../hooks/useProjects';
@@ -68,7 +68,13 @@ export default function InternsTab({ project }: { project: ProjectDetail }) {
             </span>
           </button>
         </div>
-        {members.map((member: ProjectMember, idx) => (
+        {members.length === 0 ? (
+          <div className='flex flex-col items-center justify-center py-16'>
+            <Users className='w-12 h-12 text-font-shade mx-auto'/>
+            <p className="text-sm text-font-shade mt-3">Belum ada anggota.</p>
+          </div>
+        ) : (
+          members.map((member: ProjectMember, idx) => (
           <div
             key={idx}
             className={`flex items-center justify-between py-3 ${idx < members.length - 1 ? 'border-b border-gray-300' : ''
@@ -92,7 +98,7 @@ export default function InternsTab({ project }: { project: ProjectDetail }) {
               </button>
             </div>
           </div>
-        ))}
+        )))}
       </div>
       {isModalOpen && <ManageInternsModal 
         isOpen={isModalOpen} 

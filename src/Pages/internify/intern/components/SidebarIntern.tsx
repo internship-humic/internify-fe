@@ -2,6 +2,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Award, Settings, HelpCircle, X } from 'lucide-react';
 import { GrHomeRounded } from "react-icons/gr";
 import { MdOutlineAssignment, MdLogout } from "react-icons/md";
+import { HiUser } from "react-icons/hi2";
 
 const navItems = [
   { label: "Home", icon: GrHomeRounded, path: "/intern" },
@@ -46,12 +47,14 @@ export default function SidebarIntern({ isOpen, closeSidebar }: SidebarProps) {
       `}
     >
       {/* Brand & Tombol Close untuk Mobile */}
-      <div className="flex items-center justify-between px-2 pb-10">
+      <div className="flex items-center justify-between px-2 pb-6">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-[10px] bg-red flex items-center justify-center flex-shrink-0"></div>
+          <div className="w-9 h-9 rounded-[10px] bg-red flex items-center justify-center flex-shrink-0">
+            <HiUser className="w-[18px] h-[18px] text-white"/>
+          </div>
           <div>
-            <p className="text-sm font-bold text-gray-900 leading-tight">Internify</p>
-            <p className="text-[11px] text-gray-400">LMS Portal</p>
+            <p className="text-[19px] font-bold text-font-shade leading-tight">Internify</p>
+            <p className="text-[14px] text-font">LMS Portal</p>
           </div>
         </div>
         <button
@@ -83,10 +86,10 @@ export default function SidebarIntern({ isOpen, closeSidebar }: SidebarProps) {
         })}
       </nav>
 
-      <div className="h-px bg-gray-200 my-1" />
+      <div className="h-px bg-gray-300 my-1" />
 
       {/* Preferences */}
-      <p className="text-[10px] font-semibold tracking-widest text-gray-400 px-3 py-1.5">
+      <p className="text-[10px] font-semibold tracking-widest text-font px-3 py-1.5">
         PREFERENCES
       </p>
       <nav className="flex flex-col gap-0.5">

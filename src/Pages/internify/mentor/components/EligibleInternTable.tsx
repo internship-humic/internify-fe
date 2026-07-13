@@ -171,7 +171,7 @@ export default function EligibleInternTable({
     ).then(() => true).catch(() => false);
 
     setGenerating(false);
-    if (ok) navigate(`/mentor/certificates/${project.id}/result`);
+    if (ok) navigate(`/mentor/certificates/${project.slug}/result`);
   };
 
   if (loading) {

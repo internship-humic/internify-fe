@@ -13,5 +13,5 @@ export interface UpdateProfilePayload {
   full_name?: string;
   email?: string;
   professional_bio?: string;
-  profile_picture?: File | null;
+  profile_picture?: File | string | null;
 }

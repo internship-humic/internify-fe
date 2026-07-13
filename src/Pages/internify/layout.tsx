@@ -36,13 +36,13 @@ export const MentorLayout = () => {
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const closeSidebar = () => setIsSidebarOpen(false);
   return (
-    <div className="min-h-screenflex flex-col">
+    <div className="min-h-screen flex flex-col relative">
       <Header toggleSidebar={toggleSidebar}/>
-      <div className="flex flex-1">
+      <div className="flex flex-1 relative">
         <SidebarMentor isOpen={isSidebarOpen} closeSidebar={closeSidebar} />
         {isSidebarOpen && (
           <div 
-            className="fixed inset-0 bg-black/20 z-20 md:hidden min-h-screen" 
+            className="fixed inset-0 bg-black/20 z-20 lg:hidden min-h-screen" 
             onClick={closeSidebar}
           />
         )}

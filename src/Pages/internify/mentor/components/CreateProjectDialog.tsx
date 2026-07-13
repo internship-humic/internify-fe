@@ -38,10 +38,8 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
 
     if (isOpen) {
       dialog.showModal();
-      document.body.style.overflow = "hidden";
     } else {
       dialog.close();
-      document.body.style.overflow = "unset";
     }
 
     const handleCancel = (e: Event) => {

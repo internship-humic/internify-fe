@@ -2,7 +2,7 @@ import { Bell, Menu } from "lucide-react"
 import { useEffect, useState } from "react";
 import humiclogo from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
-import { useCurrentUser } from "../hooks/useUser";
+import { useCurrentUser, resolveFileUrl, DEFAULT_AVATAR } from "../hooks/useUser";
 
 function getInitials(fullName: string | undefined | null): string {
   if (!fullName) return "U";
@@ -17,15 +17,12 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
   const { user } = useCurrentUser();
   const [imageError, setImageError] = useState(false);
 
-  useEffect(() => {
-    setImageError(false);
-  }, [user?.profile_picture, user?.full_name]);
+  const displayName = user?.full_name?.trim() || [user?.nama_depan, user?.nama_belakang].filter(Boolean).join(" ") || "";
 
-  const settingsPath =
-    user?.role === "intern" ? "/intern" : "/mentor";
+  const photoUrl = resolveFileUrl(user?.profile_picture);
 
-  const initials = user?.full_name ? getInitials(user.full_name) : "U";
-  const hasPhoto = !!user?.profile_picture && !imageError;
+  const initials = getInitials(displayName);
+  const hasPhoto = !!photoUrl && !imageError;
 
   return (
     <header className='sticky top-0 flex w-full justify-between items-center py-4 px-12 bg-white border-b border-gray-300 z-10'>
@@ -49,13 +46,12 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
 
         {/* Gambar Profil */}
         <button
-          onClick={() => nav(settingsPath)}
-          className="rounded-full w-9 h-9 overflow-hidden border-2 border-gray-200 hover:border-red-400 transition-colors flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-red-400"
+          className="rounded-full w-9 h-9 overflow-hidden border-2 border-gray-200"
           title="Profile Settings"
         >
           {hasPhoto ? (
             <img
-              src={user?.profile_picture ?? ""}
+              src={`${import.meta.env.VITE_API_BASE_URL}${user?.profile_picture ?? ""}`}
               alt={user?.full_name ?? "Profile"}
               className="w-full h-full object-cover"
               onError={() => setImageError(true)}

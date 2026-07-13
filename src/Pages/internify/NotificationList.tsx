@@ -5,6 +5,7 @@ import { LuFileSpreadsheet } from "react-icons/lu";
 import { io } from "socket.io-client";
 import * as NotificationService from "../../services/NotificationService";
 import type { UINotification, BackendNotification } from "../../types/notification.types";
+import mailRafiki from '../../assets/Mail-rafiki.svg'
 
 const getCookieToken = () => {
   return document.cookie
@@ -95,7 +96,10 @@ export default function NotificationList() {
       </div>
 
       {notifications.length === 0 && (
-        <p className="text-sm text-gray-400">Belum ada notifikasi.</p>
+        <div className="flex flex-col items-center justify-center pt-14 gap-3">
+          <img src={mailRafiki} alt="empty notification" className="w-[280px]"/>
+          <p className="text-lg text-font">Belum ada pesan notifikasi yang diterima</p>
+        </div>
       )}
 
       <div className="space-y-6">
@@ -165,9 +169,9 @@ export default function NotificationList() {
 
         {/* Header Section YESTERDAY */}
         <div className="space-y-3 pt-2">
-          <h2 className="text-[10px] font-bold tracking-widest text-gray-400 uppercase">
+          {/* <h2 className="text-[10px] font-bold tracking-widest text-gray-400 uppercase">
             YESTERDAY
-          </h2>
+          </h2> */}
 
           {notifications.filter(n => n.group === "YESTERDAY").map((item) => (
             <div

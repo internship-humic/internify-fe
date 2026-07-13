@@ -3,10 +3,11 @@ import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import CreateProjectModal from './components/CreateProjectDialog';
 import { useProjectsByRole } from '../../../hooks/useListProjects';
+import TeamPana from '../../../assets/Team-pana.svg';
 
 export default function MentorProjectsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { projects, loading, error, refetch } = useProjectsByRole("active");
+  const { projects, loading, error, refetch } = useProjectsByRole();
 
   const openDialog = () => {
     setIsModalOpen(true);
@@ -48,6 +49,14 @@ export default function MentorProjectsPage() {
       </div>
 
       <div className="flex flex-wrap gap-4 items-stretch">
+
+        {projects.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-2 gap-3 mt-19 w-full">
+            <img className='w-[440px]' src={TeamPana} alt="" />
+            <p className="text-[18px] text-font-shade">Belum ada project, Buat project dengan kik 'add'</p>
+          </div>
+        )}
+
         {projects.map(project => (
           <MentorProjectCard
             key={project.id}

@@ -13,15 +13,13 @@ interface AddInternsModalProps {
 
 export default function AddInternsModal({ isOpen, onClose, userId }: AddInternsModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-
-  // Form States
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
-
-  // Hooks
   const { assign, loading: assigning, error: assignError } = useAssignMember();
   const { projects, loading: loadingProjects } = useProjects("active");
   const { interns, loading: loadingInterns } = useAssignableInterns();
+
+  console.log(projects)
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -29,10 +27,10 @@ export default function AddInternsModal({ isOpen, onClose, userId }: AddInternsM
 
     if (isOpen) {
       dialog.showModal();
-      document.body.style.overflow = "hidden";
+      // document.body.style.overflow = "hidden";
     } else {
       dialog.close();
-      document.body.style.overflow = "unset";
+      // document.body.style.overflow = "unset";
     }
 
     const handleCancel = (e: Event) => {

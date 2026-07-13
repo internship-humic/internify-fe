@@ -14,7 +14,7 @@ export default function NotFoundPage() {
 
         {/* 404 Large Text */}
         <div className="relative mb-4 select-none">
-          <span className="text-[160px] sm:text-[200px] font-black leading-none bg-gradient-to-b from-red to-red/10 bg-clip-text text-transparent">
+          <span className="text-[160px] sm:text-[200px] font-black leading-none bg-gradient-to-b from-red to-red/60 bg-clip-text text-transparent">
             404
           </span>
           <div className="absolute inset-0 flex items-center justify-center">
@@ -22,13 +22,13 @@ export default function NotFoundPage() {
         </div>
 
         {/* Title */}
-        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3 tracking-tight">
-          Not Found
+        <h1 className="text-3xl sm:text-4xl font-bold text-red/60 mb-3 tracking-tight">
+          Tidak Ditemukan
         </h1>
 
         {/* Description */}
         <p className="text-slate-800 text-base sm:text-lg mb-10 max-w-md leading-relaxed">
-          Sorry, the page you are looking for does not exist or has been moved. Let's get back on track.
+          Maaf, halaman yang Anda cari tidak ada atau telah dipindahkan. Mari kembali ke jalur yang benar.
         </p>
 
         {/* Divider */}
@@ -38,7 +38,7 @@ export default function NotFoundPage() {
         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/10 bg-white/30 hover:bg-white/15 text-white font-semibold text-sm transition-all active:scale-95 backdrop-blur-sm"
+            className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-red/60 bg-white/30 hover:bg-white/15 text-red-700 font-semibold text-sm transition-all active:scale-95 backdrop-blur-sm"
           >
             <ArrowLeft className="w-4 h-4" />
             Kembali
