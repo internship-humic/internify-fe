@@ -6,7 +6,11 @@ export interface CurrentUser {
   email: string;
   role: "mentor" | "intern" | "admin";
   professional_bio?: string;
-  profile_picture?: string | null;
+  profile_picture?:  string | null;
+  changes?: number;
+  kelompok_peminatan: string;
+  signature?: string;
+
 }
 
 export interface UpdateProfilePayload {

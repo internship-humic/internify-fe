@@ -7,8 +7,8 @@ export default function ProjectTimeline({ tasks }: { tasks: InternTaskItem[] }) 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   return (
-    <div className="">
-      <div className="flex items-center gap-1.5 mb-1 md:mb-4 justify-between">
+    <div>
+      <div className="flex items-center gap-1.5 mb-0 md:mb-4 justify-between">
         <span className="font-semibold text-md text-font-shade">Timeline</span>
       </div>
       <ul className="relative pl-4">
@@ -19,13 +19,13 @@ export default function ProjectTimeline({ tasks }: { tasks: InternTaskItem[] }) 
           const isPast = d < today;
           const active = isToday || isPast;
           return (
-            <li key={task.id} className="relative mb-6 list-none">
+            <li key={task.id} className="relative mb-2 list-none">
               {index < tasks.length - 1 && (
                 <div className="absolute -left-[1.0625rem] top-3 w-px h-full bg-[#ddd]" />
               )}
               {/* Dot */}
               <div
-                className={`absolute -left-5 top-0.5 w-3 h-3 rounded-full border-2 border-white ${
+                className={`absolute -left-[1.45rem] top-0.5 w-3 h-3 rounded-full border-2 border-white ${
                   active ? 'bg-red' : 'bg-gray-400'
                 } ${isToday ? 'shadow-md' : ''}`}
               />

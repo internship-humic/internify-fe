@@ -27,7 +27,6 @@ export default function InternsTable({
 
   const totalPages = Math.max(1, Math.ceil(interns.length / PAGE_SIZE));
 
-  // Clamp page bila filter mengubah jumlah hasil
   const safePage = Math.min(currentPage, totalPages);
   const startIndex = (safePage - 1) * PAGE_SIZE;
   const paginatedInterns = interns.slice(startIndex, startIndex + PAGE_SIZE);

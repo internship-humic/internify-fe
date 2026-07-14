@@ -34,6 +34,12 @@ export default function TaskCard({ task }: { task: InternTaskItem }) {
       onClick={() => navigate(`/intern/projects/${task.project_slug}/${task.slug}?type=${task.submission_type}`)}
     >
       <div className="flex-1 min-w-0">
+        <div className="md:hidden mb-[8px]">
+          <span
+            className={`font-semibold text-xs px-2.5 py-1 rounded-md whitespace-nowrap border ${statusStyles[displayStatus]}`}>
+            {statusLabels[displayStatus]}
+          </span>
+        </div>
         <div className="text-[11px] text-font mb-1">
           Deadline : {formatDate(task.deadline_at)} at {formatTime(task.deadline_at)}
         </div>
@@ -48,7 +54,6 @@ export default function TaskCard({ task }: { task: InternTaskItem }) {
         </div>
       </div>
 
-      <div className="block md:hidden h-[10px] bg-gray-600" />
 
       <div className="shrink-0 hidden md:flex items-center border border-card-outline">
         <span

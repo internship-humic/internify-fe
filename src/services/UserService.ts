@@ -15,49 +15,45 @@ export const loginUser = async (payload: {
 // GET /auth-api/me
 export const getProfile = async (): Promise<CurrentUser> => {
   const res = await api.get("/auth-api/me");
-  return res.data.data;
+  return normalizeUser(res.data.data);
 };
+
+export const normalizeUser = (raw: any): CurrentUser => ({
+  ...raw,
+  full_name:
+    raw.full_name ??
+    `${raw.nama_depan ?? ""} ${raw.nama_belakang ?? ""}`.trim(),
+});
+
+// Mengembalikan inisial nama dari pengguna (Huruf pertama Nama depan dan huruf kedua Nama belakang)
+export function getInitials(fullName: string | undefined | null): string {
+  if (!fullName) return "U";
+  const parts = fullName.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "U";
+  if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+}
 
 // PATCH /auth-api/update-profile
 export const updateProfile = async (
   payload: UpdateProfilePayload,
 ): Promise<CurrentUser> => {
-  const parts = (payload.full_name ?? "").trim().split(/\s+/).filter(Boolean);
-  const namaDepan = parts[0] ?? "";
-  const namaBelakang = parts.slice(1).join(" ");
+  const formData = new FormData();
 
-  if (payload.profile_picture instanceof File) {
-    const formData = new FormData();
-
-    if (payload.full_name !== undefined) {
-      formData.append("nama_depan", namaDepan);
-      formData.append("nama_belakang", namaBelakang);
-    }
-    if (payload.email !== undefined) formData.append("email", payload.email);
-    if (payload.professional_bio !== undefined)
-      formData.append("professional_bio", payload.professional_bio);
-
-    formData.append("profile_picture", payload.profile_picture);
-
-    const res = await api.patch("/auth-api/update-profile", formData);
-    return res.data.data;
-  }
-  const body: Record<string, unknown> = {};
   if (payload.full_name !== undefined) {
-    body.nama_depan = namaDepan;
-    body.nama_belakang = namaBelakang;
+    formData.append("full_name", payload.full_name.trim());
   }
-  if (payload.email !== undefined) body.email = payload.email;
+  if (payload.email !== undefined) formData.append("email", payload.email.trim());
+
   if (payload.professional_bio !== undefined) {
-    body.professional_bio = payload.professional_bio;
+    formData.append("professional_bio", payload.professional_bio);
+  }
+  if (payload.profile_picture instanceof File) {
+    formData.append("profile_picture", payload.profile_picture);
   }
 
-  if (typeof payload.profile_picture === "string") {
-    body.profile_picture = payload.profile_picture;
-  }
-
-  const res = await api.patch("/auth-api/update-profile", body);
-  return res.data.data;
+  const res = await api.patch("/auth-api/update-profile", formData);
+  return normalizeUser(res.data.data);
 };
 
 export const getMahasiswa = async (): Promise<Mahasiswa[]> => {

@@ -1,31 +1,80 @@
 // hooks/useUser.ts
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef, useSyncExternalStore } from "react";
 import { loginUser, getProfile, updateProfile } from "../services/UserService";
 import type { Mahasiswa } from "../types/project.types";
 import { getMahasiswa } from "../services/MahasiswaService";
 import type { CurrentUser, UpdateProfilePayload } from "../types/user.types";
-import { useRef } from "react";
 
-// GET /auth-api/me — ambil data user yang sedang login
+
+type UserStore = {
+  user: CurrentUser | null;
+  loading: boolean;
+  error: string | null;
+};
+
+let store: UserStore = { user: null, loading: true, error: null };
+const listeners = new Set<() => void>();
+
+const setStore = (patch: Partial<UserStore>) => {
+  store = { ...store, ...patch }; // objek baru -> getSnapshot berubah referensinya
+  listeners.forEach((l) => l());
+};
+
+const subscribe = (l: () => void) => {
+  listeners.add(l);
+  return () => listeners.delete(l);
+};
+
+const getSnapshot = () => store;
+
+//  useUpdateProfile setelah PATCH sukses -> broadcast ke semua konsumen
+export const setCurrentUser = (user: CurrentUser | null) => {
+  setStore({ user, loading: false, error: null });
+};
+
+// dipakai saat logout
+export const clearCurrentUser = () => {
+  fetched = false;
+  inflight = null;
+  setStore({ user: null, loading: false, error: null });
+};
+
+let fetched = false;
+let inflight: Promise<void> | null = null;
+
+const fetchUser = (): Promise<void> => {
+  if (inflight) return inflight;
+
+  setStore({ loading: true, error: null });
+
+  inflight = getProfile()
+    .then((u) => {
+      fetched = true;
+      setStore({ user: u, loading: false, error: null });
+    })
+    .catch(() => {
+      setStore({ loading: false, error: "Gagal memuat data user." });
+    })
+    .finally(() => {
+      inflight = null;
+    });
+
+  return inflight;
+};
+
 export const useCurrentUser = () => {
-  const [user, setUser] = useState<CurrentUser | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const refetch = useCallback(() => {
-    setLoading(true);
-    setError(null);
-    getProfile()
-      .then(setUser)
-      .catch(() => setError("Gagal memuat data user."))
-      .finally(() => setLoading(false));
-  }, []);
+  const snap = useSyncExternalStore(subscribe, getSnapshot);
 
   useEffect(() => {
-    refetch();
-  }, [refetch]);
+    if (!fetched && !inflight) fetchUser();
+  }, []);
 
-  return { user, loading, error, refetch };
+  const refetch = useCallback(() => {
+    fetched = false;
+    return fetchUser();
+  }, []);
+
+  return { user: snap.user, loading: snap.loading, error: snap.error, refetch };
 };
 
 // POST /auth-api/login
@@ -38,6 +87,7 @@ export const useLogin = () => {
     setError(null);
     try {
       const data = await loginUser({ email, password });
+      clearCurrentUser(); // buang user lama agar tidak bocor antar-sesi
       return data; // { token }
     } catch (err: any) {
       const status = err?.response?.status;
@@ -55,7 +105,14 @@ export const useLogin = () => {
   return { login, loading, error, setError };
 };
 
-export const DEFAULT_AVATAR = "https://placehold.co/150";
+export const getInitials = (fullName?: string | null): string => {
+  if (!fullName) return "U";
+  const parts = fullName.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "U";
+  if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+};
+
 
 export const resolveFileUrl = (path?: string | null): string | null => {
   if (!path) return null;
@@ -84,6 +141,8 @@ export const useUpdateProfile = () => {
     try {
       const updated = await updateProfile(payload);
 
+      setCurrentUser(updated);
+
       const msg = "Profile updated successfully!";
       msgRef.current.success = msg;
       setSuccessMsg(msg);
@@ -103,7 +162,10 @@ export const useUpdateProfile = () => {
           message = "Sesi Anda telah berakhir. Silakan login kembali.";
           break;
         case 403:
-          message = "Anda tidak memiliki izin untuk mengubah profil ini.";
+          message = apiMessage || "Anda tidak memiliki izin untuk mengubah data ini.";
+          break;
+        case 409:
+          message = apiMessage || "Email sudah digunakan, atau nama sudah pernah diubah.";
           break;
         case 413:
           message = "Ukuran file terlalu besar. Maksimal 2MB.";
@@ -120,8 +182,6 @@ export const useUpdateProfile = () => {
 
       msgRef.current.error = message;
       setError(message);
-
-      // WAJIB throw — kalau `return null`, toast selalu masuk cabang success.
       throw new Error(message);
     } finally {
       setLoading(false);

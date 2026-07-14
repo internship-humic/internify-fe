@@ -1,15 +1,15 @@
-import { Briefcase, Globe, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { FaInstagram, FaLinkedin, FaRegEnvelope } from "react-icons/fa";
+import logoHumic from "../assets/logo.png"
 
 const footerLinks = {
   Internship: [
     { label: "Beranda", path: "/" },
-    { label: "Tentang", path: "/tentang" },
-    { label: "Life At Humic", path: "/life" },
+    { label: "Tentang", path: "/about-us" },
+    { label: "Life At Humic", path: "/our-developer" },
   ],
-  "Internify Logo": [
-    { label: "Humic Website", path: "/humic" },
+  External: [
+    { label: "Humic Website", path: "https://humic.telkomuniversity.ac.id/" },
     { label: "Our Activity", path: "/activity" },
     { label: "Life At Humic", path: "/life-humic" },
     { label: "Our Developer", path: "/developer" },
@@ -17,9 +17,9 @@ const footerLinks = {
 };
 
 const socials = [
-  { label: "Instagram", icon: FaInstagram, href: "https://placeholder.com" },
-  { label: "LinkedIn", icon: FaLinkedin, href: "https://placeholder.com" },
-  { label: "Email", icon: FaRegEnvelope, href: "https://placeholder.com" },
+  { label: "Instagram", icon: FaInstagram, href: "https://www.instagram.com/humicengineering/" },
+  { label: "LinkedIn", icon: FaLinkedin, href: "https://www.linkedin.com/company/humic-engineering/" },
+  { label: "Email", icon: FaRegEnvelope, href: "https://humic.telkomuniversity.ac.id/" },
 ];
 
 
@@ -54,7 +54,7 @@ export function FooterIntern() {
       {/* Link columns */}
       <div className="flex gap-12 flex-1 justify-end flex-wrap">
         {Object.entries(footerLinks).map(([title, links]) => (
-          <div key={title} className="flex flex-col gap-2.5 min-w-[110px]">
+          <div key={title} className="flex flex-col gap-2 min-w-[110px]">
             <p className="text-[13px] font-bold text-gray-900">{title}</p>
             <ul className="flex flex-col gap-0.5">
               {links.map(({ label, path }) => (
@@ -71,6 +71,11 @@ export function FooterIntern() {
           </div>
         ))}
       </div>
+      <img
+        src={logoHumic}
+        alt="logo humic"
+        className='w-[110px] h-[68px]'
+      />
     </footer>
   );
 }

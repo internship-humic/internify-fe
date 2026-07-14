@@ -1,25 +1,17 @@
 import { Bell, Menu } from "lucide-react"
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import humiclogo from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
-import { useCurrentUser, resolveFileUrl, DEFAULT_AVATAR } from "../hooks/useUser";
-
-function getInitials(fullName: string | undefined | null): string {
-  if (!fullName) return "U";
-  const parts = fullName.trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return "U";
-  if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
-  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
-}
+import { useCurrentUser, resolveFileUrl, getInitials } from "../hooks/useUser";
+import { useNotifications } from "../hooks/useNotification";
 
 export default function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
   const nav = useNavigate();
   const { user } = useCurrentUser();
   const [imageError, setImageError] = useState(false);
-
-  const displayName = user?.full_name?.trim() || [user?.nama_depan, user?.nama_belakang].filter(Boolean).join(" ") || "";
-
+  const { unreadCount } = useNotifications();
   const photoUrl = resolveFileUrl(user?.profile_picture);
+  const displayName = user?.full_name?.trim() || [user?.nama_depan, user?.nama_belakang].filter(Boolean).join(" ") || "";
 
   const initials = getInitials(displayName);
   const hasPhoto = !!photoUrl && !imageError;
@@ -40,8 +32,11 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
       </div>
 
       <div className="flex flex-row gap-6 items-center">
-        <button onClick={() => nav("notifications")}>
+        <button onClick={() => nav("notifications")} className="relative">
           <Bell className="w-5 h-5 hover:text-red-800"/>
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-600 rounded-full border-2 border-white" />
+          )}
         </button>
 
         {/* Gambar Profil */}

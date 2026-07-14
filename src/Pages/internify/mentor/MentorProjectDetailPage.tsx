@@ -25,7 +25,7 @@ export default function MentorProjectsDetailPage() {
   };
 
   if (loading) return (
-    <div className="space-y-4">
+    <div className="space-y-4 mt-10">
       {[...Array(3)].map((_, i) => (
         <div key={i} className="h-32 bg-box-secondary rounded-2xl animate-pulse" />
       ))}
@@ -47,7 +47,7 @@ export default function MentorProjectsDetailPage() {
   return (
     <div>
       {/* Header Utama */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6  ">
         <h1 className="text-3xl font-bold text-[#1a1a1a]">{task.title}</h1>
         <button
           className="flex items-center gap-2 border border-gray-400 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"

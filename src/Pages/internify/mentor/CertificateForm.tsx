@@ -192,7 +192,7 @@ export default function CertificateDetail() {
               >
                 {uploading ? (
                   <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <Loader2 className="w-5 h-5 animate-spin" />
                     Mengupload...
                   </>
                 ) : (

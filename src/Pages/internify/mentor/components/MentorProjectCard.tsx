@@ -27,7 +27,7 @@ export default function MentorProjectCard({ onArchived, onCompleted, ...project 
 
  const Icon = getProjectIcon(project.project_icon); 
 
-  /* ── Archive ─────────────────────────────────────────────── */
+  /* Archive */
   const handleArchiveButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setShowArchiveDialog(true);
@@ -65,24 +65,6 @@ export default function MentorProjectCard({ onArchived, onCompleted, ...project 
 
   return (
     <>
-      {/* Archive Confirmation Dialog */}
-      <ArchiveProjectDialog
-        isOpen={showArchiveDialog}
-        projectName={project.project_name}
-        loading={archiveLoading}
-        onConfirm={handleArchiveConfirm}
-        onClose={() => setShowArchiveDialog(false)}
-      />
-
-      {/* Complete Confirmation Dialog */}
-      <CompleteProjectDialog
-        isOpen={showCompleteDialog}
-        projectName={project.project_name}
-        loading={completeLoading}
-        onConfirm={handleCompleteConfirm}
-        onClose={() => setShowCompleteDialog(false)}
-      />
-
       {/* Card */}
       <div
         onClick={handleCardClick}
@@ -151,6 +133,24 @@ export default function MentorProjectCard({ onArchived, onCompleted, ...project 
           </button>
         </div>
       </div>
+
+      {/* Archive Confirmation Dialog */}
+      <ArchiveProjectDialog
+        isOpen={showArchiveDialog}
+        projectName={project.project_name}
+        loading={archiveLoading}
+        onConfirm={handleArchiveConfirm}
+        onClose={() => setShowArchiveDialog(false)}
+      />
+
+      {/* Complete Confirmation Dialog */}
+      <CompleteProjectDialog
+        isOpen={showCompleteDialog}
+        projectName={project.project_name}
+        loading={completeLoading}
+        onConfirm={handleCompleteConfirm}
+        onClose={() => setShowCompleteDialog(false)}
+      />
     </>
   );
 }

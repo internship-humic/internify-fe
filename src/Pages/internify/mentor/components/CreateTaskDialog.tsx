@@ -72,7 +72,7 @@ export default function CreateTaskModal({ isOpen, onClose, projectId, onSuccess 
     }
   };
   return (
-    <dialog ref={dialogRef} className="custom-dialog p-[1.5rem]">
+    <dialog ref={dialogRef} className="custom-dialog">
       <div className="dialog-header">
         <div>
           <h2 className="text-[26px] font-bold text-[#B30000] tracking-tight">Create New Task</h2>
@@ -82,7 +82,7 @@ export default function CreateTaskModal({ isOpen, onClose, projectId, onSuccess 
           <X className="w-5 h-5 stroke-[2.5]" />
         </button>
       </div>
-      <form onSubmit={handleSubmit} className="px-6 space-y-2 overflow-y-auto flex-1">
+      <form onSubmit={handleSubmit} className="p-6 space-y-2 overflow-y-auto flex-1 pt-7">
         <div>
           <label className="text-xs font-bold text-gray-700 tracking-wide">Task Title</label>
           <input

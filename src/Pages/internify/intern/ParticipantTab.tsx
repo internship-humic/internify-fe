@@ -1,7 +1,12 @@
 import { Users } from 'lucide-react';
 import type { ProjectDetail, ProjectMember } from '../../../types/project.types';
+import { useState } from 'react';
+import { resolveFileUrl, getInitials } from '../../../hooks/useUser';
 
 export default function ParticipantsTab({ project }: { project: ProjectDetail }) {
+  const [ImageError, setImageError] = useState(false);
+  const Avatar = resolveFileUrl(project.admin.profile_picture);
+  const hasAvatar = !!Avatar && !ImageError;
   return (
     <div>
       {/* Mentor */}
@@ -9,14 +14,19 @@ export default function ParticipantsTab({ project }: { project: ProjectDetail })
         <h3 className="font-bold text-font-shade mb-3.5">Mentor</h3>
         <div className="border-b border-box-border pb-4">
           <div className="flex items-center gap-3">
-            {project.admin.profile_picture ? (
+            {hasAvatar ? (
               <img
-                src={project.admin.profile_picture}
+                src={Avatar}
                 alt={project.admin.full_name}
-                className="w-8 h-8 rounded-full object-cover"
+                className="w-[40px] h-[40px] object-cover rounded-full"
+                onError={() => setImageError(true)}
               />
             ) : (
-              <div className="w-8 h-8 rounded-full bg-gray-200" />
+              <div className="w-full h-full bg-[#B30000] flex items-center justify-center">
+                <span className="text-white text-[10px] font-bold tracking-wide">
+                  {getInitials(project.admin.full_name)}
+                </span>
+              </div>
             )}
             <span className="text-md text-font">{project.admin.full_name}</span>
           </div>

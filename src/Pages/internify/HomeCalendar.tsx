@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 import { useDeadlines } from '../../hooks/useTasks';
 
 const DAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
@@ -15,6 +15,9 @@ function getDaysInMonth(year: number, month: number) {
 function getFirstDayOfMonth(year: number, month: number) {
   return new Date(year, month, 1).getDay()
 }
+
+const formatDate = (dateInput: Date | string) =>
+    new Date(dateInput).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 
 export default function HomeCalendar() {
   const [today, setToday] = useState(new Date());
@@ -82,22 +85,24 @@ export default function HomeCalendar() {
   const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7
   const leadingDays = Array.from({ length: totalCells - firstDay - daysInMonth }, (_, i) => i + 1)
 
-  // Bold dates (weekends or special)
+  // Tanggal Akhir Pekan
   const isBold = (day: number) => {
     const d = new Date(currentYear, currentMonth, day).getDay()
-    return d === 0 || d === 6 // Sun or Sat
+    return d === 0 || d === 6
   }
 
   if (loading) {
     return (
-      <div className="px-13 py-5 border border-card-outline rounded-2xl">
-        <p className="text-[11px] text-font-shade">Loading calendar...</p>
+      <div className="px-13 py-5 bg-gray-100 animate-pulse rounded-2xl">
+        <div className="h-[260px] rounded-xl flex items-center justify-center animate-pulse">
+            <Loader2 className='w-5 h-5 animate-spin'/>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className=" px-13 py-5 border border-card-outline rounded-2xl">
+    <div className="px-13 py-5 border border-card-outline rounded-2xl">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-bold text-font">
@@ -180,7 +185,7 @@ export default function HomeCalendar() {
             {upcomingDeadlines.map((d, i) => (
               <li key={i} className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-red-600 flex-shrink-0" />
-                <span className="text-xs text-font-shade">{d.label}</span>
+                <span className="text-xs text-font-shade">{formatDate(d.date)} - {d.label}</span>
               </li>
             ))}
           </ul>

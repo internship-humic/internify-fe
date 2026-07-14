@@ -8,12 +8,8 @@ import { RiFileList2Fill } from 'react-icons/ri';
 
 function ProjectCardSkeleton() {
     return (
-        <div className="flex items-center gap-4 border border-gray-200 rounded-lg px-4 py-3 bg-gray-50 animate-pulse">
+        <div className="flex items-center gap-4 border border-gray-200 rounded-lg px-4 py-3 bg-gray-100 animate-pulse">
             <div className="w-10 h-10 rounded-lg bg-gray-300 flex-shrink-0" />
-            <div className="space-y-2">
-                <div className="h-4 bg-gray-300 rounded w-32" />
-                <div className="h-3 bg-gray-300 rounded w-40" />
-            </div>
         </div>
     );
 }
@@ -29,13 +25,17 @@ const HomeMentorProject = () => {
         closeDialog();
         refetch();
     }
+
+    
     return (
         <div className='flex flex-col'>
             <div className='flex flex-row justify-between mb-3 items-center'>
                 <h2 className="text-lg font-semibold text-gray-800">Projects</h2>
                 <button
                     className='bg-card p-1.5 rounded-lg font-bold hover:bg-card-hover border border-card-outline'
-                    onClick={openDialog} >
+                    onClick={openDialog} 
+                    disabled={loading}
+                    >
                     <span className='text-sm flex flex-row px-1 justify-between items-center gap-3.5'>
                         <Plus className='w-4 h-4' />
                         Add
@@ -44,11 +44,7 @@ const HomeMentorProject = () => {
             </div>
             <div className="flex flex-col max-h-[160px] overflow-y-auto gap-3 pr-1">
                 {loading && (
-                    <>
-                        {[...Array(2)].map((_, i) => (
-                            <ProjectCardSkeleton key={i} />
-                        ))}
-                    </>
+                    <ProjectCardSkeleton/>
                 )}
 
                 {error && <p className="text-sm text-red-500 px-5">{error}</p>}

@@ -26,9 +26,6 @@ export default function UpdateProfileDialog({
     if (!isOpen && dialog.open) dialog.close();
   }, [isOpen]);
 
-  // Event "cancel" dipicu saat user menekan Esc.
-  // preventDefault() tanpa onClose() = Esc benar-benar dimatikan,
-  // dialog hanya bisa ditutup lewat tombol Batal / X.
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
@@ -42,12 +39,8 @@ export default function UpdateProfileDialog({
   return (
     <dialog
       ref={dialogRef}
-      // fixed inset-0 + m-auto + h-fit -> dialog center horizontal & vertical.
-      // hidden + open:flex -> hanya tampil kalau attribute [open] ada,
-      // supaya lifecycle showModal()/close() tetap dihormati.
       className="hidden open:flex fixed inset-0 m-auto h-fit max-h-[90vh] w-[90vw] max-w-md flex-col overflow-hidden rounded-xl border border-box-border p-0 shadow-xl backdrop:bg-black/40 backdrop:backdrop-blur-[2px]"
       onClick={(e) => {
-        // klik di area backdrop (target === dialog itu sendiri) -> tutup
         if (e.target === dialogRef.current && !loading) onClose();
       }}
     >

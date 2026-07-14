@@ -66,18 +66,10 @@ export default function InternsManagement() {
     }
   };
 
-  if (loading) return (
-    <div className="flex flex-col gap-3">
-      {[...Array(5)].map((_, i) => (
-        <div key={i} className="h-16 bg-gray-100 rounded-lg animate-pulse" />
-      ))}
-    </div>
-  );
-
   if (error) return <p className="text-red-500 text-sm">{error}</p>;
 
   return (
-    <div className="">
+    <div>
       {/* Header Title */}
       <div className="mb-6">
         <h1 className="page-title">Interns Management</h1>
@@ -119,7 +111,7 @@ export default function InternsManagement() {
                 </option>
               ))}
             </select>
-            <div 
+            <div
               className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500"
             >
               <ChevronDown className="w-4 h-4" />
@@ -130,11 +122,10 @@ export default function InternsManagement() {
           <button
             onClick={handleToggleSort}
             title={sortOrder === "asc" ? "Sort Z–A" : sortOrder === "desc" ? "Clear sort" : "Sort A–Z"}
-            className={`p-2 shadow-sm rounded-lg transition-colors hidden sm:flex items-center gap-1 text-xs font-semibold ${
-              sortOrder
-                ? "bg-[#B30000] text-white hover:bg-[#990000]"
-                : "bg-card text-gray-600 hover:bg-gray-200"
-            }`}
+            className={`p-2 shadow-sm rounded-lg transition-colors hidden sm:flex items-center gap-1 text-xs font-semibold ${sortOrder
+              ? "bg-[#B30000] text-white hover:bg-[#990000]"
+              : "bg-card text-gray-600 hover:bg-gray-200"
+              }`}
           >
             {sortOrder === "desc" ? (
               <SortDesc className="w-4 h-4" />
@@ -177,18 +168,26 @@ export default function InternsManagement() {
         </button>
       </div>
 
-      <InternsTable
-        key={`${searchEmail}-${selectedProject}`}
-        interns={filteredInterns}
-        totalInterns={totalInterns}
-        removing={removing}
-        sortOrder={sortOrder}
-        onSort={handleToggleSort}
-        onAssign={(userId) => openAssignFor(userId)}
-        onDelete={handleDeleteIntern}
-      />
+      {loading ? (
+        <div className={`w-full bg-gray-400/20 h-[300px] rounded-xl flex items-center justify-center animate-pulse`}>
+          <span className="text-sm text-font-shade">Memuat Data...</span>
+        </div>
+      ) : (
+        <InternsTable
+          key={`${searchEmail}-${selectedProject}`}
+          interns={filteredInterns}
+          totalInterns={totalInterns}
+          removing={removing}
+          sortOrder={sortOrder}
+          onSort={handleToggleSort}
+          onAssign={(userId) => openAssignFor(userId)}
+          onDelete={handleDeleteIntern}
+        />
+      )
+      }
 
-      {isModalOpen &&
+      {
+        isModalOpen &&
         <AddInternsModal
           isOpen={isModalOpen}
           userId={selectedUserId}
@@ -198,6 +197,6 @@ export default function InternsManagement() {
           }}
         />
       }
-    </div>
+    </div >
   );
 }

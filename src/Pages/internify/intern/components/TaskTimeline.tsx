@@ -8,6 +8,9 @@ const TaskTimeline = () => {
 
   const isOverdue = (dateStr: string) => new Date(dateStr) < today;
 
+  const formatDate = (dateInput: Date | string) =>
+    new Date(dateInput).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+
   if (loading) return (
     <div className="flex flex-col gap-5">
       {[...Array(3)].map((_, i) => (
@@ -19,7 +22,7 @@ const TaskTimeline = () => {
   if (error) return <p className="text-red-500 text-sm">{error}</p>;
 
   return (
-    <div>
+    <div className=''>
       <h2 className="font-semibold text-font-shade mb-5">Timeline Tugas</h2>
 
       {tasks.length === 0 ? (
@@ -50,7 +53,7 @@ const TaskTimeline = () => {
 
                   <div className="flex flex-col gap-0.5 min-w-0">
                     <p className="text-[10px] font-semibold text-font-shade uppercase tracking-widest">
-                      {deadlineDate.toLocaleDateString("id-ID")} AT{" "}
+                      {formatDate(deadlineDate)} AT{" "}
                       {deadlineDate.toLocaleTimeString("id-ID", {
                         hour: "2-digit",
                         minute: "2-digit",

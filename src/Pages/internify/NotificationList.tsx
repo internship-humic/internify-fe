@@ -6,6 +6,7 @@ import { io } from "socket.io-client";
 import * as NotificationService from "../../services/NotificationService";
 import type { UINotification, BackendNotification } from "../../types/notification.types";
 import mailRafiki from '../../assets/Mail-rafiki.svg'
+import { customToast } from "../utils/showToast";
 
 const getCookieToken = () => {
   return document.cookie
@@ -70,9 +71,9 @@ export default function NotificationList() {
     try {
       await NotificationService.markAllAsRead();
       setNotifications([]);
-      alert("All notifications marked as read!");
-    } catch (err) {
-      console.error("Failed to mark all as read:", err);
+      customToast.success("All notifications marked as read!");
+    } catch (err:any) {
+      customToast.error("Failed to mark all as read", err?.message);
     }
   };
 

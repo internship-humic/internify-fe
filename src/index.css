@@ -24,7 +24,7 @@
   --color-card-hover: #d5d5d5;
 
   --color-box-primary: #FFFFFF;
-  --color-box-secondary: #f3f4f6 ;
+  --color-box-secondary: #f3f4f6;
   --color-box-border: #a9afbb;
 
   --color-primary: #ad2b19;
@@ -42,26 +42,29 @@
   --color-danger: #c62611;
 }
 
-.container {
+.main-content {
+  flex: 1 1 0%;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   padding-inline: calc(var(--spacing) * 14);
   padding-block: calc(var(--spacing) * 12);
   background-color: var(--color-background);
-  flex-direction: column;
-  min-height: 100vh;
 }
 
 .box {
-  background-color: #F9F9F9;
-  border-radius: 12px;
-  padding: 10px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
-              0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  background-color: var(--color-box-primary);
+  border-radius: 20px;
+  border: 1px solid var(--color-border);
+  padding: 32px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.1);
 }
 
 .page-title {
-  font-size: var(--text-3xl) /* 1.875rem = 30px */;
-  line-height: var(--tw-leading, var(--text-3xl--line-height) /* calc(2.25 / 1.875) ≈ 1.2 */);
+  font-size: var(--text-3xl) ;
+  line-height: var(--tw-leading, var(--text-3xl--line-height));
   font-weight: bold;
   color: var(--color-gray-900);
   --tw-tracking: var(--tracking-tight);
@@ -74,7 +77,6 @@
   margin-top: calc(var(--spacing) * 1)
 }
 
-/* Selector utama untuk elemen dialog */
 dialog.custom-dialog {
   position: fixed;
   top: 0;
@@ -82,7 +84,7 @@ dialog.custom-dialog {
   bottom: 0;
   left: 0;
   margin: auto;
-  display: none;              /* default tertutup: sembunyikan */
+  display: none;
   flex-direction: column;
   width: calc(100% - 2rem);
   max-width: 540px;
@@ -94,22 +96,21 @@ dialog.custom-dialog {
 }
 
 dialog.custom-dialog[open] {
-  display: flex;             /* hanya tampil saat terbuka */
+  display: flex;
   animation: fadeInZoom 200ms ease-out forwards;
 }
 
-/* Pseudo-element untuk Backdrop (Latar belakang gelap) */
 dialog.custom-dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.4); /* bg-black/40 */
-  backdrop-filter: blur(4px); /* backdrop-blur-sm */
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
 }
 
-/* Keyframes untuk animasi Tailwind (animate-in fade-in zoom-in-95) */
 @keyframes fadeInZoom {
   from {
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -123,21 +124,18 @@ dialog.custom-dialog::backdrop {
   padding-left: 1rem;
   padding-right: 1.5rem;
   padding-top: 1rem;
-  border-bottom: 1px solid #b3b8c0; /* border-gray-100 */
+  border-bottom: 1px solid #b3b8c0;
 }
 
-/* Breakpoint Medium (md:) - Aktif saat lebar layar >= 768px */
 @media (min-width: 1024px) {
   .dialog-header {
-    /* Perubahan padding untuk layar desktop (md:px-8 md:py-5) */
-    padding-left: 2rem;     /* 32px */
-    padding-right: 2rem;    /* 32px */
-    padding-top: 1.25rem;   /* 20px */
-    padding-bottom: 1.25rem;/* 20px */
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
   }
 
-  .container {
-    padding-inline: calc(var(--spacing) * 14);
+  .main-content {
     padding-block: calc(var(--spacing) * 10);
   }
 }

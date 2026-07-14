@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useCurrentUser, useUpdateProfile, resolveFileUrl, DEFAULT_AVATAR } from "../../hooks/useUser";
+import { useCurrentUser, useUpdateProfile, resolveFileUrl, getInitials } from "../../hooks/useUser";
 import { customToast } from "../utils/showToast";
 import { Pen } from "lucide-react";
 import UpdateProfileDialog from "./UpdateProfileDialogue";
@@ -8,7 +8,9 @@ export default function SettingsPage() {
   const { user, loading: userLoading } = useCurrentUser();
   const { save, loading: saving, msgRef } = useUpdateProfile();
   const [confirmOpen, setConfirmOpen] = useState(false);
+
   const isIntern = user?.role === "intern";
+  const hasPendingChanges = isIntern && (user?.changes ?? 0) > 0;
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -16,9 +18,13 @@ export default function SettingsPage() {
     bio: "",
   });
 
+  const [formErrors, setFormErrors] = useState({
+    fullName: "",
+    email: "",
+  });
+
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const [removePhoto, setRemovePhoto] = useState(false);
   const [imageError, setImageError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -26,13 +32,13 @@ export default function SettingsPage() {
     if (!user) return;
 
     setFormData({
-      fullName: user.full_name || `${user.nama_depan} ${user.nama_belakang}`.trim(),
+      fullName: user.full_name || "",
       email: user.email || "",
       bio: user.professional_bio || "",
     });
 
-    setPhotoPreview(resolveFileUrl(user.profile_picture) ?? DEFAULT_AVATAR);
-    setRemovePhoto(false);
+    setPhotoFile(null);
+    setPhotoPreview(resolveFileUrl(user.profile_picture));
     setImageError(false);
   }, [user]);
 
@@ -46,7 +52,6 @@ export default function SettingsPage() {
     if (!file) return;
 
     setPhotoFile(file);
-    setRemovePhoto(false);
     setImageError(false);
 
     const reader = new FileReader();
@@ -54,29 +59,45 @@ export default function SettingsPage() {
     reader.readAsDataURL(file);
   };
 
-  const handleRemovePhoto = () => {
+  const handleCancelPhoto = () => {
     setPhotoFile(null);
-    setRemovePhoto(true);
-    setPhotoPreview(DEFAULT_AVATAR);
+    setPhotoPreview(resolveFileUrl(user?.profile_picture));
     setImageError(false);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  const validateForm = () => {
+    const errors = { fullName: "", email: "" };
+
+    if (!formData.fullName.trim()) errors.fullName = "Full name is required.";
+    if (!formData.email.trim()) errors.email = "Email address is required.";
+
+    setFormErrors(errors);
+    return !errors.fullName && !errors.email;
+  };
+
   const handleSaveChanges = async () => {
     setConfirmOpen(false);
+    if (!validateForm()) return;
+
+    const emailChanged =
+      formData.email.trim().toLowerCase() !== (user?.email ?? "").trim().toLowerCase();
+
     try {
       await customToast.promise(
         save({
           full_name: formData.fullName,
           email: formData.email,
           professional_bio: formData.bio,
-          profile_picture: photoFile ?? (removePhoto ? DEFAULT_AVATAR : undefined),
+          profile_picture: !isIntern && photoFile ? photoFile : undefined,
         }),
         {
           loading: "Menyimpan perubahan...",
           success: () => ({
             title: "Perubahan berhasil disimpan!",
-            description: msgRef.current.success ?? "",
+            description: emailChanged
+              ? "Email berubah, silakan login ulang..."
+              : msgRef.current.success ?? "",
           }),
           error: () => ({
             title: "Gagal menyimpan perubahan!",
@@ -84,21 +105,35 @@ export default function SettingsPage() {
           }),
         }
       );
+
+      // email berubah -> sesi lama tidak valid lagi, paksa login ulang
+      if (emailChanged) {
+        document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        setTimeout(() => {
+          window.location.href = "/login-internify";
+        }, 1200);
+        return;
+      }
+
+      setPhotoFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     } catch { }
   };
-
-  if (userLoading) {
-    return (
-      <div className="flex items-center justify-center h-40 text-sm text-gray-400">
-        Loading profile...
-      </div>
-    );
-  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setConfirmOpen(true);
   };
+
+  if (userLoading) {
+    return (
+      <div className="space-y-4 mt-10">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="h-32 bg-box-secondary rounded-2xl animate-pulse" />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -123,35 +158,32 @@ export default function SettingsPage() {
 
         {/* Card Body & Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
-
-          {/* Profile Photo Row */}
           <div className="flex items-center gap-5 py-2">
-            {/* Avatar dengan badge edit */}
             <div className="relative flex-shrink-0">
-              <div className="w-16 h-16 rounded-xl border border-card-outline overflow-hidden bg-gray-100 flex items-center justify-center shadow-sm">
-                {photoPreview && !imageError && (
+              <div className="w-16 h-16 rounded-xl border border-card-outline overflow-hidden bg-red flex items-center justify-center shadow-sm">
+                {photoPreview && !imageError ? (
                   <img
                     src={photoPreview}
                     alt="Profile"
                     className="w-full h-full object-cover"
                     onError={() => setImageError(true)}
                   />
+                ) : (
+                  <p className="text-lg font-bold text-white">{getInitials(user?.full_name) || "U"}</p>
                 )}
               </div>
-              {/* Badge edit icon */}
-              {!isIntern &&
+              {!isIntern && (
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute -bottom-1.5 -right-1.5 w-6 h-6 bg-[#B30000] rounded-full flex items-center justify-center shadow border-2 border-white hover:bg-[#990000] transition-colors"
+                  className="absolute -bottom-1.5 -right-1.5 w-6 h-6 bg-red rounded-full flex items-center justify-center shadow border-2 border-white hover:bg-red-800 transition-colors"
                   title="Edit photo"
                 >
                   <Pen className="text-white w-2.5 h-2.5" />
                 </button>
-              }
+              )}
             </div>
 
-            {/* Info & Action Buttons */}
             {!isIntern ? (
               <div>
                 <h3 className="text-sm font-bold text-gray-900 mb-0.5">Profile Photo</h3>
@@ -159,31 +191,35 @@ export default function SettingsPage() {
                   JPG, GIF or PNG. Recommended size 800x800px. Max size of 800K.
                 </p>
                 {photoFile && (
-                  <p className="text-xs text-blue-500 mb-2 font-medium">
-                    {photoFile.name}
-                  </p>
+                  <p className="text-xs text-blue-500 mb-2 font-medium">{photoFile.name}</p>
                 )}
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="px-4 py-1.5 bg-[#B30000] hover:bg-[#990000] text-white text-xs font-bold rounded-lg shadow-sm transition-colors"
+                    className="px-4 py-1.5 bg-red hover:bg-red-600 text-white text-xs font-bold rounded-lg shadow-sm transition-colors"
                   >
                     Upload New
                   </button>
                   <button
                     type="button"
-                    onClick={handleRemovePhoto}
-                    className="px-4 py-1.5 bg-white border border-box-border text-gray-600 hover:bg-gray-50 text-xs font-bold rounded-lg transition-colors"
+                    onClick={handleCancelPhoto}
+                    disabled={!photoFile}
+                    className="px-4 py-1.5 bg-white border border-box-border text-gray-600 hover:bg-gray-50 text-xs font-bold rounded-lg transition-colors disabled:opacity-40"
                   >
-                    Remove
+                    Cancel
                   </button>
                 </div>
               </div>
             ) : (
               <div>
                 <h3 className="text-sm font-bold text-gray-900 mb-0.5">Nama</h3>
-                <p className="text-base text-gray-700 font-medium">{user?.full_name || formData.fullName || 'User'}</p>
+                <p className="text-base text-font-shade font-medium">
+                  {user?.full_name || formData.fullName || "User"}
+                </p>
+                <p className="text-[13px] text-font font-medium">
+                  {user.kelompok_peminatan}
+                </p>
               </div>
             )}
 
@@ -210,8 +246,17 @@ export default function SettingsPage() {
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-box-border rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-colors bg-white font-medium"
+                disabled={hasPendingChanges}
+                className={`w-full px-3 py-2 border rounded-lg text-sm text-gray-800 focus:outline-none transition-colors bg-white font-medium disabled:bg-gray-100 disabled:text-gray-500 ${formErrors.fullName ? "border-red-600 focus:border-red-600 focus:ring-1 focus:ring-red-600" : "border-box-border focus:border-red-600 focus:ring-1 focus:ring-red-600"}`}
               />
+              {formErrors.fullName && (
+                <p className="text-[11px] text-red-600">{formErrors.fullName}</p>
+              )}
+              {hasPendingChanges && (
+                <p className="text-[11px] text-gray-500">
+                  Nama hanya bisa diubah satu kali dan sudah pernah diubah.
+                </p>
+              )}
             </div>
             <div className="space-y-1">
               <label className="text-[10px] font-bold tracking-wider text-gray-700 uppercase block">
@@ -222,8 +267,14 @@ export default function SettingsPage() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-box-border rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-colors bg-white font-medium"
+                className={`w-full px-3 py-2 border rounded-lg text-sm text-gray-800 focus:outline-none transition-colors bg-white font-medium ${formErrors.email ? "border-red-600 focus:border-red-600 focus:ring-1 focus:ring-red-600" : "border-box-border focus:border-red-600 focus:ring-1 focus:ring-red-600"}`}
               />
+              {formErrors.email && (
+                <p className="text-[11px] text-red-600">{formErrors.email}</p>
+              )}
+              <p className="text-[11px] text-gray-500 font-normal pt-0.5">
+                Mengubah email akan mengakhiri sesi — kamu harus login ulang.
+              </p>
             </div>
           </div>
 
@@ -249,7 +300,7 @@ export default function SettingsPage() {
             <button
               type="submit"
               disabled={saving}
-              className="px-6 py-2 bg-[#B30000] hover:bg-[#990000] text-white font-bold text-xs rounded-lg shadow-sm transition-colors uppercase tracking-wider disabled:opacity-60"
+              className="px-6 py-2 bg-red hover:bg-red-700 text-white font-bold text-xs rounded-lg shadow-sm transition-colors uppercase tracking-wider disabled:bg-gray-400"
             >
               {saving ? "Saving..." : "Save Changes"}
             </button>
@@ -257,6 +308,7 @@ export default function SettingsPage() {
 
         </form>
       </div>
+
       <UpdateProfileDialog
         isOpen={confirmOpen}
         isIntern={isIntern}

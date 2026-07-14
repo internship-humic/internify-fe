@@ -30,13 +30,14 @@ export default function TaskTab({ project }: { project: ProjectDetail }) {
     }
   };
 
-  if (loading) return (
-    <div className="flex flex-col gap-3 p-6">
-      {[...Array(3)].map((_, i) => (
-        <div key={i} className="h-12 bg-gray-100 rounded-lg animate-pulse" />
-      ))}
-    </div>
-  );
+  // if (loading) return (
+  //   <div className="flex flex-col gap-3 p-6">
+  //     {[...Array(3)].map((_, i) => (
+  //       <div key={i} className="h-12 bg-gray-300 rounded-lg animate-pulse" />
+  //     ))}
+  //   </div>
+  // );
+
   if (error) return <p className="text-red-500 text-sm p-6">{error}</p>;
 
   return (
@@ -54,7 +55,52 @@ export default function TaskTab({ project }: { project: ProjectDetail }) {
       <hr className="border-gray-200/80 mb-4" />
 
       <div className="flex flex-col">
-        {tasks.length > 0 ? (
+        {loading ? (
+          <div className="flex flex-col gap-3 py-4">
+            {[...Array(tasks.length)].map((_, i) => (
+              <div key={i} className="h-14 bg-gray-200 rounded-lg animate-pulse" />
+            ))}
+          </div>
+        ) : error ? (
+          <p className="text-red-500 text-sm py-4">{error}</p>
+        ) : tasks.length > 0 ? (
+          tasks.map((task, idx) => (
+            <div
+              key={task.id}
+              className={`flex items-center justify-between py-4 group ${idx < tasks.length - 1 ? 'border-b border-gray-100' : ''
+                }`}
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <ClipboardList size={22} className="text-slate-600 shrink-0" />
+                <span className="text-base text-slate-700 font-medium truncate">{task.title}</span>
+              </div>
+              <div className="flex items-center gap-4 text-slate-600 shrink-0">
+                <button
+                  onClick={() => { setSelectedTask(task); setEditModalOpen(true); }}
+                  disabled={!isProjectActive}
+                  className="border border-gray-500 text-font-shade rounded-lg px-2 py-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Pencil size={20} />
+                </button>
+                <button
+                  onClick={() => handleDeleteTask(task.id, task.title)}
+                  disabled={!isProjectActive}
+                  className="border border-gray-500 text-font-shade rounded-lg px-2 py-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Trash2 size={20} />
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className='flex flex-col items-center justify-center py-16'>
+            <ClipboardList className='w-12 h-12 text-font-shade mx-auto' />
+            <p className="text-sm text-font-shade mt-3">Belum ada tugas yang dibuat untuk proyek ini.</p>
+          </div>
+        )
+        }
+
+        {/* {tasks.length > 0 ? (
           tasks.map((task, idx) => (
             <div
               key={task.id}
@@ -70,14 +116,14 @@ export default function TaskTab({ project }: { project: ProjectDetail }) {
                 <button
                   onClick={() => { setSelectedTask(task); setEditModalOpen(true); }}
                   disabled={!isProjectActive}
-                  className="border border-gray-500 text-font-shade rounded-lg px-2 py-1 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="border border-gray-500 text-font-shade rounded-lg px-2 py-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Pencil size={20} />
                 </button>
                 <button
                   onClick={() => handleDeleteTask(task.id, task.title)}
                   disabled={!isProjectActive}
-                  className="border border-gray-500 text-font-shade rounded-lg px-2 py-1 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="border border-gray-500 text-font-shade rounded-lg px-2 py-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Trash2 size={20} />
                 </button>
@@ -89,7 +135,7 @@ export default function TaskTab({ project }: { project: ProjectDetail }) {
             <ClipboardList className='w-12 h-12 text-font-shade mx-auto'/>
             <p className="text-sm text-font-shade mt-3">Belum ada tugas yang dibuat untuk proyek ini.</p>
           </div>
-        )}
+        )} */}
       </div>
 
       {isModalOpen && (

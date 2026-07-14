@@ -22,9 +22,9 @@ export default function MentorForumTab({ project }: { project: Project }) {
       )}
 
       {!loading && tasks.length === 0 ? (
-        <div className='flex justify-center items-center flex-col mt-5'>
-          <FileText className='text-font mb-3' size={48} />
-          <p className="text-md text-font-shade">Belum ada tugas yang dapat dikerjakan.</p>
+        <div className='flex justify-center items-center flex-col mt-12'>
+          <FileText className='text-font mb-6' size={48} />
+          <p className="text-md text-font">Belum ada tugas yang dapat dikerjakan.</p>
         </div>
       ) : (
         !loading && (

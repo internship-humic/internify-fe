@@ -21,7 +21,7 @@ export const InternLayout = () => {
             onClick={closeSidebar}
           />
         )}
-        <main className="container">
+        <main className="main-content">
           <Breadcrumbs/>
           <Outlet />
         </main>
@@ -46,7 +46,7 @@ export const MentorLayout = () => {
             onClick={closeSidebar}
           />
         )}
-        <main className="container">
+        <main className="main-content">
           <Breadcrumbs/>
           <Outlet />
         </main>

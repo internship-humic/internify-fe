@@ -68,7 +68,7 @@ export default function InternifyLogin() {
                     </p>
                 </div>
                 {/* MAIN CONTENT */}
-                <div className="max-w-md bg-box-primary rounded-2xl border border-box-border p-8 md:p-12 shadow-sm">
+                <div className="box max-w-md bg-box-primary border border-box-border p-8 md:p-12 shadow-sm rounded-lg">
                     <h2 className="text-xl font-bold text-gray-900 mb-1">Welcome back</h2>
                     <p className="text-sm text-gray-500 mb-6">Access your dashboard with your credentials.</p>
 
@@ -142,7 +142,7 @@ export default function InternifyLogin() {
                         </div>
 
                         <button className="w-full mt-2 flex items-center justify-center gap-2 border border-card-outline rounded-full py-1.5 text-xs text-font-shade hover:bg-gray-50 transition-colors font-medium">
-                            <CircleQuestionMark className="w-5 h-5"/>
+                            <CircleQuestionMark className="w-5 h-5" />
                             Frequently Asked Questions
                         </button>
                     </div>

@@ -6,7 +6,6 @@ import * as LucideIcons from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
 import emptyimage from '../../../assets/Learning-amico.svg'
 
-// Skeleton card that mirrors the real certificate card layout
 function CertCardSkeleton() {
     return (
         <div className="bg-white border border-card-outline rounded-xl overflow-hidden shadow-sm animate-pulse">
@@ -17,10 +16,7 @@ function CertCardSkeleton() {
                 </div>
             </div>
             {/* Info */}
-            <div className="px-4 py-3 space-y-2">
-                <div className="h-3 bg-gray-200 rounded w-3/4" />
-                <div className="h-4 bg-gray-200 rounded w-5/6" />
-                <div className="h-3 bg-gray-200 rounded w-1/2" />
+            <div className="px-4 py-3 space-y-2 bg-gray-100">
             </div>
         </div>
     );
@@ -37,22 +33,17 @@ export default function SertificateList() {
     };
     return (
         <div>
-            {/* Header */}
             <div className="mb-6 flex flex-col gap-1">
                 <h1 className="page-title">Certificate History</h1>
                 <p className="page-title-desc">All your earned internship certificates</p>
             </div>
-
-            {/* Loading Skeleton */}
             {loading && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {[...Array(6)].map((_, i) => (
+                    {[...Array(projects.length)].map((_, i) => (
                         <CertCardSkeleton key={i} />
                     ))}
                 </div>
             )}
-
-            {/* Error */}
             {error && !loading && (
                 <div className="flex items-center justify-center py-20 text-red-500 gap-2">
                     <AlertCircle className="w-6 h-6" />
@@ -60,15 +51,12 @@ export default function SertificateList() {
                 </div>
             )}
 
-            {/* Empty */}
             {!loading && !error && projects.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-20 gap-5 text-font-shade">
                     <img src={emptyimage} alt="empty image" className="w-64 h-64" />
                     <p className="text-[18px]">Tidak ada projek yang berlangsung.</p>
                 </div>
             )}
-
-            {/* Grid */}
             {!loading && !error && projects.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {projects.map((item: Project) => (

@@ -4,15 +4,21 @@ import { useProjectDetail } from '../../../hooks/useProjects';
 import MentorForumTab from './ProjectForumTab';
 import InternsTab from './ProjectsInternTab';
 import TaskTab from './TaskTab';
+import { Loader2 } from 'lucide-react';
 
 export default function ProjectDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const [activeTab, setActiveTab] = useState<'forum' | 'participants' | 'Task'>('forum');
   const { project, loading, error } = useProjectDetail(slug ?? "");
 
-  if (loading) return <p className="p-10 text-gray-400">Memuat project...</p>;
-  if (error)   return <p className="p-10 text-red-500">{error}</p>;
-  if (!project) return <p className="p-10 text-gray-400">Project tidak ditemukan.</p>
+  if (loading) return (
+    <p className="p-10 flex items-center gap-2 text-[18px] text-gray-400">
+      <Loader2 className="w-4 h-4 animate-spin" />
+      Memuat project...
+    </p>
+  );
+
+  if (error) return <p className="p-10 text-[18px] text-red-700">{error}</p>;
 
   if (!project) {
     return (
@@ -30,7 +36,7 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <div className="">
+      <div>
 
         {/* Tabs */}
         <div className="flex mb-4 border-b-1 border-gray-300">
@@ -57,7 +63,7 @@ export default function ProjectDetailPage() {
             default:
               return null;
           }
-          })()}
+        })()}
       </div>
     </div>
   );

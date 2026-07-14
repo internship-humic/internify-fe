@@ -17,7 +17,7 @@ export default function ViewInternSubmission() {
 
   if (loading)
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 mt-10">
         {[...Array(3)].map((_, i) => (
           <div key={i} className="h-32 bg-box-secondary rounded-2xl animate-pulse" />
         ))}

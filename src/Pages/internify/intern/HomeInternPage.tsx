@@ -8,7 +8,7 @@ export default function HomeInternPage()  {
     <div className="flex-1">
       <HomeHeader />
       <div className="flex flex-col gap-5">
-        <div className="grid grid-cols-2 gap-5">
+        <div className="flex flex-col gap-5 md:grid md:grid-cols-2">
           <div className="bg-box-primary border border-box-border rounded-xl p-6">
             <HomeProjectList />
           </div>
