@@ -1,10 +1,8 @@
 import { CalendarDays } from "lucide-react";
 import type { Project } from "../../../../types/project.types";
 
-// ─── StatusBadge ─────────────────────────────────────────────────────────────
 function StatusBadge({ status }: { status: string }) {
-  const isCompleted = status === "active";
-  return (
+  const isCompleted = status === "active";  return (
     <span
       className={`text-[10px] font-extrabold tracking-wider px-2.5 py-1 rounded-full border ${
         isCompleted

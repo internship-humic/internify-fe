@@ -16,7 +16,7 @@ export default function SertificateHistory() {
             {loading && (
                 <div className="flex items-center justify-center py-8 text-gray-400 gap-2">
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    <span className="text-sm">Loading certificates...</span>
+                    <span className="text-sm">memuat sertifikat...</span>
                 </div>
             )}
 

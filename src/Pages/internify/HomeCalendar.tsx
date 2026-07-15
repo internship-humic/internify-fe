@@ -102,9 +102,9 @@ export default function HomeCalendar() {
   }
 
   return (
-    <div className="px-13 py-5 border border-card-outline rounded-2xl">
+    <div className="box">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 px-6">
         <h2 className="font-bold text-font">
           {MONTH_NAMES[currentMonth]} {currentYear}
         </h2>
@@ -126,8 +126,7 @@ export default function HomeCalendar() {
         </div>
       </div>
 
-      {/* Day labels */}
-      <div className="grid grid-cols-7 mb-1">
+      <div className="grid grid-cols-7 mb-1 px-5">
         {DAY_LABELS.map(day => (
           <div key={day} className="text-center text-xs text-gray-400 font-medium py-1">
             {day}
@@ -135,8 +134,7 @@ export default function HomeCalendar() {
         ))}
       </div>
 
-      {/* Calendar grid */}
-      <div className="grid grid-cols-7">
+      <div className="grid grid-cols-7 px-5">
         {/* Trailing days from prev month */}
         {trailingDays.map(day => (
           <div key={`prev-${day}`} className="text-center py-2">
@@ -144,18 +142,17 @@ export default function HomeCalendar() {
           </div>
         ))}
 
-        {/* Current month days */}
         {currentDays.map(day => (
           <div key={day} className="flex justify-center items-center py-0.5">
             {isToday(day) ? (
-              <span className="w-8 h-7 flex items-center justify-center border-b-2 border-red-800 text-xs font-semibold">
+              <span className="w-8 h-7 flex items-center justify-center border-b-2 border-red- text-xs font-semibold">
                 {day}
               </span>
             ) : (
               <span
                 className={`w-full h-7 flex items-center justify-center text-xs
                   ${isBold(day) ? 'font-bold text-gray-800' : 'text-gray-700'}
-                  ${hasDeadline(day) ? 'bg-red-800 text-white' : ''}
+                  ${hasDeadline(day) ? 'bg-red text-white' : ''}
                   transition-colors`}
               >
                 {day}
@@ -173,10 +170,10 @@ export default function HomeCalendar() {
       </div>
 
       {/* Divider */}
-      <hr className="my-3 border-gray-400" />
+      <hr className="my-3 border-box-border" />
 
       {/* Upcoming Deadlines */}
-      <div>
+      <div className='px-5 mt-2'>
         <p className="text-[10px] font-semibold text-font uppercase tracking-widest mb-2">
           Upcoming Deadlines
         </p>
@@ -184,7 +181,7 @@ export default function HomeCalendar() {
           <ul className="flex flex-col gap-1">
             {upcomingDeadlines.map((d, i) => (
               <li key={i} className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-red-600 flex-shrink-0" />
+                <span className="w-2 h-2 rounded-full bg-red flex-shrink-0" />
                 <span className="text-xs text-font-shade">{formatDate(d.date)} - {d.label}</span>
               </li>
             ))}

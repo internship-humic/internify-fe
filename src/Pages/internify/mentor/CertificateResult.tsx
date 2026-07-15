@@ -36,7 +36,16 @@ export default function CertificateResult() {
     }
   };
 
-  if (loading) return <p>Sedang Memuat...</p>;
+  if (loading) return (
+    <div className="flex flex-col gap-3 pb-14">
+      <div className="mb-4 flex flex-col gap-1">
+        <h1 className="page-title">Certificates</h1>
+        <p className="page-title-desc">View and download internship certificates</p>
+      </div>
+      <div className="h-[360px] bg-box-secondary rounded-xl animate-pulse" />
+      <div className="h-[150px] bg-box-secondary rounded-xl animate-pulse" />
+    </div>
+  );
   if (error) return <div className="text-sm text-red-500 p-4">Gagal memuat data sertifikat.</div>;
 
   return (
@@ -81,8 +90,8 @@ export default function CertificateResult() {
       </div>
 
       {/* Table */}
-      <CertResultTable 
-        certificates={certificates} 
+      <CertResultTable
+        certificates={certificates}
         templateUrl={project?.certificate_template ?? ""}
       />
     </div>

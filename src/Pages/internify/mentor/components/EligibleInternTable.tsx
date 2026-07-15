@@ -31,14 +31,12 @@ interface EligibleInternTableProps {
 
 const PER_PAGE = 5;
 
-const BULAN_ID = [
-  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-  "Juli", "Agustus", "September", "Oktober", "November", "Desember",
-];
-
-function formatDateIndo(dateStr: string): string {
-  const [year, month, day] = dateStr.split("-").map(Number);
-  return `${day} ${BULAN_ID[month - 1]} ${year}`;
+function formatDateIndo(date: string): string {
+  return new Intl.DateTimeFormat("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(date));
 }
 
 function formatDateRange(startDate: string, endDate: string): string {
@@ -62,7 +60,6 @@ export default function EligibleInternTable({
   loading,
   eligibleCount,
   project
-  // Durasi tanggal Proyek
 }: EligibleInternTableProps) {
   const navigate = useNavigate();
   const { generate: SubmitCertificates } = useGenerateCertificates();
@@ -95,6 +92,8 @@ export default function EligibleInternTable({
         id: project.id,
         project_name: project.project_name,
         description: project.description,
+        start_date: project.start_date,
+        end_date: project.end_date
       },
     };
     previewCertificate(mockCert, project.certificate_template);
@@ -144,14 +143,13 @@ export default function EligibleInternTable({
 
         await Promise.all(
           result.map(async (cert) => {
-            const verifyUrl = `${window.location.origin}/verify-certificate/${cert.uuid}`;
             const blob = await generateCertificate(
               templateUrl,
               cert.user.full_name,
               cert.project.project_name,
               cert.certificate_no,
-              verifyUrl,
-              duration
+              duration,
+              cert.uuid,
             );
             zip.file(`Sertifikat - ${cert.user.full_name}.png`, blob);
           })
@@ -176,9 +174,11 @@ export default function EligibleInternTable({
 
   if (loading) {
     return (
-      <div className="lg:col-span-5 flex items-center justify-center py-20 text-gray-400 text-sm">
-        <Loader2 className="w-5 h-5 animate-spin mr-2" />
-        Memuat data intern...
+      <div className="lg:col-span-5 flex flex-1">
+        <div className="flex h-[240px] w-full items-center justify-center rounded-xl bg-box-secondary text-font">
+          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+          Memuat data intern...
+        </div>
       </div>
     );
   }

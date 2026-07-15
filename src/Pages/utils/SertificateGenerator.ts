@@ -15,7 +15,7 @@ export function resolveImageUrl(path: string): string {
 export function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    img.crossOrigin = "anonymous";
+    if (!src.startsWith("data:")) img.crossOrigin = "anonymous";
     img.onload = () => resolve(img);
     img.onerror = () => reject(new Error(`Gagal load gambar: ${src}`));
     img.src = resolveImageUrl(src);
@@ -29,6 +29,17 @@ export async function ensureFontsLoaded(): Promise<void> {
   ]);
   await document.fonts.ready;
 }
+
+
+const LAYOUT = {
+  internName:      { x: 0.57,  y: 0.48,  size: 140, font: "Great Vibes", color: "#800000" },
+  internNameSmall: { x: 0.82,  y: 0.889, size: 33,  font: "Great Vibes", color: "#800000" },
+  projectName:     { x: 0.815, y: 0.598, size: 46,  font: "Grenze",      color: "#800000" },
+  duration:        { x: 0.692, y: 0.645, size: 48,  font: "Grenze",      color: "#090909" },
+  certNo:          { x: 0.6, y: 0.305, size: 50,  font: "Grenze",      color: "#090909" },
+  certNoSmall:     { x: 0.825, y: 0.91,  size: 22,  font: "Grenze",      color: "#800000" },
+  qr:              { x: 0.77,  y: 0.715, size: 0.103 },
+};
 
 export async function generateCertificate(
   templateUrl: string,
@@ -49,50 +60,30 @@ export async function generateCertificate(
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  // Nama intern — besar (Great Vibes)
-  ctx.font = `105px "Great Vibes", cursive`;
-  ctx.fillStyle = "#800000";
-  ctx.fillText(internName, canvas.width * 0.57, canvas.height * 0.48);
+  const text = (
+    cfg: { x: number; y: number; size: number; font: string; color: string },
+    value: string,
+  ) => {
+    ctx.font = `400 ${cfg.size}px "${cfg.font}", serif`;
+    ctx.fillStyle = cfg.color;
+    ctx.fillText(value, canvas.width * cfg.x, canvas.height * cfg.y);
+  };
 
-  // Nama intern — versi kecil di pojok bawah
-  ctx.font = `30px "Great Vibes", cursive`;
-  ctx.fillStyle = "#800000";
-  ctx.fillText(internName, canvas.width * 0.825, canvas.height * 0.895);
-
-  // Nama project (Grenze)
-  ctx.font = `400 54px "Grenze", serif`;
-  ctx.fillStyle = "#090909";
-  ctx.fillText(projectName, canvas.width * 0.57, canvas.height * 0.615);
-
-  // Certificate no — besar (Grenze)
-  ctx.font = `50px "Grenze", serif`;
-  ctx.fillStyle = "#090909";
-  ctx.fillText(certificateNo, canvas.width * 0.666, canvas.height * 0.305);
-
-  // Certificate no — kecil di pojok bawah
-  ctx.font = `20px "Grenze", serif`;
-  ctx.fillStyle = "#800000";
-  ctx.fillText(certificateNo, canvas.width * 0.825, canvas.height * 0.918);
-
-  //Durasi Project — besar (Grenze)
-  ctx.font = `400 48px "Grenze", serif`;
-  ctx.fillStyle = "#090909";
-  ctx.fillText(ProjectDuration, canvas.width * 0.68, canvas.height * 0.66);
+  text(LAYOUT.internName,      internName);
+  text(LAYOUT.internNameSmall, internName);
+  text(LAYOUT.projectName,     projectName);
+  text(LAYOUT.duration,        ProjectDuration);
+  text(LAYOUT.certNo,          certificateNo);
+  text(LAYOUT.certNoSmall,     certificateNo);
 
   // QR code — nanti akan diganti ke alamat domain
-  const qrDataUrl = await QRCode.toDataURL('http://localhost:5173/verify-certificate/' + verifyUrl, {
-    width: 200,
-    margin: 1,
-  });
-  const qrImg = await loadImage(qrDataUrl);
-  const qrSize = canvas.width;
-  ctx.drawImage(
-    qrImg,
-    canvas.width * 0.855 - qrSize,
-    canvas.height * 0.85 - qrSize,
-    qrSize,
-    qrSize,
+  const qrSize = Math.round(canvas.width * LAYOUT.qr.size);
+  const qrDataUrl = await QRCode.toDataURL(
+    `${window.location.origin}/verify-certificate/${verifyUrl}`,
+    { width: qrSize, margin: 1 },
   );
+  const qrImg = await loadImage(qrDataUrl);
+  ctx.drawImage(qrImg, canvas.width * LAYOUT.qr.x, canvas.height * LAYOUT.qr.y, qrSize, qrSize);
 
   return new Promise((resolve, reject) => {
     canvas.toBlob(

@@ -67,9 +67,19 @@ export default function CertificateDetail() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20 text-gray-400 text-sm">
-        <Loader2 className="w-5 h-5 animate-spin mr-2" />
-        Memuat data project...
+      <div>
+        <div className="mb-4 flex flex-col gap-1">
+          <h1 className="page-title">Certificates</h1>
+          <p className="page-title-desc">Administrate, issue, and track professional certifications for all interns.</p>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-6 items-stretch animate-pulse">
+          {/* Kolom kiri: certificate box */}
+          <div className="w-full lg:w-5/8 h-[420px] bg-box-secondary rounded-xl" />
+
+          {/* Kolom kanan: history box */}
+          <div className="w-full lg:w-3/8 flex-shrink-0 h-[420px] bg-box-secondary rounded-xl" />
+        </div>
       </div>
     );
   }
@@ -227,12 +237,14 @@ export default function CertificateDetail() {
         </div>
 
         {/* Right Column */}
-        <EligibleInternTable
-          interns={internProgress}
-          loading={progressLoading}
-          eligibleCount={eligibleCount}
-          project={project}
-        />
+        <div className="lg:col-span-5 lg:mt-[110px] min-w-0">
+          <EligibleInternTable
+            interns={internProgress}
+            loading={progressLoading}
+            eligibleCount={eligibleCount}
+            project={project}
+          />
+        </div>
       </div>
     </div>
   );

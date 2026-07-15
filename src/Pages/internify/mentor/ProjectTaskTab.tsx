@@ -30,13 +30,13 @@ export default function TaskTab({ project }: { project: ProjectDetail }) {
     }
   };
 
-  // if (loading) return (
-  //   <div className="flex flex-col gap-3 p-6">
-  //     {[...Array(3)].map((_, i) => (
-  //       <div key={i} className="h-12 bg-gray-300 rounded-lg animate-pulse" />
-  //     ))}
-  //   </div>
-  // );
+  if (loading) return (
+    <div className="flex flex-col gap-3 p-6">
+      {[...Array(3)].map((_, i) => (
+        <div key={i} className="h-12 bg-gray-300 rounded-lg animate-pulse" />
+      ))}
+    </div>
+  );
 
   if (error) return <p className="text-red-500 text-sm p-6">{error}</p>;
 

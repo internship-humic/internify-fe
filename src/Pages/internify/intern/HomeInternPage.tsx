@@ -16,7 +16,7 @@ export default function HomeInternPage()  {
             <TaskTimeline />
           </div>
         </div>
-        <div className="bg-box-primary  rounded-xl">
+        <div className="bg-box-primary">
           <HomeCalendar />
         </div>
       </div>

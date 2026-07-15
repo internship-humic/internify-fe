@@ -44,7 +44,6 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
 
     const handleCancel = (e: Event) => {
       e.preventDefault();
-      onClose();
     };
 
     dialog.addEventListener("cancel", handleCancel);

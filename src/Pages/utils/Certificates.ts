@@ -3,12 +3,22 @@ import JSZip from "jszip";
 import type { Certificate } from "../../types/certificate.types";
 import { generateCertificate, resolveImageUrl } from "./SertificateGenerator";
 
-// ── 1. Preview di tab baru ────────────────────────────────────────────────────
+function formatDateIndo(date: string): string {
+  return new Intl.DateTimeFormat("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(date));
+}
+
+function formatDateRange(startDate: string, endDate: string): string {
+  return `${formatDateIndo(startDate)} - ${formatDateIndo(endDate)}`;
+}
+// 1. Preview di tab baru
 export const previewCertificate = async (
   cert: Certificate,
   templateUrl: string,
 ): Promise<void> => {
-  // Buka tab DULU sebelum await — supaya tidak diblokir popup blocker
   const tab = window.open("", "_blank");
 
   const blob = await generateCertificate(
@@ -16,6 +26,7 @@ export const previewCertificate = async (
     cert.user.full_name,
     cert.project.project_name,
     cert.certificate_no,
+    formatDateRange(cert.project.start_date, cert.project.end_date),
     cert.uuid,
   );
   const url = URL.createObjectURL(blob);
@@ -79,6 +90,7 @@ export const downloadCertificatePdf = async (
     cert.user.full_name,
     cert.project.project_name,
     cert.certificate_no,
+    formatDateRange(cert.project.start_date, cert.project.end_date),
     cert.uuid,
   );
 
@@ -118,6 +130,7 @@ export const downloadCertificateImage = async (
     cert.user.full_name,
     cert.project.project_name,
     cert.certificate_no,
+    formatDateRange(cert.project.start_date, cert.project.end_date),
     cert.uuid,
   );
 
@@ -180,6 +193,7 @@ export const downloadAllCertificatesZip = async (
         cert.user.full_name,
         cert.project.project_name,
         cert.certificate_no,
+        formatDateRange(cert.project.start_date, cert.project.end_date),
         cert.uuid,
       );
       zip.file(`Sertifikat - ${cert.user.full_name}.png`, blob);

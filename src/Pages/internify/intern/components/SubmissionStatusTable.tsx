@@ -43,7 +43,6 @@ export default function SubmitStatusTable({
 
   const rows = [
     { label: "Submission status", value: "Submitted for grading" },
-    { label: "Grading status", value: "Not graded" },
     { label: "Time Remaining", value: timeLabel },
   ];
 

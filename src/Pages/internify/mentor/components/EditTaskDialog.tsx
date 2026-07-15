@@ -34,11 +34,22 @@ export default function EditTaskModal({ isOpen, onClose, task, onSuccess }: Edit
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
-    if (isOpen) { dialog.showModal(); document.body.style.overflow = "hidden"; }
-    else { dialog.close(); document.body.style.overflow = "unset"; }
-    const handleCancel = (e: Event) => { e.preventDefault(); onClose(); };
+    if (isOpen) { 
+      dialog.showModal(); 
+      document.body.style.overflow = "hidden"; 
+    } else { 
+      dialog.close(); 
+      document.body.style.overflow = "unset"; 
+    }
+    const handleCancel = (e: Event) => {
+      e.preventDefault();   
+    };
+
     dialog.addEventListener("cancel", handleCancel);
-    return () => { dialog.removeEventListener("cancel", handleCancel); document.body.style.overflow = "unset"; };
+    return () => { 
+      dialog.removeEventListener("cancel", handleCancel); 
+      document.body.style.overflow = "unset"; 
+    };
   }, [isOpen, onClose]);
 
   const handleSubmit = async (e: React.FormEvent) => {

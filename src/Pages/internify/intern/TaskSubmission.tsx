@@ -41,7 +41,7 @@ export default function TaskSubmission() {
       </div>
 
       <div className="w-full bg-box-secondary rounded-2xl border border-box-border p-6 space-y-3">
-        <h2 className="text-xl text-gray-800 tracking-tight">Task Description</h2>
+        <h2 className="text-xl text-gray-800 tracking-tight font-bold">Deskripsi</h2>
         <p className="text-sm text-foreground font-light leading-relaxed">{task.description}</p>
       </div>
 
@@ -71,8 +71,8 @@ export default function TaskSubmission() {
 
         <div className="w-full border border-box-border rounded-lg p-3 flex items-start gap-2.5">
           <Info className="w-4 h-4 text-font mt-0.5 flex-shrink-0" />
-          <p className="text-[11px] text-font font-medium leading-relaxed">
-            Once submitted, your work will be locked for mentor review. You can request a re-submission if needed.
+          <p className="text-[11px] text-font-shade font-medium leading-relaxed">
+            Setelah disubmit, submission anda dapat dilihat oleh mentor. Pastikan submission yang anda masukan benar
           </p>
         </div>
       </div>

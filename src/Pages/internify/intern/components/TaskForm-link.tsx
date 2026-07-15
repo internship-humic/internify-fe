@@ -98,7 +98,7 @@ export default function TaskFormLink({
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="space-y-1.5">
-        <label className="text-[11px] font-bold text-font-shade tracking-wide block">
+        <label className="text-[15px] font-bold text-font-shade tracking-wide block">
           {isEditing ? "Update Submission Link" : "Submission Link"}
         </label>
         <div className="relative flex items-center">
@@ -107,14 +107,14 @@ export default function TaskFormLink({
           </span>
           <input
             type="url" required
-            placeholder="https://example.com/your-pdf-link"
+            placeholder="https://example.com/"
             value={inputLink}
             onChange={(e) => setInputLink(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-box-primary/50 border border-box-border rounded-lg text-sm placeholder-font text-font focus:outline-none focus:bg-white focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium"
           />
         </div>
-        <p className="text-[11px] text-font font-medium pt-0.5">
-          Ensure the link is accessible to the mentor (e.g., Google Drive, Dropbox).
+        <p className="text-[13px] text-font font-medium pt-0.5">
+          Pastikan link yang disubmit bisa diakses oleh publik.
         </p>
       </div>
       <button

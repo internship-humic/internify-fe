@@ -8,7 +8,7 @@ export default function ProjectTimeline({ tasks }: { tasks: InternTaskItem[] }) 
   today.setHours(0, 0, 0, 0);
   return (
     <div>
-      <div className="flex items-center gap-1.5 mb-0 md:mb-4 justify-between">
+      <div className="flex items-center gap-1.5 mb-1 md:mb-4 justify-between">
         <span className="font-semibold text-md text-font-shade">Timeline</span>
       </div>
       <ul className="relative pl-4">
@@ -21,7 +21,7 @@ export default function ProjectTimeline({ tasks }: { tasks: InternTaskItem[] }) 
           return (
             <li key={task.id} className="relative mb-2 list-none">
               {index < tasks.length - 1 && (
-                <div className="absolute -left-[1.0625rem] top-3 w-px h-full bg-[#ddd]" />
+                <div className="absolute -left-[1.0625rem] top-3 w-px h-full bg-font-shade/30" />
               )}
               {/* Dot */}
               <div

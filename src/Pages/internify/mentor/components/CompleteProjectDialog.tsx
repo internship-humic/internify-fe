@@ -24,15 +24,14 @@ export default function CompleteProjectDialog({
 
     if (isOpen) {
       dialog.showModal();
-      // document.body.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
     } else {
       dialog.close();
-      // document.body.style.overflow = "unset";
+      document.body.style.overflow = "unset";
     }
 
     const handleCancel = (e: Event) => {
       e.preventDefault();
-      onClose();
     };
 
     dialog.addEventListener("cancel", handleCancel);

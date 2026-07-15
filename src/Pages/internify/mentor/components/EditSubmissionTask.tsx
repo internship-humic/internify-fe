@@ -54,7 +54,6 @@ export default function EditSubmissionModal({
 
     const handleCancel = (e: Event) => {
       e.preventDefault();
-      onClose();
     };
 
     dialog.addEventListener("cancel", handleCancel);

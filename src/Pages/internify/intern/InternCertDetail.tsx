@@ -15,7 +15,7 @@ export default function InternCertificateDetail() {
   const projectFromList = location.state?.project as Project | undefined;
 
   const { project: projectDetail, loading: projectLoading } = useProjectDetail(slug ?? "");
-  const { certificates, loading: certLoading, refetch: refetchCertificates } = useMyCertificates();
+  const { certificates, loading: certLoading } = useMyCertificates();
 
 
   const myCertificateForProject = useMemo(() => {

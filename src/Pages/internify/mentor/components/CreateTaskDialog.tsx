@@ -36,7 +36,6 @@ export default function CreateTaskModal({ isOpen, onClose, projectId, onSuccess 
     
     const handleCancel = (e: Event) => {
       e.preventDefault();
-      onClose();
     };
     
     dialog.addEventListener("cancel", handleCancel);

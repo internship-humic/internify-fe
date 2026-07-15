@@ -22,7 +22,7 @@ const TaskTimeline = () => {
   if (error) return <p className="text-red-500 text-sm">{error}</p>;
 
   return (
-    <div className=''>
+    <div>
       <h2 className="font-semibold text-font-shade mb-5">Timeline Tugas</h2>
 
       {tasks.length === 0 ? (
@@ -31,7 +31,7 @@ const TaskTimeline = () => {
           <p className="text-sm text-gray-400">Tidak ada tugas saat ini</p>
         </div>
       ) : (
-        <div className="relative overflow-y-auto max-h-[190px]">
+        <div className="relative overflow-y-auto max-h-[140px] px-3 md:px-6">
           <ul className="flex flex-col gap-5">
             {tasks.map((item: InternTaskItem, index) => {
               const overdue = isOverdue(item.deadline_at);
@@ -41,7 +41,7 @@ const TaskTimeline = () => {
               return (
                 <li key={item.id} className="relative flex gap-4 pl-0">
                   {!isLast && (
-                    <div className="absolute left-[3px] top-3 w-px h-full bg-[#ddd]" />
+                    <div className="absolute left-[3px] top-3 w-px h-3/2 bg-font-shade/30" />
                   )}
 
                   <div className="relative flex-shrink-0 mt-1">

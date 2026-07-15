@@ -2,13 +2,12 @@ import { AlertCircle } from "lucide-react";
 import { useMyProjects } from "../../../hooks/useProjects";
 import type { Project } from "../../../types/project.types";
 import { useNavigate } from "react-router-dom";
-import * as LucideIcons from 'lucide-react';
-import type { LucideProps } from 'lucide-react';
+import { getProjectIcon } from "../../../lib/ProjectIcons";
 import emptyimage from '../../../assets/Learning-amico.svg'
 
 function CertCardSkeleton() {
     return (
-        <div className="bg-white border border-card-outline rounded-xl overflow-hidden shadow-sm animate-pulse">
+        <div className="bg-box-secondary border border-card-outline rounded-xl overflow-hidden shadow-sm animate-pulse">
             {/* Thumbnail */}
             <div className="p-6 pb-0">
                 <div className="rounded-lg overflow-hidden">
@@ -25,12 +24,6 @@ function CertCardSkeleton() {
 export default function SertificateList() {
     const { projects, loading, error } = useMyProjects();
     const navigate = useNavigate();
-
-    const getDynamicIcon = (iconName: string) => {
-        const formatted = iconName.charAt(0).toUpperCase() + iconName.slice(1);
-        const Icon = (LucideIcons as unknown as Record<string, React.ComponentType<LucideProps>>)[formatted];
-        return Icon ?? LucideIcons.FolderOpen;
-    };
     return (
         <div>
             <div className="mb-6 flex flex-col gap-1">
@@ -73,8 +66,8 @@ export default function SertificateList() {
                                         style={{ backgroundColor: item.background_color || '#403f3fff' }}
                                     >
                                         {(() => {
-                                            const Icon = getDynamicIcon(item.project_icon);
-                                            return <Icon className="w-10 h-10 text-primary text-white" />;
+                                            const Icon = getProjectIcon(item.project_icon);
+                                            return <Icon className="w-10 h-10 text-white" />;
                                         })()}
                                     </div>
                                 </div>

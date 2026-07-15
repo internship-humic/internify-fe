@@ -3,20 +3,73 @@ import { useParams } from 'react-router-dom';
 import { useProjectDetail } from '../../../hooks/useProjects';
 import MentorForumTab from './ProjectForumTab';
 import InternsTab from './ProjectsInternTab';
-import TaskTab from './TaskTab';
-import { Loader2 } from 'lucide-react';
+import TaskTab from './ProjectTaskTab';
+
+function ProjectDetailSkeleton() {
+  return (
+    <div className="animate-pulse">
+      {/* Tab bar skeleton — tinggi & spacing disamakan dengan tombol tab asli */}
+      <div className="flex mb-4 border-b border-card-outline">
+        <div className="pr-0 py-2.5 mr-7">
+          <div className="h-4 w-16 rounded bg-gray-200" />
+        </div>
+        <div className="pr-0 py-2.5 mr-7">
+          <div className="h-4 w-24 rounded bg-gray-200" />
+        </div>
+        <div className="pr-0 py-2.5 mr-7">
+          <div className="h-4 w-24 rounded bg-gray-200" />
+        </div>
+      </div>
+
+      {/* Konten tab skeleton (default tab = forum) */}
+      <div className="flex flex-col gap-4">
+        {/* Composer / input bar */}
+        <div className="rounded-lg border border-card-outline p-4">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 shrink-0 rounded-full bg-gray-200" />
+            <div className="h-10 flex-1 rounded-md bg-gray-200" />
+            <div className="h-9 w-24 shrink-0 rounded-md bg-gray-200" />
+          </div>
+        </div>
+
+        {/* List card (forum post / participant row) */}
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="rounded-lg border border-card-outline p-4">
+            {/* Header: avatar + nama + timestamp */}
+            <div className="mb-3 flex items-center gap-3">
+              <div className="h-9 w-9 shrink-0 rounded-full bg-gray-200" />
+              <div className="flex flex-col gap-2">
+                <div className="h-3.5 w-32 rounded bg-gray-200" />
+                <div className="h-3 w-20 rounded bg-gray-200" />
+              </div>
+              <div className="ml-auto h-3 w-16 rounded bg-gray-200" />
+            </div>
+
+            {/* Body teks — baris terakhir sengaja lebih pendek biar natural */}
+            <div className="flex flex-col gap-2">
+              <div className="h-3 w-full rounded bg-gray-200" />
+              <div className="h-3 w-11/12 rounded bg-gray-200" />
+              <div className="h-3 w-2/3 rounded bg-gray-200" />
+            </div>
+
+            {/* Footer action */}
+            <div className="mt-4 flex gap-3">
+              <div className="h-7 w-20 rounded-md bg-gray-200" />
+              <div className="h-7 w-20 rounded-md bg-gray-200" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function ProjectDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const [activeTab, setActiveTab] = useState<'forum' | 'participants' | 'Task'>('forum');
   const { project, loading, error } = useProjectDetail(slug ?? "");
 
-  if (loading) return (
-    <p className="p-10 flex items-center gap-2 text-[18px] text-gray-400">
-      <Loader2 className="w-4 h-4 animate-spin" />
-      Memuat project...
-    </p>
-  );
+  if (loading) return <ProjectDetailSkeleton/>
 
   if (error) return <p className="p-10 text-[18px] text-red-700">{error}</p>;
 

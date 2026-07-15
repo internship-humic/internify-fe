@@ -87,8 +87,8 @@ export interface CreateProjectPayload {
   project_icon: string;
   project_name: string;
   description: string;
-  start_date: string; // "YYYY-MM-DD"
-  end_date: string;   // "YYYY-MM-DD"
+  start_date: string;
+  end_date: string;
   member_emails?: string[];
 }
 

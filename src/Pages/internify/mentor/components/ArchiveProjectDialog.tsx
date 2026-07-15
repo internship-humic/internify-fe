@@ -32,7 +32,6 @@ export default function ArchiveProjectDialog({
 
     const handleCancel = (e: Event) => {
       e.preventDefault();
-      onClose();
     };
 
     dialog.addEventListener("cancel", handleCancel);
