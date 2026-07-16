@@ -6,7 +6,7 @@ import UpdateProfileDialog from "./UpdateProfileDialogue";
 
 export default function SettingsPage() {
   const { user, loading: userLoading } = useCurrentUser();
-  const { save, loading: saving, msgRef } = useUpdateProfile();
+  const { save, loading: saving } = useUpdateProfile();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const isIntern = user?.role === "intern";
@@ -93,15 +93,15 @@ export default function SettingsPage() {
         }),
         {
           loading: "Menyimpan perubahan...",
-          success: () => ({
+          success: (updated) => ({
             title: "Perubahan berhasil disimpan!",
             description: emailChanged
               ? "Email berubah, silakan login ulang..."
-              : msgRef.current.success ?? "",
+              : updated.message
           }),
-          error: () => ({
+          error: (err) => ({
             title: "Gagal menyimpan perubahan!",
-            description: msgRef.current.error ?? "",
+            description: err.message ?? "",
           }),
         }
       );

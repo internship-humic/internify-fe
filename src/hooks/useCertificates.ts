@@ -11,7 +11,6 @@ import {
   generateCertificate,
   verifyCertificateByUuid
 } from "../services/CertificateService";
-import { AxiosError } from "axios";
 
 // GET /certificate-api/my-certificates
 export const useMyCertificates = () => {
@@ -93,10 +92,18 @@ export const useClaimCertificate = () => {
   const [error, setError] = useState<string | null>(null);
 
   const claim = async (id_project: number) => {
-    setLoading(true); setError(null);
-    try { return await claimCertificate(id_project); }
-    catch { setError("Gagal claim sertifikat."); return null; }
-    finally { setLoading(false); }
+    setLoading(true);
+    setError(null);
+    try {
+      const { data, message } = await claimCertificate(id_project);
+      return { success: true as const, data, message };
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? "Gagal claim sertifikat.";
+      setError(msg);
+      return { success: false as const, message: msg };
+    } finally {
+      setLoading(false);
+    }
   };
 
   return { claim, loading, error };
@@ -107,39 +114,18 @@ export const useGenerateCertificates = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const generate = async (
-    id_project: number,
-    id_users: number[]
-  ): Promise<Certificate[] | null> => {
+  const generate = async (id_project: number, id_users: number[]) => {
     setLoading(true);
     setError(null);
     setSuccess(false);
     try {
-      const data = await generateCertificate(id_project, id_users);
+      const { data, message } = await generateCertificate(id_project, id_users);
       setSuccess(true);
-      return data;
-    } catch (err) {
-      if (err instanceof AxiosError) {
-        switch (err.response?.status) {
-          case 400:
-            setError("Ada intern yang tidak eligible atau parameter tidak lengkap.");
-            break;
-          case 401:
-            setError("Sesi kamu berakhir, silakan login ulang.");
-            break;
-          case 403:
-            setError("Hanya mentor/admin project ini yang bisa generate sertifikat.");
-            break;
-          case 409:
-            setError("Sertifikat sudah pernah di-generate untuk satu atau lebih intern.");
-            break;
-          default:
-            setError("Gagal generate sertifikat.");
-        }
-      } else {
-        setError("Gagal generate sertifikat.");
-      }
-      return null;
+      return { data, message };
+    } catch (err: any) {
+      const message = err?.response?.data?.message ?? "Gagal generate sertifikat.";
+      setError(message);
+      return { message };
     } finally {
       setLoading(false);
     }
@@ -159,10 +145,18 @@ export const useUploadCertificateTemplate = () => {
   const [error, setError] = useState<string | null>(null);
 
   const upload = async (id_project: number, file: File) => {
-    setLoading(true); setError(null);
-    try { return await uploadCertificateTemplate(id_project, file); }
-    catch { setError("Gagal upload template."); return null; }
-    finally { setLoading(false); }
+    setLoading(true);
+    setError(null);
+    try {
+      const { data, message } = await uploadCertificateTemplate(id_project, file);
+      return { success: true as const, data, message };
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? "Gagal upload template.";
+      setError(msg);
+      return { success: false as const, message: msg };
+    } finally {
+      setLoading(false);
+    }
   };
 
   return { upload, loading, error };

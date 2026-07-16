@@ -58,18 +58,14 @@ export default function CreateTaskModal({ isOpen, onClose, projectId, onSuccess 
       submission_type: submissionType,
     });
 
-    if (result) {
-      customToast.success(
-        'Task created',
-        `"${taskTitle}" has been successfully added to the project.`);
+    if (result.data) {
+      customToast.success('Task created', result.message);
       onSuccess();
-
     } else {
-      customToast.error(
-        'Failed to create task',
-        'An error occurred while saving the task. Please try again.');
+      customToast.error('Failed to create task', result.message);
     }
   };
+
   return (
     <dialog ref={dialogRef} className="custom-dialog">
       <div className="dialog-header">

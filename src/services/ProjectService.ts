@@ -16,9 +16,9 @@ import type {
 // POST /project-api/add
 export const createProject = async (
   payload: CreateProjectPayload
-): Promise<Project> => {
+): Promise<{ data: Project, message: string }> => {
   const res = await api.post("/project-api/add", payload);
-  return res.data.data;
+  return { data: res.data.data, message: res.data.message };
 };
 
 // GET /project-api/get
@@ -72,25 +72,25 @@ export const getProjectById = async (
 export const updateProject = async (
   id: string | number,
   payload: UpdateProjectPayload
-): Promise<ProjectDetail> => {
+): Promise<{data: ProjectDetail, message: string}> => {
   const res = await api.patch(`/project-api/update/${id}`, payload);
-  return res.data.data;
+  return {data: res.data.data, message: res.data.message};
 };
 
 // DELETE /project-api/delete/{id} — soft delete (archive)
 export const archiveProject = async (
   id: string | number
-): Promise<ProjectDetail> => {
+): Promise<{data: ProjectDetail, message: string}> => {
   const res = await api.delete(`/project-api/delete/${id}`);
-  return res.data.data;
+  return {data: res.data.data, message: res.data.message};
 };
 
 
 export const completeProject = async (
   id: string | number
-): Promise<ProjectDetail> => {
+): Promise<{data: ProjectDetail, message: string}> => {
   const res = await api.patch(`/project-api/complete/${id}`);
-  return res.data.data;
+  return {data: res.data.data, message: res.data.message};
 }; 
 
 // GET /project-api/my-projects (intern only)
@@ -126,9 +126,9 @@ export const getAssignableInterns = async (): Promise<AssignableIntern[]> => {
 // POST /project-api/assign-member (admin/mentor only)
 export const assignMember = async (
   payload: AssignMemberPayload
-): Promise<MemberAssignment> => {
+): Promise<{data: MemberAssignment, message: string}> => {
   const res = await api.post("/project-api/assign-member", payload);
-  return res.data.data;
+  return {data: res.data.data, message: res.data.message};
 };
 
 export const removeMember = async (
@@ -136,7 +136,7 @@ export const removeMember = async (
     id_project: string | number;
     id_user: number;
   }
-): Promise<MemberAssignment> => {
+): Promise<{data: MemberAssignment, message: string}> => {
   const res = await api.post("/project-api/remove-member", { id_project: payload.id_project, id_user: payload.id_user });
-  return res.data.data;
+  return {data: res.data.data, message: res.data.message};
 };

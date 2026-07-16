@@ -22,11 +22,11 @@ export default function InternsTab({ project }: { project: ProjectDetail }) {
 
   const handleRemove = async (id_user: number) => {
     const res = await remove({ id_project: project.id, id_user });
-    if (res !== null) {
+    if (res.success) {
       setMembers(prev => prev.filter(m => m.id !== id_user));
-      customToast.success('Member removed', 'The intern has been successfully removed from this project.');
+      customToast.success('Member removed', res.message);
     } else {
-      customToast.error('Failed to remove', 'An error occurred while removing the member. Please try again.');
+      customToast.error('Failed to remove', res.message);
     }
   };
 

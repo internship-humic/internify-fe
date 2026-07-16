@@ -58,11 +58,11 @@ export default function InternsManagement() {
       return;
     }
     const res = await remove({ id_project: matchedProject.id, id_user: intern.id });
-    if (res !== null) {
-      customToast.success('Intern removed', `${intern.name} has been successfully removed from the project.`);
+    if (res.success) {
+      customToast.success('Intern removed', res.message);
       refetch();
     } else {
-      customToast.error('Failed to remove', 'An error occurred while removing the intern. Please try again.');
+      customToast.error('Failed to remove', res.message);
     }
   };
 

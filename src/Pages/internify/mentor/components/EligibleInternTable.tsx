@@ -124,7 +124,7 @@ export default function EligibleInternTable({
       return;
     }
     if (selected.size === 0) {
-      customToast.error("Tidak ada intern dipilih", "Pilih minimal satu intern untuk generate sertifikat.");
+      customToast.error("Tidak ada intern dipilih", "Checklist intern yang sudah eligible untuk membuat sertifikat.");
       return;
     }
 
@@ -134,15 +134,14 @@ export default function EligibleInternTable({
     const ok = await customToast.promise(
       (async () => {
         const result = await SubmitCertificates(project.id, Array.from(selected));
-        if (!result) throw new Error("Tidak ada data sertifikat yang dikembalikan.");
+        if (!result.data) throw new Error("Tidak ada data sertifikat yang dikembalikan.");
 
         const zip = new JSZip();
         const templateUrl = resolveImageUrl(project.certificate_template!);
-
         const duration = formatDateRange(project.start_date, project.end_date);
 
         await Promise.all(
-          result.map(async (cert) => {
+          result.data.map(async (cert) => {
             const blob = await generateCertificate(
               templateUrl,
               cert.user.full_name,

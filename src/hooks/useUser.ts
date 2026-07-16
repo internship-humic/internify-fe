@@ -16,7 +16,7 @@ let store: UserStore = { user: null, loading: true, error: null };
 const listeners = new Set<() => void>();
 
 const setStore = (patch: Partial<UserStore>) => {
-  store = { ...store, ...patch }; // objek baru -> getSnapshot berubah referensinya
+  store = { ...store, ...patch };
   listeners.forEach((l) => l());
 };
 
@@ -27,12 +27,10 @@ const subscribe = (l: () => void) => {
 
 const getSnapshot = () => store;
 
-//  useUpdateProfile setelah PATCH sukses -> broadcast ke semua konsumen
 export const setCurrentUser = (user: CurrentUser | null) => {
   setStore({ user, loading: false, error: null });
 };
 
-// dipakai saat logout
 export const clearCurrentUser = () => {
   fetched = false;
   inflight = null;
@@ -87,15 +85,11 @@ export const useLogin = () => {
     setError(null);
     try {
       const data = await loginUser({ email, password });
-      clearCurrentUser(); // buang user lama agar tidak bocor antar-sesi
-      return data; // { token }
+      clearCurrentUser();
+      return data;
     } catch (err: any) {
-      const status = err?.response?.status;
-      if (status === 401 || status === 400) {
-        setError("Email atau password salah.");
-      } else {
-        setError("Terjadi kesalahan. Coba beberapa saat lagi.");
-      }
+      const msg = err?.response?.data?.message ?? "Terjadi kesalahan. Coba beberapa saat lagi.";
+      setError(msg);
       return null;
     } finally {
       setLoading(false);
@@ -105,6 +99,7 @@ export const useLogin = () => {
   return { login, loading, error, setError };
 };
 
+// Ambil 2 huruf (nama depan + nama belakang user)
 export const getInitials = (fullName?: string | null): string => {
   if (!fullName) return "U";
   const parts = fullName.trim().split(/\s+/).filter(Boolean);
@@ -113,7 +108,7 @@ export const getInitials = (fullName?: string | null): string => {
   return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
 };
 
-
+// Untuk resolve gambar (duplikat dari utils/...)
 export const resolveFileUrl = (path?: string | null): string | null => {
   if (!path) return null;
   if (/^(https?:|data:|blob:)/i.test(path)) return path;
@@ -124,71 +119,22 @@ export const resolveFileUrl = (path?: string | null): string | null => {
 // PATCH /auth-api/update-profile
 export const useUpdateProfile = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [successMsg, setSuccessMsg] = useState<string | null>(null);
-
-  const msgRef = useRef<{ success: string | null; error: string | null }>({
-    success: null,
-    error: null,
-  });
 
   const save = async (payload: UpdateProfilePayload) => {
     setLoading(true);
-    setError(null);
-    setSuccessMsg(null);
-    msgRef.current = { success: null, error: null };
-
     try {
       const updated = await updateProfile(payload);
-
-      setCurrentUser(updated);
-
-      const msg = "Profile updated successfully!";
-      msgRef.current.success = msg;
-      setSuccessMsg(msg);
+      setCurrentUser(updated.data);
       return updated;
-    } catch (err: any) {
-      const status = err?.response?.status;
-      const apiMessage = err?.response?.data?.message;
-
-      let message: string;
-      switch (status) {
-        case 400:
-          message =
-            apiMessage ||
-            "Data yang dikirim tidak valid. Periksa kembali isian Anda.";
-          break;
-        case 401:
-          message = "Sesi Anda telah berakhir. Silakan login kembali.";
-          break;
-        case 403:
-          message = apiMessage || "Anda tidak memiliki izin untuk mengubah data ini.";
-          break;
-        case 409:
-          message = apiMessage || "Email sudah digunakan, atau nama sudah pernah diubah.";
-          break;
-        case 413:
-          message = "Ukuran file terlalu besar. Maksimal 2MB.";
-          break;
-        case 417:
-          message = apiMessage || "Validasi gagal. Periksa kembali isian Anda.";
-          break;
-        case 500:
-          message = "Terjadi kesalahan di server. Coba beberapa saat lagi.";
-          break;
-        default:
-          message = apiMessage || "Failed to save changes.";
-      }
-
-      msgRef.current.error = message;
-      setError(message);
-      throw new Error(message);
+;    } catch (err: any) {
+      const message = (err?.response?.data?.message, "Gagal menyimpan perubahan.");
+      throw new Error(message)
     } finally {
       setLoading(false);
     }
   };
 
-  return { save, loading, error, successMsg, setSuccessMsg, setError, msgRef };
+  return { save, loading };
 };
 
 // Ambil Seluruh Mahasiswa

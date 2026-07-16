@@ -10,14 +10,12 @@ import type {
 import type { InternTaskItem, Project } from "../types/project.types";
 import type { MentorTaskItem, AdminTaskDetail } from "../types/task.types";
 
-// ── Task ──────────────────────────────────────────────
-
 export const createTask = async (
   projectId: string | number,
   payload: CreateTaskPayload
-): Promise<ProjectTask> => {
+): Promise<{ data: ProjectTask; message: string }> => {
   const res = await api.post(`/task-api/projects/${projectId}/tasks`, payload);
-  return res.data.data;
+  return { data: res.data.data, message: res.data.message };
 };
 
 export const getProjectTasks = async (
@@ -51,20 +49,21 @@ export const updateTask = async (
   taskId: string | number,
   payload: UpdateTaskPayload,
   projectId?: string | number
-): Promise<ProjectTask> => {
+): Promise<{ data: ProjectTask; message: string }> => {
   const res = await api.patch(`/task-api/tasks/${taskId}`, payload, {
     params: projectId ? { project: projectId } : undefined,
   });
-  return res.data.data;
+  return { data: res.data.data, message: res.data.message };
 };
 
 export const deleteTask = async (
   taskId: string | number,
   projectId?: string | number
-): Promise<void> => {
-  await api.delete(`/task-api/tasks/${taskId}`, {
+) => {
+  const res = await api.delete(`/task-api/tasks/${taskId}`, {
     params: projectId ? { project: projectId } : undefined,
   });
+  return res.data;
 };
 
 export const getAllMentorTasks = async (): Promise<MentorTaskItem[]> => {
@@ -87,54 +86,54 @@ export const getAllMentorTasks = async (): Promise<MentorTaskItem[]> => {
 
 
 
-// ── Submission ────────────────────────────────────────
-
+// Submission
 export const submitTaskFile = async (
   taskId: string | number,
   files: File[],
   projectId?: string | number
-): Promise<TaskSubmissionData> => {
+): Promise<{ data: TaskSubmissionData; message: string }> => {
   const formData = new FormData();
   files.forEach((file) => formData.append("submission_files", file));
   const res = await api.post(`/task-api/tasks/${taskId}/submissions`, formData, {
     params: projectId ? { project: projectId } : undefined,
   });
-  return res.data.data;
+  return { data: res.data.data, message: res.data.message };
 };
 
 export const submitTaskLink = async (
   taskId: string | number,
   url_link: string,
   projectId?: string | number
-): Promise<TaskSubmissionData> => {
+): Promise<{ data: TaskSubmissionData; message: string }> => {
   const formData = new FormData();
   formData.append("url_link", url_link);
   const res = await api.post(`/task-api/tasks/${taskId}/submissions`, formData, {
     params: projectId ? { project: projectId } : undefined,
   });
-  return res.data.data;
+  return { data: res.data.data, message: res.data.message };
 };
 
 export const updateSubmissionFile = async (
   submissionId: number,
   files: File[]
-): Promise<TaskSubmissionData> => {
+): Promise<{ data: TaskSubmissionData; message: string }> => {
   const formData = new FormData();
   files.forEach((file) => formData.append("submission_files", file));
   const res = await api.patch(`/task-api/submissions/${submissionId}`, formData);
-  return res.data.data;
+  return { data: res.data.data, message: res.data.message };
 };
 
 export const updateSubmissionLink = async (
   submissionId: number,
   url_link: string
-): Promise<TaskSubmissionData> => {
+): Promise<{ data: TaskSubmissionData; message: string }> => {
   const formData = new FormData();
   formData.append("url_link", url_link);
   const res = await api.patch(`/task-api/submissions/${submissionId}`, formData);
-  return res.data.data;
+  return { data: res.data.data, message: res.data.message };
 };
 
-export const deleteSubmission = async (submissionId: number): Promise<void> => {
-  await api.delete(`/task-api/submissions/${submissionId}`);
+export const deleteSubmission = async (submissionId: number): Promise<{ message: string }> => {
+  const res = await api.delete(`/task-api/submissions/${submissionId}`);
+  return { message: res.data.message };
 };

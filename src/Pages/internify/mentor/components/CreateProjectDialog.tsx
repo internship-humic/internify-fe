@@ -22,6 +22,7 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
   const [invitedEmails, setInvitedEmails] = useState<string[]>([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [dateError, setDateError] = useState("");
   const { create, loading, error } = useCreateProject();
   const { interns: assignableInterns, loading: loadingInterns } = useAssignableInterns();
   const [showDropdown, setShowDropdown] = useState(false);
@@ -68,6 +69,14 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    setDateError("");
+
+    if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
+      setDateError("Tanggal selesai tidak boleh lebih awal dari tanggal mulai.");
+      return;
+    }
+
     const payload: CreateProjectPayload = {
       project_icon: selectedIcon,
       project_name: projectName,
@@ -81,13 +90,12 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
     }
 
     const result = await create(payload);
-    if (result) {
+    if (result.success) {
       onSuccess?.();
       onClose();
-      customToast.success(
-        "Project berhasil dibuat!",
-        `${projectName} sudah aktif dan siap dikelola.`
-      );
+      customToast.success("Project berhasil dibuat!", (result.message));
+    } else {
+      customToast.error("Gagal membuat project", (result.message));
     }
   };
 
@@ -263,14 +271,14 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
           {/* Start Date */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-gray-700 tracking-wide">
-              Start Date
+              Tanggal Mulai
             </label>
             <div className="relative">
               <input
                 type="date"
                 required
                 value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
+                onChange={(e) => { setStartDate(e.target.value); setDateError(""); }}
                 className="w-full px-3 py-2.5 bg-white border border-card-outline rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium appearance-none"
               />
               <span className="absolute right-3.5 top-3 text-gray-400 pointer-events-none">
@@ -281,14 +289,14 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
           {/* End Date */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-gray-700 tracking-wide">
-              End Date
+              Tanggal Berakhir
             </label>
             <div className="relative">
               <input
                 type="date"
                 required
                 value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+                onChange={(e) => { setEndDate(e.target.value); setDateError(""); }}
                 className="w-full px-3 py-2.5 bg-white border border-card-outline rounded-lg text-sm text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium appearance-none"
               />
               <span className="absolute right-3.5 top-3 text-gray-400 pointer-events-none">
@@ -296,9 +304,12 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
             </div>
           </div>
         </div>
+        {dateError && (
+          <p className="text-xs text-red font-medium">{dateError}</p>
+        )}
 
         {error && (
-          <p className="text-xs text-red-600 text-center font-medium">{error}</p>
+          <p className="text-xs text-red text-center font-medium">{error}</p>
         )}
 
         {/* Action Row Buttons */}

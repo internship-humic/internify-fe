@@ -37,15 +37,15 @@ export default function MentorProjectCard({ onArchived, onCompleted, ...project 
     const result = await archive(project.id);
     setShowArchiveDialog(false);
 
-    if (result) {
-      customToast.success("Berhasil!", "Projek berubah status menjadi Archived (Diarsipkan");
+    if (result.success) {
+      customToast.success("Berhasil!", result.message);
       onArchived?.();
     } else {
-      customToast.error("Gagal!", "Projek gagal diarsipkan (archived)");
+      customToast.error("Gagal!", result.message);
     }
   };
 
-  /* ── Complete ────────────────────────────────────────────── */
+  /* Complete  */
   const handleCompleteButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setShowCompleteDialog(true);
@@ -55,11 +55,11 @@ export default function MentorProjectCard({ onArchived, onCompleted, ...project 
     const result = await complete(project.id);
     setShowCompleteDialog(false);
 
-    if (result) {
-      customToast.success("Berhasil!", "Projek  berubah status menjadi completed (selesai)");
+    if (result?.success) {
+      customToast.success("Berhasil!", result.message);
       onCompleted?.();
     } else {
-      customToast.error("Gagal!", "Projek gagal diselesaikan (completed)");
+      customToast.error("Gagal!", result?.message);
     }
   };
 

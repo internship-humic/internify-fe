@@ -1,4 +1,3 @@
-// services/NotificationService.ts
 import api from "../lib/api";
 import type { BackendNotification, UINotification } from "../types/notification.types";
 
@@ -7,12 +6,16 @@ export const getNotifications = async (): Promise<BackendNotification[]> => {
   return res.data.data;
 };
 
-export const markAllAsRead = async (): Promise<void> => {
-  await api.patch("/notification-api/read-all");
+export const markAllAsRead = async (): Promise<{ message: string }> => {
+  const res = await api.patch("/notification-api/read-all");
+  return { message: res.data.message };
 };
 
-export const markAsRead = async (id: number): Promise<void> => {
-  await api.patch(`/notification-api/${id}/read`);
+export const markAsRead = async (
+  id: number
+): Promise<{ data: BackendNotification; message: string }> => {
+  const res = await api.patch(`/notification-api/${id}/read`);
+  return { data: res.data.data, message: res.data.message };
 };
 
 export const mapType = (title: string): string => {

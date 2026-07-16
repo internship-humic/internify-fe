@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Check, Download, Info } from "lucide-react";
+import { Check, Download } from "lucide-react";
 import { LuFileSpreadsheet } from "react-icons/lu";
 import { io } from "socket.io-client";
 import * as NotificationService from "../../services/NotificationService";
@@ -66,14 +66,25 @@ export default function NotificationList() {
     };
   }, []);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleMarkAllRead = async () => {
     try {
-      await NotificationService.markAllAsRead();
+      const res = await NotificationService.markAllAsRead();
       setNotifications([]);
-      customToast.success("All notifications marked as read!");
-    } catch (err:any) {
-      customToast.error("Failed to mark all as read", err?.message);
+      customToast.success("Berhasil", res.message);
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? "Gagal menandai semua notifikasi.";
+      customToast.error("Gagal", msg);
+    }
+  };
+
+  const handleReadMessage = async (id: number) => {
+    try {
+      const res = await NotificationService.markAsRead(id);
+      setNotifications(prev => prev.filter(n => n.id !== id));
+      customToast.success("Ditandai dibaca", res.message);
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? "Gagal menandai notifikasi.";
+      customToast.error("Gagal", msg);
     }
   };
 
@@ -98,7 +109,7 @@ export default function NotificationList() {
 
       {notifications.length === 0 && (
         <div className="flex flex-col items-center justify-center pt-14 gap-3">
-          <img src={mailRafiki} alt="empty notification" className="w-[280px]"/>
+          <img src={mailRafiki} alt="empty notification" className="w-[280px]" />
           <p className="text-lg text-font">Belum ada pesan notifikasi yang diterima</p>
         </div>
       )}
@@ -110,7 +121,7 @@ export default function NotificationList() {
           {notifications.filter(n => n.group === "TODAY").map((item) => (
             <div
               key={item.id}
-              className={`relative flex items-start gap-4 p-5 bg-white border border-gray-100 rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.01)] ${item.type === 'new-task' ? 'border-l-4 border-l-[#B30000]' : ''
+              className={`relative flex items-start gap-4 p-5 bg-box border border-card-outline/40 rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.01)] ${item.type === 'new-task' ? 'border-l-4 border-l-[#B30000]' : ''
                 }`}
             >
               {/* Icon Container */}
@@ -137,16 +148,19 @@ export default function NotificationList() {
                 </p>
 
                 {/* Conditional Actions */}
-                {item.type === 'new-task' && item.link  &&(
+                {item.type === 'new-task' && item.link && (
                   <div className="flex items-center gap-2 pt-3">
                     <button
                       className="px-4 py-1.5 bg-[#B30000] hover:bg-[#990000] text-white text-xs font-bold rounded-lg shadow-sm transition-colors"
                       onClick={() => navigate(`${item.link}`)}>
                       View Task
                     </button>
-                    {/* <button className="px-4 py-1.5 border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 text-xs font-semibold rounded-lg transition-colors">
+                    <button
+                      className="px-4 py-1.5 border border-card-outline text-font hover:text-font-shade hover:bg-gray-50 text-xs font-semibold rounded-lg transition-colors"
+                      onClick={() => handleReadMessage(item.id)}
+                    >
                       Later
-                    </button> */}
+                    </button>
                   </div>
                 )}
 
@@ -167,34 +181,6 @@ export default function NotificationList() {
             </div>
           ))}
         </div>
-
-        {/* Header Section YESTERDAY */}
-        <div className="space-y-3 pt-2">
-          {/* <h2 className="text-[10px] font-bold tracking-widest text-gray-400 uppercase">
-            YESTERDAY
-          </h2> */}
-
-          {notifications.filter(n => n.group === "YESTERDAY").map((item) => (
-            <div
-              key={item.id}
-              className="relative flex items-start gap-4 p-5 bg-gray-50 border border-gray-100 rounded-xl"
-            >
-              <div className="p-2.5 bg-gray-200 text-gray-500 rounded-xl">
-                <Info className="w-5 h-5" />
-              </div>
-              <div className="flex-grow space-y-1">
-                <h3 className="text-sm font-bold text-gray-700">{item.title}</h3>
-                <p className="text-xs text-gray-500 font-medium leading-relaxed max-w-2xl">
-                  {item.description}
-                </p>
-              </div>
-              <span className="text-[11px] text-gray-400 font-medium whitespace-nowrap md:absolute md:top-5 md:right-5">
-                {item.time}
-              </span>
-            </div>
-          ))}
-        </div>
-
       </div>
     </div>
   );

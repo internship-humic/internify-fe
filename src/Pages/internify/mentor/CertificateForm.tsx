@@ -36,13 +36,15 @@ export default function CertificateDetail() {
       upload(project.id, selectedFile),
       {
         loading: "Mengupload template...",
-        success: () => ({
-          title: "Upload berhasil",
-          description: "Template sertifikat berhasil disimpan.",
+        success: (result) => ({
+          title: result?.success === false ? "Upload gagal" : "Upload berhasil",
+          description: result?.message ?? (result?.success === false
+            ? "Terjadi kesalahan saat upload."
+            : "Template sertifikat berhasil disimpan."),
         }),
         error: (err) => ({
           title: "Upload gagal",
-          description: err instanceof Error ? err.message : "Terjadi kesalahan saat upload.",
+          description: err?.message ?? "Terjadi kesalahan saat upload.",
         }),
       }
     ).then(async (result) => {

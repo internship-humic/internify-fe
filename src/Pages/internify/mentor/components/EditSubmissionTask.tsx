@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import { LuSave } from "react-icons/lu";
 import { useUpdateTask } from "../../../../hooks/useTasks";
 import type { ProjectTask, SubmissionType, UpdateTaskPayload } from "../../../../types/task.types";
+import { customToast } from "../../../utils/showToast";
 
 interface EditTaskModalProps {
   isOpen: boolean;
@@ -79,9 +80,12 @@ export default function EditSubmissionModal({
       return;
     }
     const result = await update(task.id, payload, String(task.id_project));
-    if (result) {
-      onSuccess(result);
+    if (result.data) {
+      customToast.success("Task diperbarui", result.message);
+      onSuccess(result.data);
       onClose();
+    } else {
+      customToast.error("Gagal", result.message);
     }
   };
 

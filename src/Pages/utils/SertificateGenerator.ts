@@ -36,7 +36,7 @@ const LAYOUT = {
   internNameSmall: { x: 0.82,  y: 0.889, size: 33,  font: "Great Vibes", color: "#800000" },
   projectName:     { x: 0.815, y: 0.598, size: 46,  font: "Grenze",      color: "#800000" },
   duration:        { x: 0.692, y: 0.645, size: 48,  font: "Grenze",      color: "#090909" },
-  certNo:          { x: 0.6, y: 0.305, size: 50,  font: "Grenze",      color: "#090909" },
+  certNo:          { x: 0.6, y: 0.28, size: 50,  font: "Grenze",      color: "#090909" },
   certNoSmall:     { x: 0.825, y: 0.91,  size: 22,  font: "Grenze",      color: "#800000" },
   qr:              { x: 0.77,  y: 0.715, size: 0.103 },
 };

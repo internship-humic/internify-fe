@@ -74,16 +74,15 @@ export default function ManageInternsModal({ isOpen, onClose, projectId, initial
 
   const handleAssign = async (intern: AssignableIntern) => {
     const result = await assign({ id_project: projectId, id_user: intern.id });
-    if (result) {
-      // Tandai sebagai sudah ditambah — intern hilang dari dialog (tidak muncul lagi)
+    if (result.success) {
       setAddedIds(prev => new Set([...prev, intern.id]));
-      customToast.success('Intern added', `${intern.full_name} has been successfully added to the project.`);
+      customToast.success('Intern added', result.message);
     } else {
-      customToast.error('Failed to add', 'An error occurred while adding the intern. Please try again.');
+      customToast.error('Failed to add', result.message);
     }
   };
 
-  const getInitials = (m: AssignableIntern) => 
+  const getInitials = (m: AssignableIntern) =>
     m.full_name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
 
   return (

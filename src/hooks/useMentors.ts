@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import type { MentorData, CreateMentorPayload, UpdateMentorPayload } from "../services/MentorServices";
+import type { MentorData, CreateMentorPayload, UpdateMentorPayload } from "../types/user.types";
 import {
   createMentorService,
   getMentorsService,
@@ -8,7 +8,7 @@ import {
   deleteMentorService,
 } from "../services/MentorServices"
 
-// ── GET ALL ──────────────────────────────────────────────────────────────────
+// GET ALL MENTORS 
 export const useMentors = () => {
   const [mentors, setMentors] = useState<MentorData[]>([]);
   const [loading, setLoading] = useState(false);
@@ -31,7 +31,7 @@ export const useMentors = () => {
   return { mentors, loading, error, refetch: fetch };
 };
 
-// ── GET DETAIL ───────────────────────────────────────────────────────────────
+// GET DETAIL
 export const useMentorDetail = (id: number | null) => {
   const [mentor, setMentor] = useState<MentorData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -55,18 +55,19 @@ export const useMentorDetail = (id: number | null) => {
   return { mentor, loading, error, refetch: fetch };
 };
 
-// ── CREATE ───────────────────────────────────────────────────────────────────
+// CREATE 
 export const useCreateMentor = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const createMentor = async (payload: CreateMentorPayload): Promise<MentorData | null> => {
+  const createMentor = async (payload: CreateMentorPayload): Promise<{ data: MentorData; message: string } | null> => {
     setLoading(true);
     setError(null);
     try {
       return await createMentorService(payload);
-    } catch {
-      setError("Gagal membuat akun mentor.");
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? "Gagal membuat akun mentor.";
+      setError(msg);
       return null;
     } finally {
       setLoading(false);
@@ -76,7 +77,7 @@ export const useCreateMentor = () => {
   return { createMentor, loading, error };
 };
 
-// ── UPDATE ───────────────────────────────────────────────────────────────────
+// UPDATE 
 export const useUpdateMentor = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -84,13 +85,14 @@ export const useUpdateMentor = () => {
   const updateMentor = async (
     id: number,
     payload: UpdateMentorPayload
-  ): Promise<MentorData | null> => {
+  ): Promise<{ data: MentorData; message: string } | null> => {
     setLoading(true);
     setError(null);
     try {
       return await updateMentorService(id, payload);
-    } catch {
-      setError("Gagal memperbarui data mentor.");
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? "Gagal memperbarui data mentor.";
+      setError(msg);
       return null;
     } finally {
       setLoading(false);
@@ -100,20 +102,21 @@ export const useUpdateMentor = () => {
   return { updateMentor, loading, error };
 };
 
-// ── DELETE ───────────────────────────────────────────────────────────────────
+// DELETE 
 export const useDeleteMentor = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const deleteMentor = async (id: number): Promise<boolean> => {
+  const deleteMentor = async (id: number): Promise<{ success: boolean; message: string }> => {
     setLoading(true);
     setError(null);
     try {
-      await deleteMentorService(id);
-      return true;
-    } catch {
-      setError("Gagal menghapus mentor.");
-      return false;
+      const res = await deleteMentorService(id);
+      return { success: true, message: res.message };
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? "Gagal menghapus mentor.";
+      setError(msg);
+      return { success: false, message: msg };
     } finally {
       setLoading(false);
     }

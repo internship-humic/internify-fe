@@ -188,10 +188,12 @@ export const useCreateProject = () => {
     setLoading(true);
     setError(null);
     try {
-      return await createProject(payload);
-    } catch {
-      setError("Gagal membuat project.");
-      return null;
+      const { data, message } = await createProject(payload);
+      return { success: true as const, data, message };
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? "Gagal membuat project.";
+      setError(msg);
+      return { success: false as const, message: msg };
     } finally {
       setLoading(false);
     }
@@ -220,10 +222,12 @@ export const useUpdateProject = () => {
     setLoading(true);
     setError(null);
     try {
-      return await updateProject(id, payload);
-    } catch {
-      setError("Gagal mengupdate project.");
-      return null;
+      const { data, message } = await updateProject(id, payload);
+      return { success: true as const, data, message };
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? "Gagal mengupdate project.";
+      setError(msg);
+      return { success: false as const, message: msg };
     } finally {
       setLoading(false);
     }
@@ -241,10 +245,12 @@ export const useArchiveProject = () => {
     setLoading(true);
     setError(null);
     try {
-      return await archiveProject(id);
-    } catch {
-      setError("Gagal mengarsipkan project.");
-      return null;
+      const { data, message } = await archiveProject(id);
+      return { success: true as const, data, message };
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? "Gagal mengarsipkan project.";
+      setError(msg);
+      return { success: false as const, message: msg };
     } finally {
       setLoading(false);
     }
@@ -261,10 +267,12 @@ export const useCompleteProject = () => {
     setLoading(true);
     setError(null);
     try {
-      return await completeProject(id);
-    } catch {
-      setError("Gagal menyelesaikan project.");
-      return null;
+      const { data, message } = await completeProject(id);
+      return { success: true as const, data, message}
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? "Gagal menyelesaikan project.";
+      setError(msg);
+      return { success: false as const, message: msg};
     } finally {
       setLoading(false);
     }
@@ -282,10 +290,12 @@ export const useAssignMember = () => {
     setLoading(true);
     setError(null);
     try {
-      return await assignMember(payload);
-    } catch {
-      setError("Gagal assign member.");
-      return null;
+      const { data, message } = await assignMember(payload);
+      return { success: true as const, data, message };
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? "Gagal assign member.";
+      setError(msg);
+      return { success: false as const, message: msg };
     } finally {
       setLoading(false);
     }
@@ -303,10 +313,12 @@ export const useRemoveMember = () => {
     setLoading(true);
     setError(null);
     try {
-      return await removeMember(payload);
-    } catch {
-      setError("Gagal remove member.");
-      return null;
+      const { data, message } = await removeMember(payload);
+      return { success: true as const, data, message };
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? "Gagal remove member.";
+      setError(msg);
+      return { success: false as const, message: msg };
     } finally {
       setLoading(false);
     }

@@ -62,9 +62,8 @@ export default function CertificateAvailable({ project, certificate, templateUrl
     setDownloadingImg(true);
     try {
       await downloadCertificateImage(certificate, templateUrl, "png");
-      customToast.success("Sertifikat berhasil diunduh!");
     } catch {
-      customToast.error("Gagal mengunduh sertifikat!");
+      customToast.error("Gagal mengunduh sertifikat!", "Terjadi kendala saat mengunduh sertifikat!");
     } finally {
       setDownloadingImg(false);
     }
@@ -74,9 +73,8 @@ export default function CertificateAvailable({ project, certificate, templateUrl
     setDownloadingPdf(true);
     try {
       await downloadCertificatePdf(certificate, templateUrl);
-      customToast.success("Sertifikat berhasil diunduh!");
     } catch {
-      customToast.error("Gagal mengunduh sertifikat!");
+      customToast.error("Gagal mengunduh sertifikat!", "Terjadi kendala saat mengunduh sertifikat!");
     } finally {
       setDownloadingPdf(false);
     }

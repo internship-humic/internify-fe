@@ -14,19 +14,13 @@ export default function TaskTab({ project }: { project: ProjectDetail }) {
   const [selectedTask, setSelectedTask] = useState<InternTaskItem | null>(null);
   const isProjectActive = project?.status === "active"
 
-  const handleDeleteTask = async (taskId: number, taskTitle: string) => {
-    const confirmed = window.confirm(`Yakin ingin menghapus task “${taskTitle}”?`);
-    if (!confirmed) return;
-
+  const handleDeleteTask = async (taskId: number) => {
     const del = await remove(taskId, String(project.id));
-    if (del) {
-      try {
-        customToast.success("Berhasil", `Task ${taskTitle} berhasil dihapus`)
-      } catch (error) {
-        customToast.error("Gagal", `Task ${taskTitle} gagal dihapus`)
-      } finally {
-        refetch();
-      }
+    if (!del.failed) {
+      customToast.success("Berhasil Menghapus Task", del.message);
+      refetch();
+    } else {
+      customToast.error("Gagal Menghapus Task", del.message);
     }
   };
 
@@ -83,7 +77,7 @@ export default function TaskTab({ project }: { project: ProjectDetail }) {
                   <Pencil size={20} />
                 </button>
                 <button
-                  onClick={() => handleDeleteTask(task.id, task.title)}
+                  onClick={() => handleDeleteTask(task.id)}
                   disabled={!isProjectActive}
                   className="border border-gray-500 text-font-shade rounded-lg px-2 py-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >

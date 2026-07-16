@@ -54,7 +54,7 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
     if (files.length === 0) {
       customToast.error(
         "File belum dipilih!",
-        "Silakan pilih file terlebih dahulu sebelum mengirim."
+        "Choose your file before submit it!"
       );
       return;
     }
@@ -63,11 +63,12 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
       isEditing ? updateFile(submission!.id, files) : submitFile(files),
       {
         loading: isEditing ? "Memperbarui file..." : "Mengirim file...",
-        success: () => ({
+        success: (res) => ({
           title: isEditing ? "File berhasil diperbarui!" : "File berhasil dikirim!",
-          description: isEditing
-            ? "Perubahan submission Anda telah disimpan."
-            : "Submission Anda telah berhasil dikirim.",
+          description: res?.message ??
+              (isEditing
+                ? "Perubahan submission Anda telah disimpan."
+                : "Link berhasil dikirim."),
         }),
         error: (err) => ({
           title: isEditing ? "Gagal memperbarui file!" : "Gagal mengirim file!",
@@ -86,8 +87,6 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
   };
 
   const handleDelete = async () => {
-    if (!confirm("Yakin ingin menghapus submission ini?")) return;
-
     try {
       const ok = await remove(submission!.id);
       if (ok) {
@@ -95,7 +94,7 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
         setIsEditing(false);
         customToast.success(
           "Submission berhasil dihapus!",
-          "Anda dapat mengirim submission baru kapan saja."
+          ok.message
         );
       }
     } catch (err: any) {

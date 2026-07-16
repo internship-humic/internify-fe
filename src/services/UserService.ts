@@ -7,9 +7,9 @@ import type { Mahasiswa, MahasiswaResponse } from "../types/project.types";
 export const loginUser = async (payload: {
   email: string;
   password: string;
-}): Promise<{ token: string }> => {
+}): Promise<{ token: string, message: string }> => {
   const res = await api.post("/auth-api/login", payload);
-  return res.data.data;
+  return { token: res.data.data.token, message: res.data.message };
 };
 
 // GET /auth-api/me
@@ -37,7 +37,7 @@ export function getInitials(fullName: string | undefined | null): string {
 // PATCH /auth-api/update-profile
 export const updateProfile = async (
   payload: UpdateProfilePayload,
-): Promise<CurrentUser> => {
+): Promise<{ data: CurrentUser, message: string }> => {
   const formData = new FormData();
 
   if (payload.full_name !== undefined) {
@@ -51,9 +51,11 @@ export const updateProfile = async (
   if (payload.profile_picture instanceof File) {
     formData.append("profile_picture", payload.profile_picture);
   }
-
   const res = await api.patch("/auth-api/update-profile", formData);
-  return normalizeUser(res.data.data);
+  if (!res.data?.status) {
+    throw { response: { data: { message: res.data?.message } } };
+  }
+  return { data: normalizeUser(res.data.data), message: res.data.message };
 };
 
 export const getMahasiswa = async (): Promise<Mahasiswa[]> => {

@@ -27,24 +27,18 @@ export default function TaskFormLink({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputLink.trim()) {
-      customToast.error(
-        "Link belum dibuat",
-        "Masukkan link untuk mengirim submission"
-      );
-      return;
-    }
-
     try {
       await customToast.promise(
         isEditing ? updateLink(submission!.id, inputLink) : submitLink(inputLink),
         {
           loading: isEditing ? "Memperbarui Link..." : "Mengirim Link...",
-          success: () => ({
+          success: (res) => ({
             title: isEditing ? "Link diperbaharui" : "Link berhasil dikirim",
-            description: isEditing
-              ? "Perubahan submission Anda telah disimpan."
-              : "Submission Anda telah berhasil dikirim.",
+            description:
+              res?.message ??
+              (isEditing
+                ? "Perubahan submission Anda telah disimpan."
+                : "Link berhasil dikirim."),
           }),
           error: (err) => ({
             title: isEditing ? "Gagal memperbarui link!" : "Gagal mengirim link!",
@@ -56,13 +50,10 @@ export default function TaskFormLink({
         }
       );
       setIsEditing(false);
-    } catch {
-      // error sudah ditangani toast, tetap di form
-    }
+    } catch { }
   };
 
   const handleDelete = async () => {
-    if (!confirm("Yakin ingin menghapus submission ini?")) return;
     try {
       const ok = await remove(submission!.id);
       if (ok) {
@@ -70,7 +61,7 @@ export default function TaskFormLink({
         setIsEditing(false);
         customToast.success(
           "Submission berhasil dihapus!",
-          "Anda dapat mengirim submission baru kapan saja."
+          ok.message
         );
       }
     } catch (err: any) {
@@ -90,7 +81,7 @@ export default function TaskFormLink({
         deadline={deadline}
         onEdit={() => setIsEditing(true)}
         onDelete={handleDelete}
-        disabled={!isProjectActive} 
+        disabled={!isProjectActive}
       />
     );
   }

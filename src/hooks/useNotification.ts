@@ -24,18 +24,28 @@ export const useNotifications = () => {
 
   const markAllRead = async () => {
     try {
-      await markAllAsRead();
+      const { message } = await markAllAsRead();
       setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
-    } catch { setError("Gagal menandai semua notifikasi."); }
+      return { success: true as const, message };
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? "Gagal menandai semua notifikasi.";
+      setError(msg);
+      return { success: false as const, message: msg };
+    }
   };
 
   const markOneRead = async (id: number) => {
     try {
-      await markAsRead(id);
+      const { message } = await markAsRead(id);
       setNotifications(prev =>
         prev.map(n => n.id === id ? { ...n, is_read: true } : n)
       );
-    } catch { setError("Gagal menandai notifikasi."); }
+      return { success: true as const, message };
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? "Gagal menandai notifikasi.";
+      setError(msg);
+      return { success: false as const, message: msg };
+    }
   };
 
   const unreadCount = notifications.filter(n => !n.is_read).length;

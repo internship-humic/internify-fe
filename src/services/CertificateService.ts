@@ -7,15 +7,20 @@ import type {
 } from "../types/certificate.types";
 
 // POST /certificate-api/claim
-export const claimCertificate = async (id_project: number): Promise<Certificate> => {
+export const claimCertificate = async (
+  id_project: number
+): Promise<{ data: Certificate; message: string }> => {
   const res = await api.post("/certificate-api/claim", { id_project });
-  return res.data.data;
+  return { data: res.data.data, message: res.data.message };
 };
 
 // POST /certificate-api/generate
-export const generateCertificate = async (id_project: number, id_users: number[]): Promise<Certificate[]> => {
+export const generateCertificate = async (
+  id_project: number,
+  id_users: number[]
+): Promise<{ data: Certificate[]; message: string }> => {
   const res = await api.post("/certificate-api/generate", { id_project, id_users });
-  return res.data.data.certificates;
+  return { data: res.data.data.certificates, message: res.data.message };
 };
 
 // GET /certificate-api/my-certificates
@@ -52,9 +57,9 @@ export const verifyCertificateByUuid = async (uuid: string): Promise<Certificate
 export const uploadCertificateTemplate = async (
   id_project: number,
   file: File
-): Promise<CertificateTemplate> => {
+): Promise<{ data: CertificateTemplate; message: string }> => {
   const formData = new FormData();
   formData.append("template", file);
   const res = await api.post(`/certificate-api/projects/${id_project}/template`, formData);
-  return res.data.data;
+  return { data: res.data.data, message: res.data.message };
 };

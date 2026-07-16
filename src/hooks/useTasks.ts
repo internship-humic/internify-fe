@@ -97,16 +97,16 @@ export const useCreateTask = (projectId: string) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const create = async (
-    payload: CreateTaskPayload,
-  ): Promise<ProjectTask | null> => {
+  const create = async (payload: CreateTaskPayload) => {
     setLoading(true);
     setError(null);
     try {
-      return await createTask(projectId, payload);
-    } catch {
-      setError("Gagal membuat task.");
-      return null;
+      const { data, message } = await createTask(projectId, payload);
+      return { data, message };
+    } catch (err: any) {
+      const message = err?.response?.data?.message ?? "Gagal membuat task.";
+      setError(message);
+      return { message };
     } finally {
       setLoading(false);
     }
@@ -128,10 +128,12 @@ export const useUpdateTask = () => {
     setLoading(true);
     setError(null);
     try {
-      return await updateTask(taskId, payload, projectId);
-    } catch {
-      setError("Gagal mengupdate task.");
-      return null;
+      const { data, message } = await updateTask(taskId, payload, projectId);
+      return { data, message };
+    } catch (err: any) {
+      const message = err?.response?.data?.message ?? "Gagal mengupdate task.";
+      setError(message);
+      return { message };
     } finally {
       setLoading(false);
     }
@@ -149,16 +151,17 @@ export const useDeleteTask = () => {
     setLoading(true);
     setError(null);
     try {
-      await deleteTask(taskId, projectId);
-      return true;
-    } catch {
-      setError("Gagal menghapus task.");
-      return false;
+      const data = await deleteTask(taskId, projectId);
+      const msg = data?.message ?? "Task berhasil dihapus.";
+      return { message: msg };
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? "Gagal menghapus task.";
+      setError(msg);
+      return {  message: msg, failed: true as const };
     } finally {
       setLoading(false);
     }
   };
-
   return { remove, loading, error };
 };
 
@@ -179,12 +182,12 @@ export const useSubmission = (
     setError(null);
     try {
       const res = await submitTaskFile(taskId, files, projectId);
-      if (res) setSubmission(res);
+      if (res.data) setSubmission(res.data);
       return res;
-    } catch (err){
-      setError("Gagal submit file.");
-      throw error;
-      return null;
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? "Gagal submit file.";
+      setError(msg);
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -195,10 +198,11 @@ export const useSubmission = (
     setError(null);
     try {
       const res = await submitTaskLink(taskId, url, projectId);
-      if (res) setSubmission(res);
+      if (res.data) setSubmission(res.data);
       return res;
-    } catch (err){
-      setError("Gagal submit link.");
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? "Gagal submit link.";
+      setError(msg);
       throw err;
     } finally {
       setLoading(false);
@@ -210,10 +214,11 @@ export const useSubmission = (
     setError(null);
     try {
       const res = await updateSubmissionFile(submissionId, files);
-      if (res) setSubmission(res);
+      if (res.data) setSubmission(res.data);
       return res;
-    } catch (err){
-      setError("Gagal update submission.");
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? "Gagal update submission.";
+      setError(msg);
       throw err;
     } finally {
       setLoading(false);
@@ -225,10 +230,11 @@ export const useSubmission = (
     setError(null);
     try {
       const res = await updateSubmissionLink(submissionId, url);
-      if (res) setSubmission(res);
+      if (res.data) setSubmission(res.data);
       return res;
-    } catch (err){
-      setError("Gagal update submission.");
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? "Gagal update submission.";
+      setError(msg);
       throw err;
     } finally {
       setLoading(false);
@@ -239,12 +245,13 @@ export const useSubmission = (
     setLoading(true);
     setError(null);
     try {
-      await deleteSubmission(submissionId);
+      const res = await deleteSubmission(submissionId);
       setSubmission(null);
-      return true;
-    } catch (err) {
-      setError("Gagal hapus submission.");
-      throw err;
+      return { success: true as const, message: res.message };
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? "Gagal hapus submission.";
+      setError(msg);
+      return { success: false as const, message: msg };
     } finally {
       setLoading(false);
     }
@@ -305,16 +312,14 @@ export const useDeadlines = () => {
     if (!user) return [];
     return isIntern
       ? internTasks.map((task) => ({
-          date: new Date(task.deadline_at),
-          label: task.title,
-        }))
+        date: new Date(task.deadline_at),
+        label: task.title,
+      }))
       : mentorTasks.map((task) => ({
-          date: new Date(task.deadline_at),
-          label: `[${task.project_name}] ${task.title}`,
-        }));
+        date: new Date(task.deadline_at),
+        label: `[${task.project_name}] ${task.title}`,
+      }));
   }, [isIntern, internTasks, mentorTasks, user]);
-
-  // Loading: tunggu user dulu, baru tunggu task yang relevan dengan rolenya
   const loading = userLoading || (isIntern ? internLoading : mentorLoading);
   const error = userError || (isIntern ? internError : mentorError);
 

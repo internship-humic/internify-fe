@@ -53,6 +53,16 @@ export const customToast = {
     const loadingId = toast.loading(messages.loading);
     try {
       const data = await promise;
+      const isHookFailure = typeof data === 'object' && data !== null && 'success' in data && (data as { success?: boolean }).success === false;
+
+      if (isHookFailure) {
+        toast.dismiss(loadingId);
+        const result = data as { success: boolean; message?: string };
+        const { title, description } = messages.error(result);
+        customToast.error(title, description ?? result.message);
+        throw new Error(result.message ?? 'Operasi gagal.');
+      }
+
       toast.dismiss(loadingId);
       const { title, description } = messages.success(data);
       customToast.success(title, description);
@@ -60,7 +70,7 @@ export const customToast = {
     } catch (err) {
       toast.dismiss(loadingId);
       const { title, description } = messages.error(err);
-      customToast.error(title, description);
+      customToast.error(title, description ?? (err as Error)?.message);
       throw err;
     }
   },

@@ -59,11 +59,11 @@ export default function AddInternsModal({ isOpen, onClose, userId }: AddInternsM
       id_project: Number(selectedProjectId),
       id_user: Number(selectedUserId),
     });
-    if (res !== null) {
-      customToast.success('Intern assigned', 'The intern has been successfully assigned to the project.');
+    if (res.success) {
+      customToast.success('Intern assigned', res.message);
       onClose();
     } else {
-      customToast.error('Failed to assign', 'An error occurred while assigning the intern. Please try again.');
+      customToast.error('Failed to assign', res.message);
     }
   };
 
