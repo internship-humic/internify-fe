@@ -93,7 +93,7 @@ export default function SidebarIntern({ isOpen, closeSidebar }: SidebarProps) {
         PREFERENCES
       </p>
       <nav className="flex flex-col gap-0.5">
-        {prefItems.map(({ label, icon: Icon, path, danger, isLogout }) => {
+        {prefItems.map(({ label, icon: Icon, path, isLogout }) => {
           const isActive = location.pathname === path;
           return (
             <button

@@ -1,35 +1,36 @@
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FaInstagram, FaLinkedin, FaRegEnvelope } from "react-icons/fa";
-import logoHumic from "../assets/logo.png"
+import logoHumic from "../assets/logo.png";
 
-const footerLinks = {
-  Internship: [
-    { label: "Beranda", path: "/" },
-    { label: "Tentang", path: "/about-us" },
-    { label: "Life At Humic", path: "/our-developer" },
-  ],
-  External: [
-    { label: "Humic Website", path: "https://humic.telkomuniversity.ac.id/" },
-    { label: "Our Activity", path: "/activity" },
-    { label: "Life At Humic", path: "/life-humic" },
-    { label: "Our Developer", path: "/developer" },
-  ],
-};
+const internshipLinks = [
+  { label: "Beranda", path: "/" },
+  { label: "Tentang", path: "/about-us" },
+  { label: "Life At Humic", path: "/our-developer" },
+];
+
+const externalLinks = [
+  { label: "Humic Website", href: "https://humic.telkomuniversity.ac.id/" },
+  { label: "Our Activity", href: "https://humic.telkomuniversity.ac.id/humicinmedia/" },
+  { label: "Life At Humic", href: "#" },
+  { label: "Our Developer", href: "#" },
+];
 
 const socials = [
   { label: "Instagram", icon: FaInstagram, href: "https://www.instagram.com/humicengineering/" },
   { label: "LinkedIn", icon: FaLinkedin, href: "https://www.linkedin.com/company/humic-engineering/" },
-  { label: "Email", icon: FaRegEnvelope, href: "https://humic.telkomuniversity.ac.id/" },
+  { label: "Email", icon: FaRegEnvelope, href: "#" },
 ];
 
-
 export function FooterIntern() {
-  const navigate = useNavigate();
-
   return (
     <footer className="bg-white border-t border-gray-300 px-14 py-8 flex gap-12 flex-wrap">
       {/* Brand info */}
-      <div className="flex flex-col gap-2 flex-shrink-0 w-70">
+      <div className="flex flex-col gap-2 flex-shrink-0 w-70 items-start">
+        <img
+          src={logoHumic}
+          alt="logo humic"
+          className="w-[160px]"
+        />
         <address className="text-xs text-gray-800 leading-relaxed not-italic">
           Gedung Kultubai Selatan, Blok F
           Jl. Telekomunikasi, Terusan Buah Batu Bandung
@@ -53,32 +54,43 @@ export function FooterIntern() {
 
       {/* Link columns */}
       <div className="flex gap-12 flex-1 justify-end flex-wrap">
-        {Object.entries(footerLinks).map(([title, links]) => (
-          <div key={title} className="flex flex-col gap-2 min-w-[110px]">
-            <p className="text-[13px] font-bold text-gray-900">{title}</p>
-            <ul className="flex flex-col gap-0.5">
-              {links.map(({ label, path }) => (
-                <li key={label}>
-                  <button
-                    onClick={() => navigate(path)}
-                    className="text-[12.5px] text-gray-600 hover:text-red-800 transition-colors text-left bg-transparent border-none p-0 cursor-pointer"
-                  >
-                    {label}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+        <div className="flex flex-col gap-2 min-w-[140px]">
+          <p className="text-[13px] font-bold text-gray-900">Internship</p>
+          <ul className="flex flex-col gap-0.5">
+            {internshipLinks.map(({ label, path }) => (
+              <li key={label}>
+                <Link
+                  to={path}
+                  className="text-[12.5px] text-gray-600 hover:text-red-800 transition-colors"
+                >
+                  {label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="flex flex-col gap-2 min-w-[140px]">
+          <p className="text-[13px] font-bold text-gray-900">Eksternal</p>
+          <ul className="flex flex-col gap-0.5">
+            {externalLinks.map(({ label, href }) => (
+              <li key={label}>
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[12.5px] text-gray-600 hover:text-red-800 transition-colors"
+                >
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
-      <img
-        src={logoHumic}
-        alt="logo humic"
-        className='w-[110px] h-[68px]'
-      />
     </footer>
   );
 }
 
+export default FooterIntern;
 
-export default FooterIntern

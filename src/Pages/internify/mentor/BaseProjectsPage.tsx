@@ -23,12 +23,18 @@ export default function MentorProjectsPage() {
     refetch();
   };
 
+  const STATUS_ORDER: Record<string, number> = {
+    active: 0,
+    completed: 1,
+    archived: 2,
+  };
+
 
   const renderContent = () => {
     if (loading) {
       return (
         <div className="flex flex-row gap-3 w-full">
-          {[...Array(4)].map((_, i) => (
+          {[...Array(4)].map((_) => (
             <MentorProjectCardSkeleton />
           ))}
         </div>
@@ -48,7 +54,12 @@ export default function MentorProjectsPage() {
       );
     }
 
-    return projects.map(project => (
+    const sorted = [...projects].sort(
+      (a, b) =>
+        (STATUS_ORDER[a.status] ?? 99) - (STATUS_ORDER[b.status] ?? 99)
+    );
+
+    return sorted.map(project => (
       <MentorProjectCard
         key={project.id}
         {...project}

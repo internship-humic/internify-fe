@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { lazy, Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import Landing from "./Pages/Landing";
 import AboutUs from "./Pages/AboutUs";
@@ -56,6 +57,10 @@ import NotFoundPage from "./Pages/NotFoundPage";
 import InternCertificateDetail from "./Pages/Internify/intern/InternCertDetail";
 import VerificationCert from "./Pages/Internify/VerificationCert";
 
+const InternCertificatePage = lazy(() => import("./Pages/Internify/intern/InternCertDetail"));
+const MentorCertForm = lazy(() => import("./Pages/Internify/mentor/CertificateForm"));
+const MentorCertResult = lazy(() => import("./Pages/Internify/mentor/CertificateResult"));
+
 function App() {
   return (
     <>
@@ -111,7 +116,7 @@ function App() {
               <Route index element={<HomeInternPage />} />
               <Route path="projects" element={<ProjectsPage />} />
               <Route path="certificates" element={<SertificateList />} />
-              <Route path="certificates/:slug" element={<InternCertificateDetail />} />
+              <Route path="certificates/:slug" element={<InternCertificatePage />} />
               <Route path="projects/:slug" element={<ProjectDetailPage />} />
               <Route path="projects/:slug/:taskSlug" element={<TaskSubmission />} />
               <Route path="faq" element={<FAQPage />} />
@@ -126,8 +131,8 @@ function App() {
               <Route index element={<HomeMentorPage />} />
               <Route path="projects" element={<MentorProjectsPage />} />
               <Route path="certificates" element={<MentorCertificatePage />} />
-              <Route path="certificates/:slug" element={<CertificateDetail />} />
-              <Route path="certificates/:slug/result" element={<CertificateResult />} />
+              <Route path="certificates/:slug" element={<MentorCertForm />} />
+              <Route path="certificates/:slug/result" element={<MentorCertResult />} />
               <Route path="intern" element={<MentorInternPage />} />
               <Route path="projects/:slug" element={<MentorDetailProject />} />
               <Route path="projects/:slug/:taskSlug" element={<MentorProjectsDetailPage />} />

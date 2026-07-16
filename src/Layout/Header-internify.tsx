@@ -1,5 +1,5 @@
 import { Bell, Menu } from "lucide-react"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import humiclogo from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import { useCurrentUser, resolveFileUrl, getInitials } from "../hooks/useUser";
@@ -11,6 +11,11 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
   const [imageError, setImageError] = useState(false);
   const { unreadCount } = useNotifications();
   const photoUrl = resolveFileUrl(user?.profile_picture);
+
+  useEffect(() => {
+    setImageError(false);
+  }, [photoUrl]);
+
   const displayName = user?.full_name?.trim() || [user?.nama_depan, user?.nama_belakang].filter(Boolean).join(" ") || "";
 
   const initials = getInitials(displayName);
@@ -27,7 +32,7 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
         </button>
 
         <button>
-          <img src={humiclogo} alt="Humic Logo" className="w-[100px] cursor-pointer" />
+          <img src={humiclogo} alt="Humic Logo" className="w-[120px] cursor-pointer" />
         </button>
       </div>
 
@@ -35,7 +40,7 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
         <button onClick={() => nav("notifications")} className="relative">
           <Bell className="w-5 h-5 hover:text-red-800"/>
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-600 rounded-full border-2 border-white" />
+            <span className="absolute -top-1 -right-0.5 w-2.5 h-2.5 bg-red-600 rounded-full border-2 border-white" />
           )}
         </button>
 
@@ -46,8 +51,8 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
         >
           {hasPhoto ? (
             <img
-              src={`${import.meta.env.VITE_API_BASE_URL}${user?.profile_picture ?? ""}`}
-              alt={user?.full_name ?? "Profile"}
+              src={photoUrl!}
+              alt={displayName || "Profile"}
               className="w-full h-full object-cover"
               onError={() => setImageError(true)}
             />

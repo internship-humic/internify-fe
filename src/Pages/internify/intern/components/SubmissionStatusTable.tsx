@@ -42,7 +42,7 @@ export default function SubmitStatusTable({
     : "Assignment was submitted early";
 
   const rows = [
-    { label: "Submission status", value: "Submitted for grading" },
+    { label: "Submission status", value: "Submitted" },
     { label: "Time Remaining", value: timeLabel },
   ];
 

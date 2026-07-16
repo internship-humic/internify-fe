@@ -82,7 +82,7 @@ const Navbar = () => {
             }}
             className="block w-full text-left hover:text-red-600 transition"
           >
-            Internify
+            Portal LMS
           </button>
         </div>
       </div>
