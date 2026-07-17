@@ -17,7 +17,7 @@ const MentorPage = () => {
       alert("Mentor berhasil dihapus!");
       refetch();
     } else {
-      alert("Gagal menghapus mentor. Silakan coba lagi.");
+      alert("Gagal menghapus mentor");
     }
   };
 

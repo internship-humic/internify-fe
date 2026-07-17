@@ -3,8 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import NavbarAdmin from "../Layout/NavbarAdmin";
 import SidebarAdmin from "../Layout/SidebarAdmin";
 import { useMentorDetail, useUpdateMentor } from "../hooks/useMentors";
-import type { UpdateMentorPayload } from "../services/MentorServices";
-
+import type { UpdateMentorPayload } from "../types/user.types";
 const EditMentorForm = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();

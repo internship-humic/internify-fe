@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import NavbarAdmin from "../Layout/NavbarAdmin";
 import SidebarAdmin from "../Layout/SidebarAdmin";
 import { useCreateMentor } from "../hooks/useMentors";
-import type { CreateMentorPayload } from "../services/MentorServices";
+import type { CreateMentorPayload } from "../types/user.types";
 
 const CreateMentorForm = () => {
   const navigate = useNavigate();
