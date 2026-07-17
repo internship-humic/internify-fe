@@ -159,8 +159,8 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
           <div className="flex flex-col items-center justify-center h-full space-y-2 text-center py-6">
             <div className="space-y-0.5">
               {submission.files.map((f) => (
-                <div className="flex items-center gap-2 text-[11px]">
-                  <FileText className="w-4 h-4 text-red-700 stroke-[2.5]" />
+                <div key={f.id} className="flex items-center gap-2 text-[11px]">
+                  <FileText className="w-4 h-4 text-red-700" />
                   {f.original_name}
                 </div>
               ))}

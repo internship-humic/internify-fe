@@ -1,16 +1,5 @@
-import api from "../../lib/api";
+import { resolveFileUrl } from "./resolveFileFromUrl";
 import QRCode from "qrcode";
-
-export function resolveImageUrl(path: string): string {
-  if (!path) return "";
-  if (path.startsWith("data:")) return path;
-  if (path.startsWith("http://") || path.startsWith("https://")) {
-    return path;
-  }
-  const apiBaseURL = api.defaults.baseURL ?? "";
-  const origin = new URL(apiBaseURL).origin;
-  return `${origin}${path.startsWith("/") ? "" : "/"}${path}`;
-}
 
 export function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -18,7 +7,7 @@ export function loadImage(src: string): Promise<HTMLImageElement> {
     if (!src.startsWith("data:")) img.crossOrigin = "anonymous";
     img.onload = () => resolve(img);
     img.onerror = () => reject(new Error(`Gagal load gambar: ${src}`));
-    img.src = resolveImageUrl(src);
+    img.src = resolveFileUrl(src);
   });
 }
 
@@ -30,14 +19,13 @@ export async function ensureFontsLoaded(): Promise<void> {
   await document.fonts.ready;
 }
 
-
 const LAYOUT = {
   internName:      { x: 0.57,  y: 0.48,  size: 140, font: "Great Vibes", color: "#800000" },
-  internNameSmall: { x: 0.82,  y: 0.889, size: 33,  font: "Great Vibes", color: "#800000" },
+  internNameSmall: { x: 0.82,  y: 0.889, size: 47,  font: "Great Vibes", color: "#090909" },
   projectName:     { x: 0.815, y: 0.598, size: 46,  font: "Grenze",      color: "#800000" },
-  duration:        { x: 0.692, y: 0.645, size: 48,  font: "Grenze",      color: "#090909" },
-  certNo:          { x: 0.6, y: 0.28, size: 50,  font: "Grenze",      color: "#090909" },
-  certNoSmall:     { x: 0.825, y: 0.91,  size: 22,  font: "Grenze",      color: "#800000" },
+  duration:        { x: 0.7, y: 0.645, size: 48,  font: "Grenze",      color: "#090909" },
+  certNo:          { x: 0.597, y: 0.305, size: 50,  font: "Grenze",      color: "#090909" },
+  certNoSmall:     { x: 0.827, y: 0.92,  size: 32,  font: "Grenze",      color: "#090909"},
   qr:              { x: 0.77,  y: 0.715, size: 0.103 },
 };
 
@@ -74,7 +62,7 @@ export async function generateCertificate(
   text(LAYOUT.projectName,     projectName);
   text(LAYOUT.duration,        ProjectDuration);
   text(LAYOUT.certNo,          certificateNo);
-  text(LAYOUT.certNoSmall,     certificateNo);
+  text(LAYOUT.certNoSmall,     "No.2026/SPI3/" + certificateNo);
 
   // QR code — nanti akan diganti ke alamat domain
   const qrSize = Math.round(canvas.width * LAYOUT.qr.size);

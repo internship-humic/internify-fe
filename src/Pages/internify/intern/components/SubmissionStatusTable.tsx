@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FileText, FileUp, Link } from "lucide-react";
-import { resolveImageUrl } from "../../../utils/SertificateGenerator";
+import { resolveFileUrl } from "../../../utils/resolveFileFromUrl";
 
 interface SubmitStatusTableProps {
   type: "file" | "link";
@@ -128,7 +128,7 @@ export default function SubmitStatusTable({
                 files?.map((f) => (
                   <a
                     key={f.id}
-                    href={resolveImageUrl(f.file_path)}
+                    href={resolveFileUrl(f.file_path) ?? undefined}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 text-sm text-blue-600 hover:underline"

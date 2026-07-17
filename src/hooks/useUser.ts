@@ -109,12 +109,12 @@ export const getInitials = (fullName?: string | null): string => {
 };
 
 // Untuk resolve gambar (duplikat dari utils/...)
-export const resolveFileUrl = (path?: string | null): string | null => {
-  if (!path) return null;
-  if (/^(https?:|data:|blob:)/i.test(path)) return path;
-  const base = import.meta.env.VITE_API_BASE_URL as string;
-  return `${base}${path.startsWith("/") ? path : `/${path}`}`;
-};
+// export const resolveFileUrl = (path?: string | null): string | null => {
+//   if (!path) return null;
+//   if (/^(https?:|data:|blob:)/i.test(path)) return path;
+//   const base = import.meta.env.VITE_API_BASE_URL as string;
+//   return `${base}${path.startsWith("/") ? path : `/${path}`}`;
+// };
 
 // PATCH /auth-api/update-profile
 export const useUpdateProfile = () => {

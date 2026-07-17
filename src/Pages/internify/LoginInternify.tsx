@@ -85,6 +85,7 @@ export default function InternifyLogin() {
                                     type="email"
                                     placeholder="Email Account"
                                     value={email}
+                                    autoComplete="username"
                                     onChange={(e) => setEmail(e.target.value)}
                                     className="w-full pl-10 pr-4 py-2.5 bg-white border border-card-outline rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
                                 />
@@ -101,6 +102,7 @@ export default function InternifyLogin() {
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Account Password"
                                     value={password}
+                                    autoComplete="current-password"
                                     onChange={(e) => setPassword(e.target.value)}
                                     className="w-full pl-10 pr-10 py-2.5 bg-white border border-card-outline rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
                                 />

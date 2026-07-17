@@ -4,35 +4,35 @@ import { Download, Link, Printer } from "lucide-react";
 import type { ProjectDetail } from "../../../../types/project.types";
 import type { Certificate } from "../../../../types/certificate.types";
 import { downloadCertificatePdf, downloadCertificateImage } from "../../../utils/Certificates";
-import { generateCertificate, resolveImageUrl } from "../../../utils/SertificateGenerator";
+import { generateCertificate } from "../../../utils/SertificateGenerator";
+import { resolveFileUrl } from "../../../utils/resolveFileFromUrl";
 import { customToast } from "../../../utils/showToast";
 
 interface CertificateAvailableProps {
-  project: ProjectDetail | null;
+  project: ProjectDetail;
   certificate: Certificate;
   templateUrl: string;
 }
 
+function formatDateIndo(date: string): string {
+  return new Intl.DateTimeFormat("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(date));
+}
+
+function formatDateRange(startDate: string, endDate: string): string {
+  return `${formatDateIndo(startDate)} - ${formatDateIndo(endDate)}`;
+}
+
 export default function CertificateAvailable({ project, certificate, templateUrl }: CertificateAvailableProps) {
-  // const [copied, setCopied] = useState(false);
   const [downloadingImg, setDownloadingImg] = useState(false);
   const [downloadingPdf, setDownloadingPdf] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loadingPreview, setLoadingPreview] = useState(true);
 
-  const duration = project
-    ? (() => {
-      const start = new Date(project.start_date);
-      const end = new Date(project.end_date);
-      const diffMs = end.getTime() - start.getTime();
-      const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-      const months = Math.floor(diffDays / 30);
-      const days = diffDays % 30;
-      if (months > 0 && days > 0) return `${months} Bulan ${days} Hari`;
-      if (months > 0) return `${months} Bulan`;
-      return `${diffDays} Hari`;
-    })()
-    : "-";
+  const duration = formatDateRange(project?.start_date, project?.end_date)
 
 
   useEffect(() => {
@@ -40,12 +40,13 @@ export default function CertificateAvailable({ project, certificate, templateUrl
     const verifyUrl = `${window.location.origin}/verify-certificate/${certificate.uuid}`;
 
     generateCertificate(
-      resolveImageUrl(templateUrl),
+      resolveFileUrl(templateUrl),
       certificate.user.full_name,
       certificate.project.project_name,
       certificate.certificate_no,
+      duration,
       verifyUrl,
-      duration)
+    )
       .then((blob) => {
         const url = URL.createObjectURL(blob);
         setPreviewUrl(url);
@@ -82,7 +83,6 @@ export default function CertificateAvailable({ project, certificate, templateUrl
 
   const handleShareLinkedIn = () => {
     const verifyUrl = `${window.location.origin}/verify-certificate/${certificate.uuid}`;
-    // Gunakan "Add Certification to Profile" LinkedIn — tidak butuh API key/approval
     const params = new URLSearchParams({
       startTask: "CERTIFICATION_NAME",
       name: certificate.project.project_name,
@@ -109,7 +109,7 @@ export default function CertificateAvailable({ project, certificate, templateUrl
           <img
             src={previewUrl}
             alt="Certificate"
-            className="rounded-xl w-[550px] h-[350px] object-contain"
+            className="rounded-xl object-contain border-2"
           />
         ) : (
           <div className="w-[550px] h-[350px] flex items-center justify-center text-gray-400 text-sm">

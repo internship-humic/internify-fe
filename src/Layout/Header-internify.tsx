@@ -2,7 +2,8 @@ import { Bell, Menu } from "lucide-react"
 import { useEffect, useState } from "react";
 import humiclogo from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
-import { useCurrentUser, resolveFileUrl, getInitials } from "../hooks/useUser";
+import { useCurrentUser, getInitials } from "../hooks/useUser";
+import { resolveFileUrl } from "../Pages/utils/resolveFileFromUrl";
 import { useNotifications } from "../hooks/useNotification";
 
 export default function Header({ toggleSidebar }: { toggleSidebar: () => void }) {

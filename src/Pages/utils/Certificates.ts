@@ -1,7 +1,8 @@
 import jsPDF from "jspdf";
 import JSZip from "jszip";
 import type { Certificate } from "../../types/certificate.types";
-import { generateCertificate, resolveImageUrl } from "./SertificateGenerator";
+import { generateCertificate } from "./SertificateGenerator";
+import { resolveFileUrl } from "./resolveFileFromUrl";
 
 function formatDateIndo(date: string): string {
   return new Intl.DateTimeFormat("id-ID", {
@@ -14,7 +15,7 @@ function formatDateIndo(date: string): string {
 function formatDateRange(startDate: string, endDate: string): string {
   return `${formatDateIndo(startDate)} - ${formatDateIndo(endDate)}`;
 }
-// 1. Preview di tab baru
+// Preview di tab baru
 export const previewCertificate = async (
   cert: Certificate,
   templateUrl: string,
@@ -22,7 +23,7 @@ export const previewCertificate = async (
   const tab = window.open("", "_blank");
 
   const blob = await generateCertificate(
-    resolveImageUrl(templateUrl),
+    resolveFileUrl(templateUrl),
     cert.user.full_name,
     cert.project.project_name,
     cert.certificate_no,
@@ -79,14 +80,14 @@ export const previewCertificate = async (
   tab.document.close();
 };
 
-// ── 2. Download PDF ───────────────────────────────────────────────────────────
+// Download PDF
 export const downloadCertificatePdf = async (
   cert: Certificate,
   templateUrl: string,
 ): Promise<void> => {
   const fileName = `Sertifikat - ${cert.user.full_name} - ${cert.certificate_no}`;
   const blob = await generateCertificate(
-    resolveImageUrl(templateUrl),
+    resolveFileUrl(templateUrl),
     cert.user.full_name,
     cert.project.project_name,
     cert.certificate_no,
@@ -118,7 +119,7 @@ export const downloadCertificatePdf = async (
   pdf.save(`${fileName}.pdf`);
 };
 
-// ── 3. Download PNG atau JPG ──────────────────────────────────────────────────
+// Download PNG atau JPG
 export const downloadCertificateImage = async (
   cert: Certificate,
   templateUrl: string,
@@ -126,7 +127,7 @@ export const downloadCertificateImage = async (
 ): Promise<void> => {
   const fileName = `Sertifikat - ${cert.user.full_name} - ${cert.certificate_no}`;
   const blob = await generateCertificate(
-    resolveImageUrl(templateUrl),
+    resolveFileUrl(templateUrl),
     cert.user.full_name,
     cert.project.project_name,
     cert.certificate_no,
@@ -176,7 +177,7 @@ export const downloadCertificateImage = async (
   URL.revokeObjectURL(url);
 };
 
-// ── 4. Download All ZIP ───────────────────────────────────────────────────────
+// Download All ZIP
 export const downloadAllCertificatesZip = async (
   certificates: Certificate[],
   templateUrl: string,
@@ -189,7 +190,7 @@ export const downloadAllCertificatesZip = async (
   await Promise.all(
     certificates.map(async (cert, i) => {
       const blob = await generateCertificate(
-        resolveImageUrl(templateUrl),
+        resolveFileUrl(templateUrl),
         cert.user.full_name,
         cert.project.project_name,
         cert.certificate_no,

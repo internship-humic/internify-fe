@@ -13,10 +13,10 @@ import {
 } from "lucide-react";
 import type { InternSubmissionProgress } from "../../../../hooks/useInternProgress";
 import JSZip from "jszip";
-import { generateCertificate, resolveImageUrl } from "../../../utils/SertificateGenerator";
+import { generateCertificate } from "../../../utils/SertificateGenerator";
+import { resolveFileUrl } from "../../../utils/resolveFileFromUrl";
 import { useGenerateCertificates } from "../../../../hooks/useCertificates";
 import Avatar from "../../Avatar";
-import ProgressBar from "../../ProgressBar";
 import { customToast } from "../../../utils/showToast";
 import type { Project } from "../../../../types/project.types";
 import { previewCertificate } from "../../../utils/Certificates";
@@ -41,6 +41,25 @@ function formatDateIndo(date: string): string {
 
 function formatDateRange(startDate: string, endDate: string): string {
   return `${formatDateIndo(startDate)} - ${formatDateIndo(endDate)}`;
+}
+
+function ProgressBar({ value, total }: {value: number, total: number}) {
+  const pct = total === 0 ? 0 : Math.round((value / total) * 100);
+  const isComplete = value === total;
+
+  return (
+    <div className="flex items-center gap-2">
+      <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+        <div
+          className={`h-full rounded-full ${isComplete ? "bg-[#B30000]" : "bg-gray-400"}`}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <span className={`text-xs font-bold ${isComplete ? "text-[#B30000]" : "text-gray-500"}`}>
+        {value}/{total}
+      </span>
+    </div>
+  );
 }
 
 function StatusBadge({ status }: { status: boolean }) {
@@ -131,13 +150,15 @@ export default function EligibleInternTable({
     setGenerating(true);
     setGenerateError(null);
 
-    const ok = await customToast.promise(
+    const res = await customToast.promise(
       (async () => {
         const result = await SubmitCertificates(project.id, Array.from(selected));
         if (!result.data) throw new Error("Tidak ada data sertifikat yang dikembalikan.");
 
         const zip = new JSZip();
-        const templateUrl = resolveImageUrl(project.certificate_template!);
+        const templateUrl = resolveFileUrl(project.certificate_template!);
+        if (!templateUrl) throw new Error("Template sertifikat tidak ditemukan.");
+        
         const duration = formatDateRange(project.start_date, project.end_date);
 
         await Promise.all(
@@ -168,7 +189,7 @@ export default function EligibleInternTable({
     ).then(() => true).catch(() => false);
 
     setGenerating(false);
-    if (ok) navigate(`/mentor/certificates/${project.slug}/result`);
+    if (res) navigate(`/mentor/certificates/${project.slug}/result`);
   };
 
   if (loading) {
@@ -185,7 +206,7 @@ export default function EligibleInternTable({
   return (
     <div className="lg:col-span-5 flex flex-col gap-4">
       {/* Roster Card */}
-      <div className="border border-box-border rounded-2xl overflow-hidden bg-white shadow-sm">
+      <div className="border border-box-border overflow-x-auto rounded-2xl bg-white shadow-sm">
         <div className="flex items-start justify-between px-5 py-4 border-b border-gray-100">
           <div>
             <h3 className="text-base font-bold text-gray-900">Intern Roster</h3>
@@ -253,7 +274,7 @@ export default function EligibleInternTable({
                 {/* Name + role */}
                 <div className="flex items-center gap-3">
                   {intern.avatar ? (
-                    <img src={intern.avatar} className="w-10 h-10 rounded-full object-cover" />
+                    <img src={intern.avatar} className="w-8 h-8 rounded-full object-cover" />
                   ) : (
                     <Avatar initials={initials} />
                   )}

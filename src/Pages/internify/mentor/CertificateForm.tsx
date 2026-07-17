@@ -5,7 +5,7 @@ import { useUploadCertificateTemplate } from "../../../hooks/useCertificates";
 import { useProjectDetail } from "../../../hooks/useProjects";
 import EligibleInternTable from "./components/EligibleInternTable";
 import { useProjectInternProgress } from "../../../hooks/useInternProgress";
-import { resolveImageUrl } from "../../utils/SertificateGenerator";
+import { resolveFileUrl } from "../../utils/resolveFileFromUrl";
 import { customToast } from "../../utils/showToast";
 
 export default function CertificateDetail() {
@@ -140,7 +140,7 @@ export default function CertificateDetail() {
                 {previewUrl || project.certificate_template ? (
                   <>
                     <img
-                      src={previewUrl || resolveImageUrl(project.certificate_template)}
+                      src={previewUrl || resolveFileUrl(project.certificate_template)}
                       alt="Preview template"
                       className="w-full h-32 object-contain rounded-lg mb-2"
                     />

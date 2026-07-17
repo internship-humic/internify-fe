@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { getProjectIcon } from '../../../../lib/ProjectIcons';
 import type { Project } from '../../../../types/project.types';
-import { resolveFileUrl } from '../../../../hooks/useUser';
+import { resolveFileUrl } from '../../../utils/resolveFileFromUrl';
 
 const ProjectCard = (project: Project) => {
   const navigate = useNavigate();

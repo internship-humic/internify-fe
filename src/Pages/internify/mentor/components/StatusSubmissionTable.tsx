@@ -2,7 +2,7 @@
 
 import { FileText, CheckCircle2, AlertCircle, MinusCircle } from "lucide-react";
 import type { TaskSubmissionData, DisplayStatus } from "../../../../types/task.types";
-import { resolveImageUrl } from "../../../utils/SertificateGenerator";
+import { resolveFileUrl } from "../../../utils/resolveFileFromUrl";
 
 // StatusBadge
 
@@ -66,7 +66,7 @@ export function StatusTable({ status, submission }: StatusTableProps) {
             {submission.files.map((f) => (
               <a
                 key={f.id}
-                href={resolveImageUrl(f.file_path)}
+                href={resolveFileUrl(f.file_path) ?? undefined}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-sm text-blue-600 hover:underline"

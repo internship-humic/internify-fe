@@ -1,7 +1,8 @@
 import { Users } from 'lucide-react';
 import type { ProjectDetail, ProjectMember } from '../../../types/project.types';
 import { useState } from 'react';
-import { resolveFileUrl, getInitials } from '../../../hooks/useUser';
+import { getInitials } from '../../../hooks/useUser';
+import { resolveFileUrl } from '../../utils/resolveFileFromUrl';
 
 export default function ParticipantsTab({ project }: { project: ProjectDetail }) {
   const [ImageError, setImageError] = useState(false);

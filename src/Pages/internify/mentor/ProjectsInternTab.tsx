@@ -4,7 +4,8 @@ import ManageInternsModal from './components/AddInternsDialog';
 import type { ProjectDetail, ProjectMember } from '../../../types/project.types';
 import { useRemoveMember } from '../../../hooks/useProjects';
 import { customToast } from '../../utils/showToast';
-import { resolveFileUrl, getInitials } from '../../../hooks/useUser';
+import { getInitials } from '../../../hooks/useUser';
+import { resolveFileUrl } from '../../utils/resolveFileFromUrl';
 
 export default function InternsTab({ project }: { project: ProjectDetail }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,7 +40,7 @@ export default function InternsTab({ project }: { project: ProjectDetail }) {
         </h3>
         <div className="border-b border-gray-300 pb-4">
           <div className="flex items-center gap-3 ">
-            {adminHasPhoto ? (
+            {adminHasPhoto && !adminImageError ? (
               <img
                 src={adminAvatar}
                 alt={project.admin.full_name}

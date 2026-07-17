@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import { useCurrentUser, useUpdateProfile, resolveFileUrl, getInitials } from "../../hooks/useUser";
+import { useCurrentUser, useUpdateProfile, getInitials } from "../../hooks/useUser";
 import { customToast } from "../utils/showToast";
 import { Pen } from "lucide-react";
 import UpdateProfileDialog from "./UpdateProfileDialogue";
+import { resolveFileUrl } from "../utils/resolveFileFromUrl";
 
 export default function SettingsPage() {
   const { user, loading: userLoading } = useCurrentUser();
