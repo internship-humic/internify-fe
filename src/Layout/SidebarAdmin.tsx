@@ -10,11 +10,10 @@ const SidebarAdmin = () => {
         <h2 className="font-semibold text-[#2C5282] text-[20px]">Menu</h2>
         <div className="list-of-sidebar flex flex-col p-7 gap-4">
           <div
-            className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${
-              location.pathname === "/dashboard"
+            className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${location.pathname === "/dashboard"
                 ? "bg-[#D3DFEA] font-bold"
                 : "hover:bg-[#D3DFEA] "
-            }`}
+              }`}
             onClick={() => navigate("/dashboard")}
           >
             <svg
@@ -40,11 +39,10 @@ const SidebarAdmin = () => {
             <h2 className="text-[#2C5282]">Dashboard</h2>
           </div>
           <div
-            className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${
-              location.pathname === "/product-list"
+            className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${location.pathname === "/product-list"
                 ? "bg-[#D3DFEA] font-bold"
                 : "hover:bg-[#D3DFEA] "
-            }`}
+              }`}
             onClick={() => navigate("/product-list")}
           >
             <svg
@@ -64,11 +62,10 @@ const SidebarAdmin = () => {
             <h2 className="text-[#2C5282]">Project</h2>
           </div>
           <div
-            className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${
-              location.pathname === "/lowongan-list"
+            className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${location.pathname === "/lowongan-list"
                 ? "bg-[#D3DFEA] font-bold"
                 : "hover:bg-[#D3DFEA]"
-            }`}
+              }`}
             onClick={() => navigate("/lowongan-list")}
           >
             <svg
@@ -89,11 +86,10 @@ const SidebarAdmin = () => {
             <h2 className="text-[#2C5282]">Lowongan</h2>
           </div>
           <div
-            className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${
-              location.pathname === "/partnership-admin"
+            className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${location.pathname === "/partnership-admin"
                 ? "bg-[#D3DFEA] font-bold"
                 : "hover:bg-[#D3DFEA]"
-            }`}
+              }`}
             onClick={() => navigate("/partnership-admin")}
           >
             <svg
@@ -114,11 +110,10 @@ const SidebarAdmin = () => {
             <h2 className="text-[#2C5282]">Partnership</h2>
           </div>
           <div
-            className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${
-              location.pathname === "/internships-list"
+            className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${location.pathname === "/internships-list"
                 ? "bg-[#D3DFEA] font-bold"
                 : "hover:bg-[#D3DFEA]"
-            }`}
+              }`}
             onClick={() => navigate("/internships-list")}
           >
             <svg
@@ -139,11 +134,10 @@ const SidebarAdmin = () => {
             <h2 className="text-[#2C5282]">Pelamar</h2>
           </div>
           <div
-            className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${
-              location.pathname === "/feedbacks-list"
+            className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${location.pathname === "/feedbacks-list"
                 ? "bg-[#D3DFEA] font-bold"
                 : "hover:bg-[#D3DFEA]"
-            }`}
+              }`}
             onClick={() => navigate("/feedback-list")}
           >
             <svg
@@ -167,11 +161,10 @@ const SidebarAdmin = () => {
             <h2 className="text-[#2C5282]">Feedback</h2>
           </div>
           <div
-            className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${
-              location.pathname === "/mentor-admin"
+            className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${location.pathname === "/mentor-admin"
                 ? "bg-[#D3DFEA] font-bold"
                 : "hover:bg-[#D3DFEA]"
-            }`}
+              }`}
             onClick={() => navigate("/mentor-admin")}
           >
             <svg
@@ -192,11 +185,10 @@ const SidebarAdmin = () => {
             <h2 className="text-[#2C5282]">Mentor</h2>
           </div>
           <div
-            className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${
-              location.pathname === "/faq-list"
+            className={`text-container flex flex-row gap-3 p-3 items-center cursor-pointer rounded-2xl ${location.pathname === "/faq-list"
                 ? "bg-[#D3DFEA] font-bold"
                 : "hover:bg-[#D3DFEA]"
-            }`}
+              }`}
             onClick={() => navigate("/faq-list")}
           >
             <svg
@@ -225,33 +217,33 @@ const SidebarAdmin = () => {
             <h2 className="text-[#2C5282]">FAQ</h2>
           </div>
         </div>
-      </div>
-
-      <div
-        className="logout flex flex-row items-center cursor-pointer gap-4 p-3 rounded-2xl hover:bg-[#F8D2D2] hover:font-bold mx-7"
-        onClick={() => {
-          document.cookie =
-            "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-          navigate("/");
-        }}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="size-8 text-[#C3423F]"
+        <div
+          className="logout flex flex-row items-center cursor-pointer gap-4 p-3 rounded-2xl hover:bg-[#F8D2D2] hover:font-bold mx-7"
+          onClick={() => {
+            document.cookie =
+              "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+            navigate("/");
+          }}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15"
-          />
-        </svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="size-8 text-[#C3423F]"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15"
+            />
+          </svg>
 
-        <h2 className="text-[#C3423F] text-[16px] font-semibold">Keluar</h2>
+          <h2 className="text-[#C3423F] text-[16px] font-semibold">Keluar</h2>
+        </div>
       </div>
+
     </div>
   );
 };

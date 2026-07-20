@@ -99,9 +99,9 @@ export default function EligibleInternTable({
       id: intern.id_user,
       id_project: project.id,
       id_user: intern.id_user,
-      certificate_no: "PREVIEW",
-      issued_at: new Date().toISOString(),
-      uuid: "preview-mode",
+      certificate_no: "CERT/YYDDMM/XXX",
+      issued_at: new Date().toISOString().slice(0, 10),
+      uuid: "HANYA SEBATAS PREVIEW",
       user: {
         id: intern.id_user,
         full_name: intern.full_name,

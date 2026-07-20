@@ -6,6 +6,10 @@ import shafa from "../assets/shafa.jpeg";
 import delkano from "../assets/delkano.jpeg";
 import reinhard from "../assets/reinhard.jpeg";
 import kakraya from "../assets/kakraya.png";
+import kemas from "../assets/Kemas M Aryadary Rasyad.jpg"
+import ayu from "../assets/Anom Ayu Radhaswasti.jpeg"
+import zhafran from "../assets/Muhammad Zhafran Ilham.jpg"
+import rafi from "../assets/Muhammad Rafi Athallah.jpeg"
 import Footer from "../Layout/Footer";
 import { useEffect } from "react";
 
@@ -68,6 +72,30 @@ const OurDeveloper = () => {
               role: "Backend Developer",
               img: reihan,
               link: "https://www.linkedin.com/in/reihanramadhana/",
+            },
+            {
+              name: "Ayu",
+              role: "Web Designer",
+              img: ayu,
+              link: "https://www.linkedin.com/in/anom-ayu-radhaswasti/",
+            },
+            {
+              name: "Kemas",
+              role: "Frontend Developer",
+              img: kemas,
+              link: " https://www.linkedin.com/in/kemas-m-aryadary-rasyad/",
+            },
+            {
+              name: "Zhafran",
+              role: "Backend Developer",
+              img: zhafran,
+              link: "hhttps://www.linkedin.com/in/muhammad-zhafran-ilham/",
+            },
+            {
+              name: "Rafi",
+              role: "Backend Developer",
+              img: rafi,
+              link: "https://www.linkedin.com/in/rafi-athallah-14b16a229/",
             },
           ].map((dev, index) => (
             <div

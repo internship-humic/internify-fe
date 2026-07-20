@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { lazy, Suspense } from "react";
+import { lazy } from "react";
 import { Toaster } from "react-hot-toast";
 import Landing from "./Pages/Landing";
 import AboutUs from "./Pages/AboutUs";
@@ -48,13 +48,10 @@ import SertificateList from "./Pages/Internify/intern/InternCertList";
 import MentorProjectsDetailPage from "./Pages/Internify/mentor/MentorProjectDetailPage";
 import ViewInternSubmission from "./Pages/Internify/mentor/ViewInternSubmission";
 import ProtectedRoutes from "./Pages/utils/ProtectedRoute";
-import CertificateDetail from "./Pages/Internify/mentor/CertificateForm";
-import CertificateResult from "./Pages/Internify/mentor/CertificateResult";
 import AdminMentorPage from "./Pages/MentorPage";
 import CreateMentorForm from "./Pages/CreateMentorForm";
 import EditMentorForm from "./Pages/EditMentorForm";
 import NotFoundPage from "./Pages/NotFoundPage";
-import InternCertificateDetail from "./Pages/Internify/intern/InternCertDetail";
 import VerificationCert from "./Pages/Internify/VerificationCert";
 
 const InternCertificatePage = lazy(() => import("./Pages/Internify/intern/InternCertDetail"));

@@ -3,6 +3,7 @@ import team from "../assets/teamwokr.jpg";
 import bghero1 from "../assets/hero1.png";
 import Footer from "../Layout/Footer";
 import Faq from "../Layout/Faq";
+import landingphoto from "../assets/landingphoto.png"
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -214,14 +215,14 @@ const Landing = () => {
         <div className="hero-3-section mx-5 lg:mx-[80px] xl:mx-[140px] mt-[60px] rounded-2xl bg-[#F8F9FA]">
           <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-stretch py-10 px-4 sm:px-8">
             {/* LEFT: image */}
-            <div className="relative flex-1 min-h-[320px] lg:min-h-[380px] flex items-center justify-center">
+            <div className="relative flex-1 min-h-[300px] lg:min-h-[380px] flex items-center justify-center">
               <div
-                className={`w-[230px] h-[320px] sm:w-[260px] sm:h-[340px] lg:w-[280px] lg:h-[360px]
+                className={`w-[230px] h-[320px] sm:w-[260px] sm:h-[340px] lg:w-[360px] lg:h-[480px]
                             rounded-xl shadow-xl bg-white/70 backdrop-blur p-3 flex items-center justify-center
                             `}
               >
                 <img
-                  src={staticImgUrl}
+                  src={landingphoto}
                   alt="Humic Internship"
                   className="w-full h-full object-contain rounded-lg"
                 />
