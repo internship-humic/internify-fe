@@ -216,7 +216,7 @@ export default function CertificateDetail() {
               </button>
             )}
 
-            {/* ── Project Scope ── */}
+            {/* Project Scope */}
             <div className="border border-card-outline rounded-xl p-5">
               <p className="text-[13px] font-bold text-gray-400 uppercase tracking-widest mb-3">
                 Project Scope

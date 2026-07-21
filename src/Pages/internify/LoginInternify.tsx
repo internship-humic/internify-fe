@@ -58,9 +58,9 @@ export default function InternifyLogin() {
     };
 
     return (
-        <div className="min-h-screen bg-background flex flex-col justify-between items-center py-12 px-4 font-sans selection:bg-red-foreground">
-            <div className="w-full  flex flex-col items-center">
-                <div className="text-center mb-12">
+        <div className="min-h-screen bg-background flex flex-col justify-between items-center py-6 px-4 selection:bg-red-foreground">
+            <div className="w-full flex flex-col items-center mb-8">
+                <div className="text-center mb-8">
                     <div className="flex items-center justify-center gap-2 font-bold text-2xl tracking-tight text-black">
                         <img src={logo} alt="Logo" />
                     </div>
@@ -129,9 +129,9 @@ export default function InternifyLogin() {
                     </form>
                     {/* Forgot Password */}
                     <div className="text-center mt-6">
-                        <a href="#" className="text-xs font-semibold text-red-600 hover:underline">
+                        <span className="text-xs font-semibold text-red-600">
                             Forgot Password?
-                        </a>
+                        </span>
                     </div>
 
                     {/* Divider & Support */}
@@ -144,7 +144,7 @@ export default function InternifyLogin() {
                             <div className="flex-grow border-t border-card-outline"></div>
                         </div>
 
-                        <button className="w-full mt-2 flex items-center justify-center gap-2 border border-card-outline rounded-full py-1.5 text-xs text-font-shade hover:bg-gray-50 transition-colors font-medium">
+                        <button className="w-full mt-2 flex items-center justify-center gap-2 border border-card-outline rounded-full py-1.5 text-xs text-font-shade font-medium">
                             <CircleQuestionMark className="w-5 h-5" />
                             Frequently Asked Questions
                         </button>

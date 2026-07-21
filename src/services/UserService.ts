@@ -1,4 +1,3 @@
-// services/UserService.ts
 import api from "../lib/api";
 import type { CurrentUser, UpdateProfilePayload } from "../types/user.types";
 import type { Mahasiswa, MahasiswaResponse } from "../types/project.types";

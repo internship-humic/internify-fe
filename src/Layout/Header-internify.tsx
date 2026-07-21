@@ -32,7 +32,9 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
           <Menu className="w-6 h-6" />
         </button>
 
-        <button>
+        <button
+          onClick={() => nav("")}
+        >
           <img src={humiclogo} alt="Humic Logo" className="w-[120px] cursor-pointer" />
         </button>
       </div>

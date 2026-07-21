@@ -87,7 +87,7 @@ export default function MentorProjectsPage() {
         </button>
       </div>
 
-      <div className="flex flex-wrap gap-4 items-stretch">{renderContent()}</div>
+      <div className="flex flex-wrap gap-3 items-stretch">{renderContent()}</div>
 
       {isModalOpen && (
         <CreateProjectModal

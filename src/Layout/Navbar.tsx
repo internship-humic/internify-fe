@@ -22,7 +22,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-[#D7E1E8] px-4 py-5 mx-5 rounded-2xl shadow-md">
+    <nav className="bg-[#D7E1E8] px-10 py-5 mx-5 rounded-2xl shadow-md">
       <div className="max-w-8xl mx-auto flex items-center justify-between">
         <img
           src={humiclogo}
@@ -56,22 +56,22 @@ const Navbar = () => {
         </div>
 
         {/* Desktop menu */}
-        <div className="hidden md:flex items-center gap-6 text-[18px] font-semibold">
+        <div className="hidden md:flex items-center gap-8 text-[18px] font-semibold">
           <button
             onClick={() => navigate("/about-us")}
-            className="hover:text-blue-600 transition cursor-pointer"
+            className="hover:text-gray-600 transition cursor-pointer"
           >
             About Us
           </button>
           <button
             onClick={handleContactClick}
-            className="hover:text-blue-600 transition cursor-pointer"
+            className="hover:text-gray-600 transition cursor-pointer"
           >
             Contact Us
           </button>
           <button
             onClick={() => navigate("/internships")}
-            className="hover:text-blue-600 transition cursor-pointer"
+            className="hover:text-gray-600 transition cursor-pointer"
           >
             Internship
           </button>
@@ -80,7 +80,7 @@ const Navbar = () => {
             onClick={() => {
               navigate("/login-internify");
             }}
-            className="block w-full text-left hover:text-red-600 transition"
+            className="hover:text-red-600 transition cursor-pointer"
           >
             Portal LMS
           </button>
@@ -125,7 +125,7 @@ const Navbar = () => {
             }}
             className="block w-full text-left hover:text-red-600 transition"
           >
-            Login
+            Portal LMS
           </button>
         </div>
       )}

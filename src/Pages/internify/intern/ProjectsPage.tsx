@@ -41,7 +41,7 @@ export default function ProjectsPage() {
         <h1 className="page-title-desc">View assigned projects and track their progress.</h1>
       </div>
 
-      <div className="flex flex-wrap gap-4 items-stretch">
+      <div className="flex flex-wrap gap-3 items-stretch">
         {renderContent()}
       </div>
     </div>

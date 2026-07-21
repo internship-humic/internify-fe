@@ -29,7 +29,6 @@ const TaskBreadcrumb = ({ match }: BreadcrumbMatch) => {
   return <>{task?.title ?? unslugify(taskSlug)}</>;
 };
 
-// Breadcrumb untuk halaman detail sertifikat (menggunakan nama project dari slug)
 const CertBreadcrumb = ({ match }: BreadcrumbMatch) => {
   const { projects } = useProjects();
   const slug = match.params.slug;
@@ -37,7 +36,6 @@ const CertBreadcrumb = ({ match }: BreadcrumbMatch) => {
   return <>{project?.project_name ?? unslugify(slug)}</>;
 };
 
-// Breadcrumb untuk halaman submission intern (unslugify nameIntern)
 const NameInternBreadcrumb = ({ match }: BreadcrumbMatch) => {
   return <>{unslugify(match.params.nameIntern)}</>;
 };
@@ -105,4 +103,4 @@ export default function Breadcrumbs(){
       })}
     </nav>
   );
-};
+};

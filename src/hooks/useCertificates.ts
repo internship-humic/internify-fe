@@ -1,4 +1,3 @@
-// hooks/useCertificates.ts
 import { useState, useEffect, useCallback } from "react";
 import type { Certificate, CertificateVerifyResult } from "../types/certificate.types";
 import {

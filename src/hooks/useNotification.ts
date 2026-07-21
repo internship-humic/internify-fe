@@ -1,4 +1,3 @@
-// hooks/useNotifications.ts
 import { useState, useEffect, useCallback } from "react";
 import {
   getNotifications,

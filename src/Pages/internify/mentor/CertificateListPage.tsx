@@ -45,7 +45,7 @@ export default function CertificateList() {
         </p>
       </div>
 
-      {/* Loading Skeleton — struktur sama persis dengan body */}
+      {/* Loading Skeleton - struktur sama persis dengan body */}
       {loading && (
         <div>
           <div className="h-4 w-32 bg-gray-200 rounded mb-4 animate-pulse" />
@@ -73,7 +73,7 @@ export default function CertificateList() {
         </div>
       )}
 
-      {/* Section: List Projects — hanya tampil kalau ada project */}
+      {/* Section: List Projects - hanya tampil kalau ada project */}
       {hasProjects && (
         <div>
           <h2 className="text-base font-bold text-font-shade mb-4">List Projects</h2>

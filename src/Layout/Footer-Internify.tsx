@@ -5,38 +5,39 @@ import logoHumic from "../assets/logo.png";
 const internshipLinks = [
   { label: "Beranda", path: "/" },
   { label: "Tentang", path: "/about-us" },
-  { label: "Life At Humic", path: "/our-developer" },
+  { label: "Life At Humic", path: "" },
+  { label: "Our Developer", path: "/our-developer" }
 ];
 
 const externalLinks = [
   { label: "Humic Website", href: "https://humic.telkomuniversity.ac.id/" },
   { label: "Our Activity", href: "https://humic.telkomuniversity.ac.id/humicinmedia/" },
-  { label: "Life At Humic", href: "#" },
-  { label: "Our Developer", href: "#" },
+  { label: "Life At Humic", href: "" },
+  // { label: "Our Developer", href: "#" },
 ];
 
 const socials = [
   { label: "Instagram", icon: FaInstagram, href: "https://www.instagram.com/humicengineering/" },
   { label: "LinkedIn", icon: FaLinkedin, href: "https://www.linkedin.com/company/humic-engineering/" },
-  { label: "Email", icon: FaRegEnvelope, href: "#" },
+  { label: "Email", icon: FaRegEnvelope, href: "" },
 ];
 
 export function FooterIntern() {
   return (
     <footer className="bg-white border-t border-gray-300 px-14 py-8 flex gap-12 flex-wrap">
       {/* Brand info */}
-      <div className="flex flex-col gap-2 flex-shrink-0 w-70 items-start">
+      <div className="flex flex-col gap-1 flex-shrink-0 w-70 items-start">
         <img
           src={logoHumic}
           alt="logo humic"
-          className="w-[160px]"
+          className="w-[130px]"
         />
-        <address className="text-xs text-gray-800 leading-relaxed not-italic">
+        <address className="text-[13px] text-gray-800 not-italic mt-[10px]">
           Gedung Kultubai Selatan, Blok F
           Jl. Telekomunikasi, Terusan Buah Batu Bandung
           Jawa Barat, Indonesia. 40257
         </address>
-        <div className="flex gap-2 mt-1">
+        <div className="flex gap-2  mt-[13px]">
           {socials.map(({ label, icon: Icon, href }) => (
             <a
               key={label}
@@ -56,7 +57,7 @@ export function FooterIntern() {
       <div className="flex gap-12 flex-1 justify-end flex-wrap">
         <div className="flex flex-col gap-2 min-w-[140px]">
           <p className="text-[13px] font-bold text-gray-900">Internship</p>
-          <ul className="flex flex-col gap-0.5">
+          <ul className="flex flex-col gap-0.5 font-semibold">
             {internshipLinks.map(({ label, path }) => (
               <li key={label}>
                 <Link
@@ -71,8 +72,8 @@ export function FooterIntern() {
         </div>
 
         <div className="flex flex-col gap-2 min-w-[140px]">
-          <p className="text-[13px] font-bold text-gray-900">Eksternal</p>
-          <ul className="flex flex-col gap-0.5">
+          <p className="text-[13px] font-bold text-gray-900">Lainnya</p>
+          <ul className="flex flex-col gap-0.5 font-semibold">
             {externalLinks.map(({ label, href }) => (
               <li key={label}>
                 <a

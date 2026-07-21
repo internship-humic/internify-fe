@@ -8,7 +8,6 @@ interface FAQ {
   created_at: string;
 }
 
-// Skeleton item that mirrors the real FAQ card shape
 function FAQSkeleton() {
   return (
     <div className="relative shadow-md py-5 px-10 rounded-md bg-white border-l-6 border-gray-200 animate-pulse">
@@ -76,4 +75,4 @@ export default function FAQPage() {
       )}
     </div>
   );
-}
+}

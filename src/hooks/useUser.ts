@@ -1,5 +1,4 @@
-// hooks/useUser.ts
-import { useState, useEffect, useCallback, useRef, useSyncExternalStore } from "react";
+import { useState, useEffect, useCallback, useSyncExternalStore } from "react";
 import { loginUser, getProfile, updateProfile } from "../services/UserService";
 import type { Mahasiswa } from "../types/project.types";
 import { getMahasiswa } from "../services/MahasiswaService";

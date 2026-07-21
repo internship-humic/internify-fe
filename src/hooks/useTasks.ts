@@ -1,4 +1,3 @@
-// hooks/useTasks.ts
 import { useState, useEffect, useCallback, useMemo } from "react";
 import type {
   ProjectTask,
@@ -46,7 +45,7 @@ export const useProjectTasks = (projectId: number) => {
     refetch();
   }, [refetch]);
 
-  return { tasks, loading, error, refetch }; // tambah refetch
+  return { tasks, loading, error, refetch };
 };
 
 // GET /task-api/tasks/{id}
@@ -276,7 +275,7 @@ export const useAllMentorTasks = (enabled: boolean) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!enabled) return; // tidak fetch kalau intern
+    if (!enabled) return;
     setLoading(true);
     getAllMentorTasks()
       .then(setTasks)

@@ -1,4 +1,3 @@
-// services/ProjectService.ts
 import api from "../lib/api";
 import type {
   Project,

@@ -8,7 +8,6 @@ import { FileText } from 'lucide-react';
 export default function MentorForumTab({ project }: { project: Project }) {
   const { tasks, loading, error } = useProjectTasks(project.id);
 
-  // Skeleton meniru layout final: kolom timeline 1/5 + list task card 4/5
   const renderSkeleton = () => (
     <div className="flex flex-col gap-7 md:flex-row md:items-start mt-5 animate-pulse">
       <div className="w-full md:w-1/5 bg-white rounded-xl p-5 border border-box-border shrink-0">
@@ -29,14 +28,12 @@ export default function MentorForumTab({ project }: { project: Project }) {
     </div>
   );
 
-  // Empty hanya valid setelah loading selesai & tidak error
   const isEmpty = !loading && !error && tasks.length === 0;
 
   return (
     <div>
       <HeroProject title={project.project_name} description={project.description} />
 
-      {/* Kondisi eksklusif: hanya satu state tampil dalam satu waktu */}
       {loading ? (
         renderSkeleton()
       ) : error ? (

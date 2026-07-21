@@ -1,4 +1,3 @@
-// services/mahasiswa.service.ts
 import api from '../lib/api';
 import type { Mahasiswa, MahasiswaResponse } from "../types/project.types"
 

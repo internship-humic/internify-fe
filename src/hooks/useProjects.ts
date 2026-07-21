@@ -1,4 +1,3 @@
-// hooks/useProject.ts
 import { useState, useEffect, useCallback } from "react";
 import type {
   Project,

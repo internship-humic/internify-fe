@@ -1,4 +1,3 @@
-// utils/toast.tsx
 import toast, { type Toast } from 'react-hot-toast';
 import { FiX } from 'react-icons/fi';
 import { FaCheck } from "react-icons/fa";
