@@ -7,6 +7,7 @@ import {
   Eye,
   ChevronLeft,
   ChevronRight,
+  BadgeCheck,
   Sparkles,
   Check,
   Loader2
@@ -43,7 +44,7 @@ function formatDateRange(startDate: string, endDate: string): string {
   return `${formatDateIndo(startDate)} - ${formatDateIndo(endDate)}`;
 }
 
-function ProgressBar({ value, total }: {value: number, total: number}) {
+function ProgressBar({ value, total }: { value: number, total: number }) {
   const pct = total === 0 ? 0 : Math.round((value / total) * 100);
   const isComplete = value === total;
 
@@ -62,13 +63,31 @@ function ProgressBar({ value, total }: {value: number, total: number}) {
   );
 }
 
-function StatusBadge({ status }: { status: boolean }) {
+type BadgeState = "certified" | "eligible" | "incomplete";
+
+function StatusBadge({ state }: { state: BadgeState }) {
+  const config = {
+    certified: {
+      className: "text-gray-500",
+      icon: <BadgeCheck className="w-3.5 h-3.5" />,
+      label: "Sudah Ada",
+    },
+    eligible: {
+      className: "text-green-600",
+      icon: <CheckCircle2 className="w-3.5 h-3.5" />,
+      label: "Eligible",
+    },
+    incomplete: {
+      className: "text-orange-500",
+      icon: <AlertCircle className="w-3.5 h-3.5" />,
+      label: "Incomplete",
+    },
+  }[state];
+
   return (
-    <div className={`flex items-center gap-1 text-[11px] font-extrabold tracking-wide ${status ? "text-green-600" : "text-orange-500"}`}>
-      {status
-        ? <CheckCircle2 className="w-3.5 h-3.5" />
-        : <AlertCircle className="w-3.5 h-3.5" />}
-      {status ? "Eligible" : "Incomplete"}
+    <div className={`flex items-center gap-1 text-[11px] font-extrabold tracking-wide ${config.className}`}>
+      {config.icon}
+      {config.label}
     </div>
   );
 }
@@ -84,7 +103,7 @@ export default function EligibleInternTable({
   const { generate: SubmitCertificates } = useGenerateCertificates();
 
   const initialSelected = new Set(
-    interns.filter(i => i.is_eligible).map(i => i.id_user)
+    interns.filter(i => i.is_eligible && !i.has_certificate).map(i => i.id_user)
   );
   const [selected, setSelected] = useState<Set<number>>(initialSelected);
   const [generating, setGenerating] = useState(false);
@@ -99,7 +118,7 @@ export default function EligibleInternTable({
       id: intern.id_user,
       id_project: project.id,
       id_user: intern.id_user,
-      certificate_no: "CERT/YYDDMM/XXX",
+      certificate_no: "CERT/yymmxx/XXX",
       issued_at: new Date().toISOString().slice(0, 10),
       uuid: "HANYA SEBATAS PREVIEW",
       user: {
@@ -121,11 +140,11 @@ export default function EligibleInternTable({
   const [page, setPage] = useState(1);
   const totalPages = Math.ceil(interns.length / PER_PAGE);
   const paginated = interns.slice((page - 1) * PER_PAGE, page * PER_PAGE);
-  const eligibleIds = interns.filter(i => i.is_eligible).map(i => i.id_user);
-  const allEligibleSelected = eligibleIds.every(id => selected.has(id));
+  const selectableIds = interns.filter(i => i.is_eligible && !i.has_certificate).map(i => i.id_user);
+  const allEligibleSelected = selectableIds.length > 0 && selectableIds.every(id => selected.has(id));
 
   const toggleSelectAll = () => {
-    setSelected(allEligibleSelected ? new Set() : new Set(eligibleIds));
+    setSelected(allEligibleSelected ? new Set() : new Set(selectableIds));
   };
 
   const toggleOne = (id: number, isEligible: boolean) => {
@@ -158,7 +177,7 @@ export default function EligibleInternTable({
         const zip = new JSZip();
         const templateUrl = resolveFileUrl(project.certificate_template!);
         if (!templateUrl) throw new Error("Template sertifikat tidak ditemukan.");
-        
+
         const duration = formatDateRange(project.start_date, project.end_date);
 
         await Promise.all(
@@ -242,6 +261,8 @@ export default function EligibleInternTable({
         {/* Rows */}
         <div className="divide-y divide-gray-50">
           {paginated.map((intern) => {
+            const isCertified = intern.has_certificate;
+            const isSelectable = intern.is_eligible && !isCertified
             const isChecked = selected.has(intern.id_user);
             const isIncomplete = !intern.is_eligible;
             const initials = intern.full_name
@@ -257,8 +278,8 @@ export default function EligibleInternTable({
               >
                 {/* Checkbox */}
                 <button
-                  onClick={() => toggleOne(intern.id_user, intern.is_eligible)}
-                  disabled={isIncomplete}
+                  onClick={() => toggleOne(intern.id_user, isSelectable)}
+                  disabled={!isSelectable}
                   className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${isIncomplete
                     ? "border-gray-200 bg-gray-50 cursor-not-allowed"
                     : isChecked
@@ -266,8 +287,12 @@ export default function EligibleInternTable({
                       : "border-gray-300 hover:border-gray-400"
                     }`}
                 >
-                  {isChecked && !isIncomplete && (
-                    <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
+                  {isCertified ? (
+                    <Check className="w-2.5 h-2.5 text-gray-400" strokeWidth={3} />
+                  ) : (
+                    isChecked && !isIncomplete && (
+                      <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
+                    )
                   )}
                 </button>
 
@@ -291,13 +316,17 @@ export default function EligibleInternTable({
 
                 {/* Status */}
                 <div className="flex justify-center">
-                  <StatusBadge status={intern.is_eligible} />
+                  <StatusBadge
+                    state={
+                      isCertified ? "certified" : intern.is_eligible ? "eligible" : "incomplete"
+                    }
+                  />
                 </div>
 
                 {/* Action */}
                 <div className="flex justify-center">
-                  {isIncomplete ? (
-                    <button className="text-[11px] font-extrabold text-[#B30000] hover:underline whitespace-nowrap">
+                  {isIncomplete && !isCertified ? (
+                    <button className="text-[11px] font-extrabold text-red hover:underline whitespace-nowrap">
                       Nag Intern
                     </button>
                   ) : (
@@ -379,7 +408,6 @@ export default function EligibleInternTable({
             </>
           )}
         </button>
-
       </div>
     </div>
   );

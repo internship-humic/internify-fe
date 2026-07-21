@@ -13,7 +13,7 @@ export default function CertificateDetail() {
   const { slug } = useParams<{ slug: string }>();
   const { project, loading, error, refetch } = useProjectDetail(slug ?? "");
   const { upload, loading: uploading, error: uploadError } = useUploadCertificateTemplate();
-  const { data: internProgress, loading: progressLoading } = useProjectInternProgress(slug ?? "");
+  const { data: internProgress, loading: progressLoading } = useProjectInternProgress(project?.id ?? 0);
   const eligibleCount = internProgress.filter(i => i.is_eligible).length;
 
   const fileInputRef = useRef<HTMLInputElement>(null);

@@ -176,5 +176,5 @@ export const useCertificateVerification = (uuid: string) => {
   }, [uuid]);
 
   return { verification, loading, error };
-
 }
+

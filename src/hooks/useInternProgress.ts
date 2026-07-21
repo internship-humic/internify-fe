@@ -1,6 +1,7 @@
-// hooks/useProjectInternProgress.ts
+// hooks/useInternProgress.ts
 import { useState, useEffect, useCallback } from "react";
 import { getProjectTasks, getTaskSubmissions } from "../services/TaskService";
+import { getCertificatesByProject } from "../services/CertificateService";
 import type { AdminTaskDetail } from "../types/task.types";
 
 export interface InternSubmissionProgress {
@@ -11,24 +12,32 @@ export interface InternSubmissionProgress {
   submitted: number;
   total_tasks: number;
   is_eligible: boolean;
+  has_certificate: boolean;
 }
 
-export const useProjectInternProgress = (projectSlug: string) => {
+export const useProjectInternProgress = (projectid: number) => {
   const [data, setData] = useState<InternSubmissionProgress[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const refetch = useCallback(async () => {
-    if (!projectSlug) return;
+    if (!projectid) return;
     setLoading(true);
     setError(null);
 
     try {
-      const tasks = await getProjectTasks(projectSlug);
+      const [tasks, certificates] = await Promise.all([
+        getProjectTasks(projectid),
+        getCertificatesByProject(projectid).catch(() => []),
+      ]);
+
+      const certifiedUserIds = new Set(
+        (certificates ?? []).map((cert) => cert.id_user)
+      );
 
       const taskDetails = await Promise.all(
         tasks.map((task) =>
-          getTaskSubmissions(task.slug, projectSlug) as Promise<AdminTaskDetail>
+          getTaskSubmissions(task.slug, projectid) as Promise<AdminTaskDetail>
         )
       );
 
@@ -38,7 +47,6 @@ export const useProjectInternProgress = (projectSlug: string) => {
         if (!taskDetail?.submissions) continue;
 
         for (const sub of taskDetail.submissions) {
-          // field yang benar: sub.submission (bukan submission_details)
           const hasSubmitted = !!sub.submission;
           const existing = internMap.get(sub.id_user);
 
@@ -50,10 +58,11 @@ export const useProjectInternProgress = (projectSlug: string) => {
               id_user: sub.id_user,
               full_name: sub.full_name,
               email: sub.email,
-              avatar: sub.profile_picture, // field yang benar
+              avatar: sub.profile_picture,
               submitted: hasSubmitted ? 1 : 0,
               total_tasks: 1,
               is_eligible: false,
+              has_certificate: certifiedUserIds.has(sub.id_user),
             });
           }
         }
@@ -71,7 +80,7 @@ export const useProjectInternProgress = (projectSlug: string) => {
     } finally {
       setLoading(false);
     }
-  }, [projectSlug]);
+  }, [projectid]);
 
   useEffect(() => {
     refetch();
