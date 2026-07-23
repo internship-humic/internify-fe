@@ -17,6 +17,7 @@ export default function CreateTaskModal({ isOpen, onClose, projectId, onSuccess 
   const [taskTitle, setTaskTitle] = useState("");
   const [description, setDescription] = useState("");
   const [deadlineDate, setDeadlineDate] = useState("");
+  const [dateError, setDateError] = useState("");
   const [specificTime, setSpecificTime] = useState("");
   const [submissionType, setSubmissionType] = useState<SubmissionType>("file_upload");
 
@@ -24,32 +25,43 @@ export default function CreateTaskModal({ isOpen, onClose, projectId, onSuccess 
     const dialog = dialogRef.current;
     if (!dialog) return;
 
-    if (isOpen) { 
-      dialog.showModal(); 
+    if (isOpen) {
+      dialog.showModal();
       document.body.style.overflow = "hidden";
     }
 
-    else { 
-      dialog.close(); 
+    else {
+      dialog.close();
       document.body.style.overflow = "unset";
     }
-    
+
     const handleCancel = (e: Event) => {
       e.preventDefault();
     };
-    
+
     dialog.addEventListener("cancel", handleCancel);
-    
+
     return () => {
       dialog.removeEventListener(
         "cancel", handleCancel
-      ); 
-      document.body.style.overflow = "unset"; 
+      );
+      document.body.style.overflow = "unset";
     };
   }, [isOpen, onClose]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    setDateError("");
+
+    if (deadlineDate) {
+      const today = new Date().toISOString().split("T")[0];
+      if (deadlineDate < today) {
+        setDateError("Deadline date cannot be in the past");
+        return;
+      }
+    }
+
     const result = await create({
       title: taskTitle,
       description,
@@ -104,8 +116,11 @@ export default function CreateTaskModal({ isOpen, onClose, projectId, onSuccess 
               type="date"
               required
               value={deadlineDate}
-              onChange={(e) => setDeadlineDate(e.target.value)}
+              onChange={(e) => { setDeadlineDate(e.target.value); setDateError(""); }}
               className="w-full px-3 py-3 bg-white border border-gray-200 rounded-lg text-xs font-medium text-gray-800 focus:outline-none focus:border-[#B30000] focus:ring-1 focus:ring-[#B30000]" />
+            {dateError && (
+              <p className="text-xs text-red font-medium">{dateError}</p>
+            )}
           </div>
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-gray-700 tracking-wide">Specific Time</label>

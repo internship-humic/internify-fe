@@ -53,12 +53,10 @@ export default function TaskCard({ task }: { task: InternTaskItem }) {
           Tipe Submission : {task.submission_type === 'file_upload' ? "File" : "Link"}
         </div>
       </div>
-
-
-      <div className="shrink-0 hidden md:flex items-center border border-card-outline">
+      <div className={`shrink-0 hidden md:flex items-center rounded-xl border ${statusStyles[displayStatus]}`}>
         <span
-          className={`font-semibold text-xs px-3.5 py-[5px] rounded-md whitespace-nowrap border ${statusStyles[displayStatus]}`}>
-          {statusLabels[task.submission_status]}
+          className={`font-semibold text-xs px-3.5 py-[5px] whitespace-nowrap`}>
+          {statusLabels[displayStatus]}
         </span>
       </div>
     </div>

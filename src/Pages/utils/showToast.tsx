@@ -1,7 +1,7 @@
 import toast, { type Toast } from 'react-hot-toast';
 import { FiX } from 'react-icons/fi';
 import { FaCheck } from "react-icons/fa";
-import { IoAlertOutline } from "react-icons/io5";
+import { IoAlertCircleOutline } from "react-icons/io5";
 
 function ToastCard({ t, type, title, description }: {
   t: Toast;
@@ -19,7 +19,7 @@ function ToastCard({ t, type, title, description }: {
     >
       <div className={`flex items-center justify-center w-6 h-6 rounded-full mt-0.5 shrink-0
         ${isSuccess ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}>
-        {isSuccess ? <FaCheck size={10} /> : <IoAlertOutline size={10} />}
+        {isSuccess ? <FaCheck size={10} /> : <IoAlertCircleOutline size={10} />}
       </div>
       <div className="flex-1">
         <p className={`font-semibold text-[10px] ${isSuccess ? 'text-green-700' : 'text-red-700'}`}>

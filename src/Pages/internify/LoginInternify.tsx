@@ -46,7 +46,6 @@ export default function InternifyLogin() {
         document.cookie = `token=${token}; path=/; SameSite=Strict`;
 
         const decoded = decodeJWT(token);
-        console.log(decoded)
         const role = decoded?.role;
         if (role === "intern") {
             navigate("/intern");

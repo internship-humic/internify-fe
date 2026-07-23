@@ -37,7 +37,7 @@ interface StatusTableProps {
 }
 
 export function StatusTable({ status, submission }: StatusTableProps) {
-  const hasSubmission = status === "submitted" || status === "done";
+  const hasSubmission = status === "submitted" || status == "overdue";
 
   const rows: { label: string; value: React.ReactNode }[] = [
     {

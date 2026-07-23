@@ -118,7 +118,11 @@ export default function MentorProjectsDetailPage() {
                     {/* Kolom Tanggal Kumpul */}
                     <td className="px-6 py-4 text-sm text-gray-500">
                       {sub.submitted_at
-                        ? new Date(sub.submitted_at).toLocaleDateString("id-ID")
+                        ? new Date(sub.submitted_at).toLocaleString("id-ID", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        })
                         : "-"}
                     </td>
 
@@ -126,12 +130,12 @@ export default function MentorProjectsDetailPage() {
                     <td className="px-6 py-4">
                       {sub.display_status === "done" && (
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-green-50 text-green-700 border border-green-200">
-                          <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Done
+                          <span className="w-1.5 h-1.5 bg-green-700 rounded-full"></span> Done
                         </span>
                       )}
                       {sub.display_status === "pending" && (
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-amber-50 text-amber-700 border border-amber-200">
-                          <span className="w-1.5 h-1.5 bg-amber-500 rounded-full"></span> Pending
+                          <span className="w-1.5 h-1.5 bg-amber-700 rounded-full"></span> Pending
                         </span>
                       )}
                       {sub.display_status === "overdue" && (
