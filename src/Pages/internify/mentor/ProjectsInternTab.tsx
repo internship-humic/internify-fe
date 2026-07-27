@@ -2,30 +2,30 @@ import { useState } from 'react';
 import { Plus, Users } from 'lucide-react';
 import ManageInternsModal from './components/AddInternsDialog';
 import type { ProjectDetail, ProjectMember } from '../../../types/project.types';
-import { useRemoveMember } from '../../../hooks/useProjects';
+import { useProjectInterns, useRemoveMember } from '../../../hooks/useProjects';
 import { customToast } from '../../utils/showToast';
 import { getInitials } from '../../../hooks/useUser';
 import { resolveFileUrl } from '../../utils/resolveFileFromUrl';
 
 export default function InternsTab({ project }: { project: ProjectDetail }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [members, setMembers] = useState<ProjectMember[]>(project.members);
-  const { remove, loading } = useRemoveMember();
-  const isProjectActive = project?.status === "active"
+  const { interns: members, loading, error, refetch } = useProjectInterns(String(project.id));
+  const { remove, loading: removing } = useRemoveMember();
+  const isProjectActive = project?.status === "active";
   const [adminImageError, setAdminImageError] = useState(false);
   const adminAvatar = resolveFileUrl(project.admin.profile_picture);
   const adminHasPhoto = !!adminAvatar && !adminImageError;
 
-  const handleModalClose = (finalMembers: ProjectMember[]) => {
-    setMembers(finalMembers);
+  const handleModalClose = () => {
     setIsModalOpen(false);
+    refetch();
   };
 
   const handleRemove = async (id_user: number) => {
     const res = await remove({ id_project: project.id, id_user });
     if (res.success) {
-      setMembers(prev => prev.filter(m => m.id !== id_user));
       customToast.success('Member removed', res.message);
+      refetch();
     } else {
       customToast.error('Failed to remove', res.message);
     }
@@ -78,7 +78,15 @@ export default function InternsTab({ project }: { project: ProjectDetail }) {
             </span>
           </button>
         </div>
-        {members.length === 0 ? (
+        {loading ? (
+          <div className="flex flex-col gap-3 pt-12">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="h-14 bg-gray-300 rounded-lg animate-pulse" />
+            ))}
+          </div>
+        ) : error ? (
+          <p className="text-red-500 text-sm py-4">{error}</p>
+        ) : members.length === 0 ? (
           <div className='flex flex-col items-center justify-center py-16'>
             <Users className='w-12 h-12 text-gray-300 mx-auto' />
             <p className="text-sm text-font mt-3">Belum ada anggota.</p>
@@ -101,7 +109,7 @@ export default function InternsTab({ project }: { project: ProjectDetail }) {
               <div>
                 <button
                   onClick={() => handleRemove(member.id)}
-                  disabled={loading || !isProjectActive}
+                  disabled={removing || !isProjectActive}
                   className='flex items-center gap-1 text-[11px] bg-red-600 text-white py-1 px-2 rounded-md disabled:opacity-50 hover:bg-red-700 transition-colors disabled:cursor-not-allowed'
                 >
                   <Plus className='w-4 h-4' />Delete

@@ -1,13 +1,12 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, FolderKanban, UsersRound, Medal, Settings, HelpCircle, LogOut, X } from 'lucide-react';
+import { Home, FolderKanban, UsersRound, FileBadge , Settings, HelpCircle, LogOut, X } from 'lucide-react';
 import { FaUserTie } from "react-icons/fa";
 
 const navItems = [
-  // belum kutambahin
   { label: "Home", icon: Home, path: "/mentor" },
   { label: "List Projects", icon: FolderKanban, path: "/mentor/projects" },
   { label: "Interns", icon: UsersRound, path: "/mentor/intern" },
-  { label: "Certificates", icon: Medal, path: "/mentor/certificates" },
+  { label: "Certificates", icon: FileBadge, path: "/mentor/certificates" },
 ];
 
 const prefItems = [

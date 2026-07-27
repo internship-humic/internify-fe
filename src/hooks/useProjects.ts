@@ -73,7 +73,7 @@ export const useProjectInterns = (projectId: string) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const refetch = useCallback(() => {
     if (!projectId) return;
     setLoading(true);
     getProjectMembers(projectId)
@@ -82,7 +82,9 @@ export const useProjectInterns = (projectId: string) => {
       .finally(() => setLoading(false));
   }, [projectId]);
 
-  return { interns, loading, error };
+  useEffect(() => { refetch(); }, [refetch]);
+
+  return { interns, loading, error, refetch };
 };
 
 // GET /project-api/my-projects

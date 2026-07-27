@@ -69,7 +69,7 @@ export default function ProjectDetailPage() {
   const [activeTab, setActiveTab] = useState<'forum' | 'participants' | 'Task'>('forum');
   const { project, loading, error } = useProjectDetail(slug ?? "");
 
-  if (loading) return <ProjectDetailSkeleton/>
+  if (loading && !project) return <ProjectDetailSkeleton/>
 
   if (error) return <p className="p-10 text-[18px] text-red-700">{error}</p>;
 
@@ -110,7 +110,7 @@ export default function ProjectDetailPage() {
             case 'forum':
               return <MentorForumTab project={project} />;
             case 'participants':
-              return <InternsTab project={project} />;
+              return <InternsTab project={project}/>;
             case 'Task':
               return <TaskTab project={project} />;
             default:
