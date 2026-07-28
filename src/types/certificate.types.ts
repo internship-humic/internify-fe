@@ -37,9 +37,17 @@ export interface CertificateTemplate {
   certificate_template: string;
 }
 
+interface projectbysertif {
+  project_id: number
+  project_name: string;
+  end_date: string;
+  description: string;
+  certificate_template: string
+}
+
 export interface CertificateVerifyResult {
   uuid: string;
   intern_name: string;
-  project_name: string;
+  project: projectbysertif;
   created_at: string;
 }

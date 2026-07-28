@@ -5,13 +5,6 @@ import CreateProjectModal from './components/CreateProjectDialog';
 import { useProjectsByRole } from '../../../hooks/useListProjects';
 import TeamPana from '../../../assets/Team-pana.svg';
 
-function MentorProjectCardSkeleton() {
-  return (
-    <div className="flex flex-row bg-gray-300 rounded-xl overflow-hidden shadow-sm w-[180px] min-h-[270px] animate-pulse">
-    </div>
-  )
-}
-
 export default function MentorProjectsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { projects, loading, error, refetch } = useProjectsByRole();
@@ -35,7 +28,8 @@ export default function MentorProjectsPage() {
       return (
         <div className="flex flex-row gap-3 w-full">
           {[...Array(4)].map((_) => (
-            <MentorProjectCardSkeleton />
+            <div className="flex flex-row bg-gray-300 rounded-xl overflow-hidden shadow-sm w-[180px] min-h-[270px] animate-pulse">
+            </div>
           ))}
         </div>
       );

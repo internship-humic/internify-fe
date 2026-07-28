@@ -34,7 +34,6 @@ export default function CertificateAvailable({ project, certificate, templateUrl
 
   const duration = formatDateRange(project?.start_date, project?.end_date)
 
-
   useEffect(() => {
     if (!templateUrl) return;
     const verifyUrl = `${window.location.origin}/verify-certificate/${certificate.uuid}`;
@@ -82,12 +81,17 @@ export default function CertificateAvailable({ project, certificate, templateUrl
   };
 
   const handleShareLinkedIn = () => {
+    
+    const issueDate = new Date(certificate.issued_at.replace(" ", "T"));
     const verifyUrl = `${window.location.origin}/verify-certificate/${certificate.uuid}`;
     const params = new URLSearchParams({
       startTask: "CERTIFICATION_NAME",
-      name: certificate.project.project_name,
-      organizationName: "Internify",
+      name: "Penyelesaian Kerja Magang Instansi CoE HUMIC Engineering Proyek: " + certificate.project.project_name,
+      issueYear: String(issueDate.getFullYear()),
+      issueMonth: String(issueDate.getMonth() + 1),
+      organizationName: "CoE Humic Engineering",
       certUrl: verifyUrl,
+
       certId: certificate.certificate_no,
     });
     window.open(
@@ -120,7 +124,7 @@ export default function CertificateAvailable({ project, certificate, templateUrl
 
       {/* Program Summary */}
       <div className="grid grid-cols-2 gap-5">
-        <div className="bg-white rounded-2xl border border-card-outline shadow-sm p-5">
+        <div className="bg-box-primary rounded-2xl border border-box-border shadow-sm p-5">
           <div className="flex items-center gap-2 mb-4">
             <h3 className="font-semibold text-gray-800 text-sm">Ringkasan Program</h3>
           </div>
@@ -128,7 +132,7 @@ export default function CertificateAvailable({ project, certificate, templateUrl
             {[
               { label: "Nama Program", value: project?.project_name ?? "-" },
               { label: "Durasi", value: duration },
-              { label: "No. Sertifikat", value: certificate.certificate_no ?? "-" },
+              { label: "No. Sertifikat", value: certificate.certificate_no ? certificate.certificate_no : "-" },
             ].map((row) => (
               <div
                 key={row.label}
@@ -141,7 +145,7 @@ export default function CertificateAvailable({ project, certificate, templateUrl
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-card-outline shadow-sm p-5">
+        <div className="bg-box-primary rounded-2xl border border-box-border shadow-sm p-5">
           <div className="flex flex-col gap-3">
             {/* Unduh Sertifikat */}
             <button
@@ -160,7 +164,7 @@ export default function CertificateAvailable({ project, certificate, templateUrl
             >
               {/* LinkedIn icon */}
               <svg className="w-4 h-4 fill-white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
               </svg>
               Tambah ke Profil LinkedIn
             </button>
@@ -179,7 +183,7 @@ export default function CertificateAvailable({ project, certificate, templateUrl
                 className="flex flex-col items-center justify-center gap-1.5 border border-card-outline hover:bg-gray-50 active:scale-95 transition-all text-red-700 font-medium py-3.5 rounded-xl text-sm"
                 onClick={() => {
                   navigator.clipboard.writeText(`${window.location.origin}/verify-certificate/${certificate.uuid}`);
-                  customToast.success("Link berhasil disalin!");
+                  customToast.success("Link berhasil disalin!", "Link sudah disalin ke clipboard");
                 }}
               >
                 <Link className="w-5 h-5" />

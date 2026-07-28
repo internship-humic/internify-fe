@@ -1,5 +1,5 @@
-// CertificateNotAvailable.tsx
-import { Clock, Lock, Award } from "lucide-react";
+import { Clock, Lock } from "lucide-react";
+import { FaAward } from "react-icons/fa";
 
 interface CertificateNotAvailableProps {
   progress: number;
@@ -19,9 +19,9 @@ export default function CertificateNotAvailable({
         <div className="w-34 h-34 border-2 border-dashed border-gray-600 rounded-xl flex justify-center items-center">
           <div className="w-26 h-26 flex items-center rounded-lg justify-center bg-gray-300">
             {allTasksDone ? (
-              <Award className="w-12 h-12 text-green-600" />
+              <FaAward className="w-12 h-12 text-green-400" />
             ) : (
-              <Lock className="w-12 h-12 text-red-700" />
+              <Lock className="w-12 h-12 text-red-500" />
             )}
           </div>
           <div className="absolute -bottom-2 -right-2 w-7 h-7 bg-amber-500 rounded- flex items-center justify-center shadow-md">

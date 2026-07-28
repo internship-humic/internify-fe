@@ -5,7 +5,6 @@ import { useMyCertificates } from "../../../../hooks/useCertificates";
 export default function SertificateHistory() {
     const { certificates, loading, error } = useMyCertificates();
     const displayed = certificates.slice(0, 3);
-
     return (
         <div className="bg-box-primary rounded-2xl border border-box-border shadow-sm p-5">
             <div className="flex items-center gap-2 mb-4">
@@ -36,7 +35,7 @@ export default function SertificateHistory() {
                     {displayed.map((item: Certificate) => (
                         <div
                             key={item.id}
-                            className="flex flex-col gap-3 p-3 bg-white border border-gray-200 shadow-sm rounded-xl hover:bg-gray-50 transition-colors cursor-pointer"
+                            className="flex flex-col gap-3 p-3 bg-card border border-card-outline shadow-sm rounded-xl hover:bg-gray-50 transition-colors cursor-pointer"
                         >
                             <div className="w-full">
                                 <p className="text-xs text-gray-400">
@@ -48,7 +47,7 @@ export default function SertificateHistory() {
                                 <p className="text-sm font-semibold text-gray-800 leading-tight">
                                     {item.project.project_name}
                                 </p>
-                                <p className="text-sm text-gray-500">No: {item.certificate_no}</p>
+                                <p className="text-sm text-gray-500">{item.certificate_no}</p>
                             </div>
                         </div>
                     ))}

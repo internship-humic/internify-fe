@@ -5,29 +5,48 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Grenze:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+ 
+    #preview {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #ffffff55;
+      box-shadow: 0 0 0 1px #000, 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+  </style>
+
 </head>
 <body>
-  <canvas id="preview" style="max-width: 100%;"></canvas>
+  <canvas id="preview"></canvas>
 
   <script>
     const TEMPLATE_PATH = "../../assets/template.png";
 
     // LAYOUT
     const LAYOUT = {
-      internName:      { x: 0.57,  y: 0.48,  size: 140, font: "Great Vibes", color: "#800000" },
+      internName:      { x: 0.54,  y: 0.5,  size: 130, font: "Great Vibes", color: "#800000" },
       internNameSmall: { x: 0.82, y: 0.889, size: 33,  font: "Great Vibes", color: "#800000" },
-      projectName:     { x: 0.815,  y: 0.598, size: 46,  font: "Grenze",      color: "#090909" },
+      projectName:     { x: 0.815,  y: 0.598, size: 46,  font: "Grenze",      color: "#800000" },
       duration:        { x: 0.692,  y: 0.645,  size: 48,  font: "Grenze",      color: "#090909" },
-      certNo:          { x: 0.6, y: 0.305, size: 50,  font: "Grenze",      color: "#090909" },
+      certNo:          { x: 0.56, y: 0.305, size: 50,  font: "Grenze",      color: "#090909" },
       certNoSmall:     { x: 0.825, y: 0.91, size: 22,  font: "Grenze",      color: "#800000" },
       qr:              { x: 0.77, y: 0.715,  size: 0.103 },
     };
 
     const DATA = {
-      internName:  "Jonathan Kristina",
+      internName:  "Kemas M. Aryadary Rasyad",
       projectName: "Internify Proyek Humic",
       duration:    "20 April 2026 - 20 Juni 2026",
-      certNo:      "CERT/XXXXXX/1",
+      certNo:      "No.2026/SPI3/CERT/XXXXXX/1",
       verifyUrl:   "dummy-uuid-preview",
     };
 
