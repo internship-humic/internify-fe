@@ -58,12 +58,6 @@ const Landing = () => {
     return feedbacks[displayIndex];
   }, [feedbacks, displayIndex]);
 
-  // Gambar statis: selalu pakai foto dari feedback pertama
-  const staticImgUrl = useMemo(() => {
-    if (feedbacks.length === 0) return "";
-    return getFeedbackImageUrl(feedbacks[0].image_path);
-  }, [feedbacks]);
-
   useEffect(() => {
     // Fetch internships
     fetch(`${import.meta.env.VITE_API_BASE_URL}/lowongan-magang-api/get`)

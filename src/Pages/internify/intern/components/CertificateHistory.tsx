@@ -35,11 +35,12 @@ export default function SertificateHistory() {
                     {displayed.map((item: Certificate) => (
                         <div
                             key={item.id}
-                            className="flex flex-col gap-3 p-3 bg-card border border-card-outline shadow-sm rounded-xl hover:bg-gray-50 transition-colors cursor-pointer"
+                            className="flex flex-col gap-3 p-3 bg-box-primary border border-box-border shadow-sm rounded-xl transition-colors"
                         >
                             <div className="w-full">
                                 <p className="text-xs text-gray-400">
                                     {new Date(item.issued_at).toLocaleDateString("id-ID", {
+                                        day: "numeric",
                                         year: "numeric",
                                         month: "long",
                                     })}
@@ -47,7 +48,7 @@ export default function SertificateHistory() {
                                 <p className="text-sm font-semibold text-gray-800 leading-tight">
                                     {item.project.project_name}
                                 </p>
-                                <p className="text-sm text-gray-500">{item.certificate_no}</p>
+                                <p className="text-sm text-font-shade">{item.certificate_no}</p>
                             </div>
                         </div>
                     ))}

@@ -32,7 +32,12 @@ export default function InternCertificateDetail() {
     };
   }, [projectDetail, projectFromList]);
 
-  const allTasksDone = !projectLoading && !!project && project.task_done >= project.total_tasks;
+
+  const allTasksDone =
+    !projectLoading &&
+    !!project &&
+    (project.total_tasks ?? 0) > 0 &&
+    project.task_done >= project.total_tasks;
 
   const progress =
     project && project.total_tasks > 0
@@ -50,10 +55,8 @@ export default function InternCertificateDetail() {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6 items-stretch animate-pulse">
-          {/* Kolom kiri: certificate box */}
           <div className="w-full lg:w-5/8 h-[420px] bg-gray-200 rounded-xl" />
 
-          {/* Kolom kanan: history box */}
           <div className="w-full lg:w-3/8 flex-shrink-0 h-[420px] bg-gray-200 rounded-xl" />
         </div>
       </div>
@@ -68,9 +71,9 @@ export default function InternCertificateDetail() {
       </div>
       <div className="flex flex-col lg:flex-row gap-6 items-stretch">
         <div className="w-full lg:w-5/8 flex flex-col">
-          {myCertificateForProject ? (
+          {myCertificateForProject && (project?.total_tasks ?? 0) > 0 ? (
             <CertificateAvailable
-              project={project}
+              project={project!}
               certificate={myCertificateForProject}
               templateUrl={project?.certificate_template ?? ""}
             />
@@ -79,6 +82,7 @@ export default function InternCertificateDetail() {
               progress={progress}
               remainingTasks={remainingTasks}
               allTasksDone={allTasksDone}
+              noTasks={(project?.total_tasks ?? 0) === 0}
             />
           )}
         </div>

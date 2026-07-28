@@ -15,14 +15,12 @@ interface EditTaskModalProps {
 export default function EditTaskModal({ isOpen, onClose, task, onSuccess }: EditTaskModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const { update, loading } = useUpdateTask();
-
   const [taskTitle, setTaskTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description);
   const [deadlineDate, setDeadlineDate] = useState(task.deadline_at.split("T")[0]);
   const [specificTime, setSpecificTime] = useState(task.deadline_at.split("T")[1]?.slice(0, 5) ?? "");
   const [submissionType, setSubmissionType] = useState<SubmissionType>(task.submission_type);
 
-  // Reset tiap task berubah
   useEffect(() => {
     setTaskTitle(task.title);
     setDescription(task.description);

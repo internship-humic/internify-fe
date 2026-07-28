@@ -20,8 +20,6 @@ export default function EditSubmissionModal({
 }: EditTaskModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const { update, loading, error } = useUpdateTask();
-
-  // Form States — diinisialisasi dari props task
   const [taskTitle, setTaskTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description);
   const [deadlineDate, setDeadlineDate] = useState(
@@ -32,7 +30,9 @@ export default function EditSubmissionModal({
   );
   const [submissionType, setSubmissionType] = useState<SubmissionType>(task.submission_type);
 
-  // Sync form ketika task berubah (misal modal dibuka untuk task berbeda)
+  const today = new Date().toISOString().split("T")[0];
+  const isDeadlinePast = !!deadlineDate && deadlineDate < today;
+
   useEffect(() => {
     setTaskTitle(task.title);
     setDescription(task.description);
@@ -108,7 +108,7 @@ export default function EditSubmissionModal({
 
         {/* Error Message */}
         {error && (
-          <div className="px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-xs text-red-600 font-medium">
+          <div className="px-3 py-2 border border-red-200 rounded-lg text-xs text-red font-medium">
             {error}
           </div>
         )}
@@ -148,9 +148,18 @@ export default function EditSubmissionModal({
                 required
                 value={deadlineDate}
                 onChange={(e) => setDeadlineDate(e.target.value)}
-                className="w-full p-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-800 focus:outline-none focus:border-[#B30000] focus:ring-1 focus:ring-[#B30000] appearance-none"
+                className={`w-full p-3 py-2.5 bg-white border rounded-lg text-sm font-medium text-gray-800 focus:outline-none appearance-none ${
+                  isDeadlinePast
+                    ? "border-red-400 focus:border-red-500 focus:ring-1 focus:ring-red-400"
+                    : "border-gray-200 focus:border-[#B30000] focus:ring-1 focus:ring-[#B30000]"
+                }`}
               />
             </div>
+            {isDeadlinePast && (
+              <p className="text-xs text-red-500 font-medium mt-1">
+                Tenggat waktu tidak boleh sebelum hari ini.
+              </p>
+            )}
           </div>
 
           <div className="space-y-1.5">
@@ -200,7 +209,7 @@ export default function EditSubmissionModal({
           </button>
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || isDeadlinePast}
             className="px-5 py-2.5 bg-[#B30000] hover:bg-[#990000] text-white text-sm font-bold rounded-xl transition-colors shadow-md flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             <LuSave className="w-4 h-4 stroke-[2.5]" />

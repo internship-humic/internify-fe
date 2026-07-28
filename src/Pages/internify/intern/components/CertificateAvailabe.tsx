@@ -123,7 +123,7 @@ export default function CertificateAvailable({ project, certificate, templateUrl
       </div>
 
       {/* Program Summary */}
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid md:grid-cols-2 gap-5">
         <div className="bg-box-primary rounded-2xl border border-box-border shadow-sm p-5">
           <div className="flex items-center gap-2 mb-4">
             <h3 className="font-semibold text-gray-800 text-sm">Ringkasan Program</h3>
@@ -138,13 +138,13 @@ export default function CertificateAvailable({ project, certificate, templateUrl
                 key={row.label}
                 className="flex justify-between items-center text-sm border-b border-card-outline pb-2 last:border-0"
               >
-                <span className="text-font">{row.label}</span>
-                <span className="text-font-shade font-bold">{row.value}</span>
+                <span className="text-font text-start text-xs md:text-sm">{row.label}</span>
+                <span className="text-font-shade font-bold text-start text-xs md:text-sm">{row.value}</span>
               </div>
             ))}
           </div>
         </div>
-
+        {/* End Program Summary */}
         <div className="bg-box-primary rounded-2xl border border-box-border shadow-sm p-5">
           <div className="flex flex-col gap-3">
             {/* Unduh Sertifikat */}
@@ -174,20 +174,19 @@ export default function CertificateAvailable({ project, certificate, templateUrl
               <button
                 onClick={handleDownloadImage}
                 disabled={downloadingImg}
-                className="flex flex-col items-center justify-center gap-1.5 border border-card-outline hover:bg-gray-50 active:scale-95 transition-all text-red-700 font-medium py-3.5 rounded-xl text-sm">
-                <Printer className="w-5 h-5" />
-                {downloadingImg ? "Memproses" : "Cetak"}
+                className="flex flex-col items-center justify-center gap-1.5 border border-card-outline hover:bg-gray-50 active:scale-95 transition-all text-red-700 font-medium py-1 md:py-3.5 rounded-xl text-sm">
+                <Printer className="w-4 h-4 md:w-5 md:h-5" />
+                <span className="text-xs md:text-sm">{downloadingImg ? "Memproses" : "Cetak"}</span>
               </button>
               <button
-                // onClick={handleCopyLink}
-                className="flex flex-col items-center justify-center gap-1.5 border border-card-outline hover:bg-gray-50 active:scale-95 transition-all text-red-700 font-medium py-3.5 rounded-xl text-sm"
+                className="flex flex-col items-center justify-center gap-1.5 border border-card-outline hover:bg-gray-50 active:scale-95 transition-all text-red-700 font-medium py-1 md:py-3.5 rounded-xl text-sm"
                 onClick={() => {
                   navigator.clipboard.writeText(`${window.location.origin}/verify-certificate/${certificate.uuid}`);
                   customToast.success("Link berhasil disalin!", "Link sudah disalin ke clipboard");
                 }}
               >
-                <Link className="w-5 h-5" />
-                Salin Link
+                <Link className="w-4 h-4 md:w-5 md:h-5" />
+                <span className="text-xs md:text-sm">Salin Link</span>
               </button>
             </div>
           </div>

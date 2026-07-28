@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import type {
-  ProjectTask,
   ProjectTaskDetail,
   CreateTaskPayload,
   UpdateTaskPayload,
   TaskSubmissionData,
   AdminTaskDetail,
+  MentorTaskItem,
 } from "../types/task.types";
 import {
   getProjectTasks,
@@ -21,7 +21,6 @@ import {
   getAllMentorTasks,
   getTaskSubmissions,
 } from "../services/TaskService";
-import type { MentorTaskItem } from "../types/task.types";
 import { useCurrentUser } from "./useUser";
 import { useMyTasks } from "./useProjects";
 import type { InternTaskItem } from "../types/project.types";

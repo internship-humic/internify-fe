@@ -1,5 +1,5 @@
 import { useParams, useLocation } from "react-router-dom";
-import { Download, Clock, AlertCircle } from "lucide-react";
+import { Download, AlertCircle, User2 } from "lucide-react";
 import { useTaskSubmissions } from "../../../hooks/useTasks";
 import type { DisplayStatus } from "../../../types/task.types";
 import { StatusTable } from "./components/StatusSubmissionTable";
@@ -50,8 +50,8 @@ export default function ViewInternSubmission() {
             {task.title}
           </h1>
           <p className="text-sm text-gray-500 flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5" />
-            {internSubmission.full_name} — {internSubmission.email}
+            <User2 className="w-3.5 h-3.5" />
+            {internSubmission.full_name}
           </p>
         </div>
       </div>

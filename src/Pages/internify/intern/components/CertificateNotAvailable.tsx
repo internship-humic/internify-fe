@@ -1,16 +1,19 @@
 import { Clock, Lock } from "lucide-react";
 import { FaAward } from "react-icons/fa";
+import { ListTodo } from "lucide-react";
 
 interface CertificateNotAvailableProps {
   progress: number;
   remainingTasks: number;
   allTasksDone?: boolean;
+  noTasks?: boolean;
 }
 
 export default function CertificateNotAvailable({
   progress,
   remainingTasks,
   allTasksDone = false,
+  noTasks = false,
 }: CertificateNotAvailableProps) {
   return (
     <div className="bg-box-primary w-full h-full rounded-2xl border border-box-border shadow-sm px-24 py-12 flex flex-col items-center justify-center">
@@ -18,7 +21,9 @@ export default function CertificateNotAvailable({
       <div className="relative mb-6">
         <div className="w-34 h-34 border-2 border-dashed border-gray-600 rounded-xl flex justify-center items-center">
           <div className="w-26 h-26 flex items-center rounded-lg justify-center bg-gray-300">
-            {allTasksDone ? (
+            {noTasks ? (
+              <ListTodo className="w-12 h-12 text-gray-400" />
+            ) : allTasksDone ? (
               <FaAward className="w-12 h-12 text-green-400" />
             ) : (
               <Lock className="w-12 h-12 text-red-500" />
@@ -30,7 +35,15 @@ export default function CertificateNotAvailable({
         </div>
       </div>
 
-      {allTasksDone ? (
+      {noTasks ? (
+        <>
+          <h2 className="text-[28px] font-bold text-gray-900 mb-3">Sertifikat Belum Tersedia</h2>
+          <p className="text-gray-500 text-[15px] mb-6 text-center">
+            Proyek ini belum memiliki tugas yang ditetapkan.
+            Sertifikat akan tersedia setelah semua tugas proyek diselesaikan.
+          </p>
+        </>
+      ) : allTasksDone ? (
         <>
           <h2 className="text-[37px] font-bold text-gray-900 mb-3">Selamat!</h2>
           <p className="text-gray-500 text-[17px] mb-6 text-center">
