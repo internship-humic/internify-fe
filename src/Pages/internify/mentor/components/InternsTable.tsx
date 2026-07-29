@@ -80,7 +80,7 @@ export default function InternsTable({
                       className="w-10 h-10 rounded-full object-cover border border-gray-100 shadow-sm hidden md:block"
                     />
                   ) : (
-                    <div className=" w-10 h-10 rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 items-center justify-center border border-gray-100 shadow-sm text-white text-xs font-bold hidden md:flex">
+                    <div className=" w-8 h-8 rounded-full bg-gray-300 items-center justify-center shadow-sm text-font-shade text-xs font-bold hidden md:flex">
                       {intern.name.charAt(0)}
                     </div>
                   )}

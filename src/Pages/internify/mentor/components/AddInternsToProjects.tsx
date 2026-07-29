@@ -19,8 +19,6 @@ export default function AddInternsModal({ isOpen, onClose, userId }: AddInternsM
   const { projects, loading: loadingProjects } = useProjects("active");
   const { interns, loading: loadingInterns } = useAssignableInterns();
 
-  console.log(projects)
-
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;

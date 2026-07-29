@@ -29,11 +29,11 @@ export default function ProjectTimeline({ tasks }: { tasks: InternTaskItem[] }) 
                   active ? 'bg-red' : 'bg-gray-400'
                 } ${isToday ? 'shadow-md' : ''}`}
               />
-              <div className={`text-[11px] font-semibold ${isToday ? 'text-red' : 'text-font'}`}>
-                {isToday ? 'Hari ini' : formatDate(task.deadline_at)}
+              <div className={`text-[14px] font-semibold ${isToday ? 'text-red' : 'text-font'}`}>
+                {task.title}
               </div>
               <div className="text-xs text-font mt-px leading-[1.3]">
-                {task.title}
+                {isToday ? 'Hari ini' : formatDate(task.deadline_at)}
               </div>
             </li>
           );

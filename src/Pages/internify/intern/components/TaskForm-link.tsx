@@ -34,18 +34,14 @@ export default function TaskFormLink({
           loading: isEditing ? "Memperbarui Link..." : "Mengirim Link...",
           success: (res) => ({
             title: isEditing ? "Link diperbaharui" : "Link berhasil dikirim",
-            description:
-              res?.message ??
-              (isEditing
-                ? "Perubahan submission Anda telah disimpan."
-                : "Link berhasil dikirim."),
+            description: res?.message 
+            // ?? (isEditing ? "Perubahan submission Anda telah disimpan." : "Link berhasil dikirim."),
           }),
           error: (err) => ({
             title: isEditing ? "Gagal memperbarui link!" : "Gagal mengirim link!",
             description:
-              err?.response?.data?.message ||
-              err?.message ||
-              "Link yang anda submit gagal dikirim",
+              err?.response?.data?.message || err?.message 
+              // || "Link yang anda submit gagal dikirim",
           }),
         }
       );

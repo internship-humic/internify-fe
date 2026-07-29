@@ -3,6 +3,7 @@ import { FiX } from 'react-icons/fi';
 import { FaCheck } from "react-icons/fa";
 import { IoAlertCircleOutline } from "react-icons/io5";
 
+// Komponen Toast Card dengan Tailwind untuk pesan sukses dan pesan error
 function ToastCard({ t, type, title, description }: {
   t: Toast;
   type: 'success' | 'error';
@@ -27,13 +28,15 @@ function ToastCard({ t, type, title, description }: {
         </p>
         {description && <p className="text-[13px] text-gray-700 mt-0.5">{description}</p>}
       </div>
-      <button onClick={() => toast.dismiss(t.id)} className="text-gray-500 hover:text-gray-800 mt-0.5 shrink-0">
+      <button onClick={() => toast.remove(t.id)} className="text-gray-500 hover:text-gray-800 mt-0.5 shrink-0">
         <FiX size={16} />
       </button>
     </div>
   );
 }
 
+
+// pemanggilan function ToastCard dengan params
 export const customToast = {
   success: (title: string, description?: string) =>
     toast.custom((t) => <ToastCard t={t} type="success" title={title} description={description} />),
@@ -55,19 +58,19 @@ export const customToast = {
       const isHookFailure = typeof data === 'object' && data !== null && 'success' in data && (data as { success?: boolean }).success === false;
 
       if (isHookFailure) {
-        toast.dismiss(loadingId);
+        toast.remove(loadingId);
         const result = data as { success: boolean; message?: string };
         const { title, description } = messages.error(result);
         customToast.error(title, description ?? result.message);
         throw new Error(result.message ?? 'Operasi gagal.');
       }
 
-      toast.dismiss(loadingId);
+      toast.remove(loadingId);
       const { title, description } = messages.success(data);
       customToast.success(title, description);
       return data;
     } catch (err) {
-      toast.dismiss(loadingId);
+      toast.remove(loadingId);
       const { title, description } = messages.error(err);
       customToast.error(title, description ?? (err as Error)?.message);
       throw err;

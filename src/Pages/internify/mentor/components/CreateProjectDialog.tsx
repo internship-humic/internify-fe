@@ -33,6 +33,7 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
     icon: PROJECT_ICON_MAP[id],
   }));
 
+  //open/close doalog komponen
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
@@ -54,8 +55,22 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
     };
   }, [isOpen, onClose]);
 
-  const handleAddEmail = (emailToAdd?: string) => {
-    const email = (emailToAdd ?? emailInput).trim();
+  // tutup dropdown email di luar kotak
+  useEffect(() => {
+    if (!showDropdown) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (emailSectionRef.current && !emailSectionRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showDropdown]);
+
+
+  const handleAddEmail = (email: string) => {
     if (email && !invitedEmails.includes(email)) {
       setInvitedEmails([...invitedEmails, email]);
       setEmailInput("");
@@ -182,34 +197,23 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
           <label className="text-xs font-bold text-gray-700 tracking-wide">
             Invite via Gmail
           </label>
-          {/* Input email + dropdown sugesti intern */}
+          {/* filterisasi email */}
           <div ref={emailSectionRef} className="relative">
             <div className="relative flex items-center">
               <span className="absolute left-3.5 text-gray-400">
                 <LuMail className="w-4 h-4 stroke-[2.5]" />
               </span>
               <input
-                type="email"
-                placeholder="intern.name@gmail.com"
+                type="text"
+                placeholder="cari intern berdasarkan nama/email"
                 value={emailInput}
                 onChange={(e) => { setEmailInput(e.target.value); setShowDropdown(true); }}
                 onFocus={() => setShowDropdown(true)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleAddEmail();
-                  }
-                  if (e.key === 'Escape') setShowDropdown(false);
+                  if (e.key === 'Escape') setShowDropdown(false)
                 }}
-                className="w-full pl-10 pr-20 py-2.5 bg-white border border-card-outline rounded-lg text-sm placeholder-gray-400 text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium"
+              className="w-full pl-10 pr-20 py-2.5 bg-white border border-card-outline rounded-lg text-sm placeholder-gray-400 text-gray-800 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 font-medium"
               />
-              <button
-                type="button"
-                onClick={() => handleAddEmail()}
-                className="absolute right-2 px-3 py-1 bg-card hover:bg-card-hover border border-card-outline text-font-shade text-[11px] font-bold rounded-md transition-colors tracking-wider uppercase"
-              >
-                ADD
-              </button>
             </div>
 
             {/* Dropdown daftar intern */}
@@ -231,12 +235,16 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
                       <button
                         key={intern.id}
                         type="button"
-                        onMouseDown={(e) => { e.preventDefault(); handleAddEmail(intern.email); }}
-                        className="w-full flex items-center gap-3 px-6 py-2.5 hover:bg-gray-50 transition-colors text-left"
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          handleAddEmail(intern.email);
+                        }}
+
+                        className="w-full flex items-center gap-3 px-6 py-1.5 hover:bg-gray-50 transition-colors text-left"
                       >
                         <div className="flex flex-col min-w-0">
-                          <span className="text-[13px] font-semibold text-gray-800 truncate">{intern.full_name}</span>
-                          <span className="text-[11px] text-gray-400 truncate">{intern.email}</span>
+                          <span className="text-[10px] font-semibold text-gray-800 truncate">{intern.full_name}</span>
+                          <span className="text-[8px] text-gray-400 truncate">{intern.email}</span>
                         </div>
                       </button>
                     ))

@@ -79,7 +79,7 @@ export default function SertificateList() {
                                     {new Date(item.start_date).toLocaleDateString("id-ID", {
                                         year: "numeric",
                                         month: "long",
-                                    })} until  {new Date(item.end_date).toLocaleDateString("id-ID", {
+                                    })} -  {new Date(item.end_date).toLocaleDateString("id-ID", {
                                         year: "numeric",
                                         month: "long",
                                     })}
@@ -88,7 +88,7 @@ export default function SertificateList() {
                                     {item.project_name}
                                 </p>
                                 <p className="text-xs text-font mt-1">
-                                    Status Projek: <span className="font-bold text-red-600">{item.status}</span>
+                                    Status: <span className="font-bold text-red-600">{item.status}</span>
                                 </p>
                             </div>
                         </div>

@@ -15,6 +15,11 @@ export default function MentorTaskCard({ task }: {task: InternTaskItem}) {
     navigate(`/mentor/projects/${slug}/${task.slug}?type=${task.submission_type}`)
   };
 
+  function truncateText(text: string) {
+    if (text.length <= 230) return text;
+    return text.slice(0, 230) + "...";
+  }
+
   return (
     <div
       className="border border-card-outline rounded-[10px] px-5 py-4 mb-3 bg-card shadow-lg flex items-start justify-between gap-3 cursor-pointer hover:border-card-outline/50 transition-colors"
@@ -28,7 +33,7 @@ export default function MentorTaskCard({ task }: {task: InternTaskItem}) {
           {task.title}
         </div>
         <div className="text-[13px] text-[#666]">
-          {task.description}
+          {truncateText(task.description)}
         </div>
       </div>
     </div>

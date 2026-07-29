@@ -104,7 +104,7 @@ export default function CertificateAvailable({ project, certificate, templateUrl
   return (
     <div className="flex flex-col gap-4">
       {/* Certificate Card */}
-      <div className="flex rounded-xl p-5 mb-1 border bg-box-primary border-box-border shadow-md items-center justify-center">
+      <div className="flex rounded-xl p-2 mb-1 border bg-box-primary border-box-border shadow-md items-center justify-center">
         {loadingPreview ? (
           <div className="w-[550px] h-[350px] flex items-center justify-center text-gray-400 text-sm">
             Memuat sertifikat...
@@ -113,7 +113,7 @@ export default function CertificateAvailable({ project, certificate, templateUrl
           <img
             src={previewUrl}
             alt="Certificate"
-            className="rounded-xl object-contain border-2"
+            className="object-contain border shadow-md h-[400px]"
           />
         ) : (
           <div className="w-[550px] h-[350px] flex items-center justify-center text-gray-400 text-sm">

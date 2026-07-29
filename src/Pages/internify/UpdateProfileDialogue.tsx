@@ -45,7 +45,7 @@ export default function UpdateProfileDialog({
       }}
     >
       {/* Header */}
-      <div className="flex items-start justify-between gap-4 p-5 border-b border-box-border">
+      <div className="flex items-start justify-between gap-4 p-3 border-b border-box-border">
         <div className="flex items-center gap-3">
           <div>
             <h2 className="text-base font-bold text-foreground">Simpan Perubahan</h2>
@@ -101,7 +101,7 @@ export default function UpdateProfileDialog({
           disabled={loading}
           className="px-5 py-2 bg-[#B30000] hover:bg-[#990000] text-white text-xs font-bold rounded-lg shadow-sm transition-colors uppercase tracking-wider disabled:opacity-60"
         >
-          {loading ? "Menyimpan..." : "Ya, Simpan"}
+          {loading ? "Menyimpan..." : "Simpan"}
         </button>
       </div>
     </dialog>
