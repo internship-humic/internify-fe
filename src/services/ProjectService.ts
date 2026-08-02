@@ -63,6 +63,17 @@ export const getProjectById = async (
       position: m.user?.position,
       kelompok_peminatan: m.user?.kelompok_peminatan,
     })),
+    tasks: raw.tasks.map((t: any) => ({
+      id: t.id,
+      id_project: raw.id,
+      slug: t.slug,
+      title: t.title,
+      description: t.description,
+      deadline_at: t.deadline_at,
+      submission_type: t.submission_type,
+      created_at: t.created_at,
+      updated_at: t.updated_at,
+    })),
     template_sertificate: raw.template_sertificate,
   };
 };

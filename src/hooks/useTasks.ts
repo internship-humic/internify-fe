@@ -6,6 +6,7 @@ import type {
   TaskSubmissionData,
   AdminTaskDetail,
   MentorTaskItem,
+  ProjectTask,
 } from "../types/task.types";
 import {
   getProjectTasks,
@@ -24,6 +25,7 @@ import {
 import { useCurrentUser } from "./useUser";
 import { useMyTasks } from "./useProjects";
 import type { InternTaskItem } from "../types/project.types";
+import { getProjects, getProjectById } from "../services/ProjectService";
 
 // GET /task-api/projects/{id_project}/tasks
 export const useProjectTasks = (projectId: number) => {
@@ -267,7 +269,7 @@ export const useSubmission = (
   };
 };
 
-// hooks/useAllMentorTasks.ts
+// hooks/useAllMentorTasks.ts - Ambil semua tasks untuk mentor (tanpa filter project)/hanya ambil tasks yang dibuat pengguna tersebut (mentor) untuk semua project yang dia ikuti. Ini digunakan untuk menampilkan semua tasks mentor di halaman dashboard mentor.
 export const useAllMentorTasks = (enabled: boolean) => {
   const [tasks, setTasks] = useState<MentorTaskItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -290,36 +292,97 @@ export interface Deadline {
   label: string;
 }
 
+// hooks.useRetrieveAllTasks.ts - Ambil semua tasks untuk admin tanpa adanya batasan dari pembuat task (mentor), bertujuan agar admin bisa melihat semua task yang ada di dalam database
+interface AdminTask extends ProjectTask {
+  project_name: string;
+}
+export const useRetrieveAllTasks = (enabled = true) => {
+  const [tasks, setTasks] = useState<AdminTask[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!enabled) return;
+
+    let isMounted = true;
+
+    const fetchAllTasks = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const projects = await getProjects();
+        const projectDetails = await Promise.all(
+          projects.map((project) => getProjectById(project.id)),
+        );
+
+        if (!isMounted) return;
+
+        const allTasks = projectDetails.flatMap((project) =>
+          project.tasks.map((task) => ({
+            ...task,
+            project_name: project.project_name,
+          })),
+        );
+        setTasks(allTasks);
+      } catch (err) {
+        if (!isMounted) return;
+        setError("Gagal memuat semua tasks.");
+      } finally {
+        if (!isMounted) return;
+        setLoading(false);
+      }
+    };
+
+    fetchAllTasks();
+    return () => {
+      isMounted = false;
+    };
+  }, [enabled]);
+
+  return { tasks, loading, error };
+}
+
 export const useDeadlines = () => {
   const { user, loading: userLoading, error: userError } = useCurrentUser();
 
   const isIntern = user?.role === "intern";
+  const isMentor = user?.role === "mentor";
+  const isAdmin = user?.role === "admin";
 
-  const {
-    tasks: internTasks,
-    loading: internLoading,
-    error: internError,
-  } = useMyTasks();
-  const {
-    tasks: mentorTasks,
-    loading: mentorLoading,
-    error: mentorError,
-  } = useAllMentorTasks(!isIntern && user !== null);
+  const { tasks: internTasks, loading: internLoading, error: internError } = useMyTasks();
+  const { tasks: mentorTasks, loading: mentorLoading, error: mentorError } = useAllMentorTasks(isMentor);
+  const { tasks: allTasks, loading: allTasksLoading, error: allTasksError } = useRetrieveAllTasks(isAdmin);
 
   const deadlines: Deadline[] = useMemo(() => {
     if (!user) return [];
-    return isIntern
-      ? internTasks.map((task) => ({
+
+    if (isIntern) {
+      return internTasks.map((task) => ({
         date: new Date(task.deadline_at),
         label: task.title,
-      }))
-      : mentorTasks.map((task) => ({
+      }));
+    }
+
+    if (isMentor) {
+      return mentorTasks.map((task) => ({
         date: new Date(task.deadline_at),
         label: `[${task.project_name}] ${task.title}`,
       }));
-  }, [isIntern, internTasks, mentorTasks, user]);
-  const loading = userLoading || (isIntern ? internLoading : mentorLoading);
-  const error = userError || (isIntern ? internError : mentorError);
+    }
+
+    if (isAdmin) {
+      return allTasks.map((task) => ({
+        date: new Date(task.deadline_at),
+        label: `[${task.project_name}] ${task.title}`,
+      }));
+    }
+
+    return [];
+  }, [isAdmin, isIntern, isMentor, allTasks, internTasks, mentorTasks, user]);
+
+  const loading = userLoading || (isIntern ? internLoading : isMentor ? mentorLoading : allTasksLoading);
+  const error = userError || (isIntern ? internError : isMentor ? mentorError : allTasksError);
 
   return { deadlines, loading, error, isIntern };
 };

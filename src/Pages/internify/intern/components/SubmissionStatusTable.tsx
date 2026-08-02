@@ -15,7 +15,7 @@ interface SubmitStatusTableProps {
 
 function getTimeEarly(submittedAt: Date, deadline: Date): string {
   const diffMs = deadline.getTime() - submittedAt.getTime();
-  if (diffMs <= 0) return "Submitted after deadline";
+  if (diffMs <= 0) return `Submitted after deadline (${Math.abs(Math.floor(diffMs / (1000 * 60 * 60)))} hours late)`;
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const days = Math.floor(diffHours / 24);
   const hours = diffHours % 24;
