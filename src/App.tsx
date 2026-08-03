@@ -109,7 +109,7 @@ function App() {
 
           {/* Intern only */}
           <Route element={<ProtectedRoutes allowedRoles={["intern"]} />}>
-            <Route path="/intern" element={<InternLayout />}>
+            <Route path="/internship" element={<InternLayout />}>
               <Route index element={<HomeInternPage />} />
               <Route path="projects" element={<ProjectsPage />} />
               <Route path="certificates" element={<SertificateList />} />

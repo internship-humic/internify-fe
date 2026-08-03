@@ -30,7 +30,7 @@ export default function SidebarMentor({ isOpen, closeSidebar }: SidebarProps) {
   };
 
   const handleLogout = () => {
-    document.cookie = "token=; path=/; max-age=86400; SameSite=Strict";
+    document.cookie = "token=; Max-Age=0; path=/; SameSite=Strict";
 
     closeSidebar();
     navigate("/login-internify", { replace: true });

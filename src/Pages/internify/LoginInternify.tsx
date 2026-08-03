@@ -1,20 +1,11 @@
 import { useState, useEffect } from "react";
-import { decodeJWT } from "../utils/decodeJWT";
 import logo from "../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useLogin } from "../../hooks/useUser";
 import { customToast } from "../utils/showToast";
 import { CircleQuestionMark } from 'lucide-react';
-
-interface JwtPayload {
-    id: string;
-    email: string;
-    role: "intern" | "mentor" | "admin";
-    signature?: string | null;
-    iat: number;
-    exp: number;
-}
+import { decodeJWT } from "../utils/decodeJWT";
 
 export default function InternifyLogin() {
     const navigate = useNavigate();
@@ -40,28 +31,18 @@ export default function InternifyLogin() {
         }
 
         const data = await login(email, password);
+        if (!data) return;
 
-        if (!data?.token) {
-            setError("Token login tidak ditemukan.");
-            return;
-        }
+        const { token } = data;
+        document.cookie = `token=${token}; path=/; SameSite=Strict`;
 
-        const decoded = decodeJWT<JwtPayload>(data.token);
+        const decoded = decodeJWT(token);
         const role = decoded?.role;
-
-        if (!role) {
-            setError("Token login tidak valid.");
-            return;
-        }
-
-        sessionStorage.setItem("token", data.token);
-
         if (role === "intern") {
-            navigate("/intern", { replace: true });
+            navigate("/internship");
         } else if (role === "mentor" || role === "admin") {
-            navigate("/mentor", { replace: true });
+            navigate("/mentor");
         } else {
-            sessionStorage.removeItem("token");
             setError("Role user tidak dikenali.");
         }
     };

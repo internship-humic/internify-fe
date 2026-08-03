@@ -42,15 +42,15 @@ const NameInternBreadcrumb = ({ match }: BreadcrumbMatch) => {
 
 const breadcrumbRoutes = [
   // --- AREA INTERN ---
-  { path: '/intern', breadcrumb: 'Home' },
-  { path: '/intern/projects', breadcrumb: 'Projects' },
-  { path: '/intern/projects/:slug', breadcrumb: ProjectBreadcrumb },
-  { path: '/intern/projects/:slug/:taskSlug', breadcrumb: TaskBreadcrumb },
-  { path: '/intern/certificates', breadcrumb: 'Certificates' },
-  { path: '/intern/certificates/:slug', breadcrumb: CertBreadcrumb },
-  { path: '/intern/faq', breadcrumb: 'FAQ' },
-  { path: '/intern/notifications', breadcrumb: 'Notifications' },
-  { path: '/intern/settings', breadcrumb: 'Settings' },
+  { path: '/internship', breadcrumb: 'Home' },
+  { path: '/internship/projects', breadcrumb: 'Projects' },
+  { path: '/internship/projects/:slug', breadcrumb: ProjectBreadcrumb },
+  { path: '/internship/projects/:slug/:taskSlug', breadcrumb: TaskBreadcrumb },
+  { path: '/internship/certificates', breadcrumb: 'Certificates' },
+  { path: '/internship/certificates/:slug', breadcrumb: CertBreadcrumb },
+  { path: '/internship/faq', breadcrumb: 'FAQ' },
+  { path: '/internship/notifications', breadcrumb: 'Notifications' },
+  { path: '/internship/settings', breadcrumb: 'Settings' },
 
   // --- AREA MENTOR / ADMIN ---
   { path: '/mentor', breadcrumb: 'Home' },
@@ -71,7 +71,7 @@ export default function Breadcrumbs(){
   const breadcrumbs = useBreadcrumbs(breadcrumbRoutes);
   const location = useLocation();
 
-  const rootPaths = ['/intern', '/mentor'];
+  const rootPaths = ['/internship', '/mentor'];
   const isOnRootPath = rootPaths.includes(location.pathname);
   const fixbreadcumbs = breadcrumbs.filter(({ match }) => {
     if (match.pathname === '/') return false;

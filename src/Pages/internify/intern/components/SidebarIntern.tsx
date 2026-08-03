@@ -5,14 +5,14 @@ import { MdOutlineAssignment, MdLogout } from "react-icons/md";
 import { HiUser } from "react-icons/hi2";
 
 const navItems = [
-  { label: "Home", icon: GrHomeRounded, path: "/intern" },
-  { label: "List Projects", icon: MdOutlineAssignment, path: "/intern/projects" },
-  { label: "Certificates", icon: Award, path: "/intern/certificates" },
+  { label: "Home", icon: GrHomeRounded, path: "/internship" },
+  { label: "List Projects", icon: MdOutlineAssignment, path: "/internship/projects" },
+  { label: "Certificates", icon: Award, path: "/internship/certificates" },
 ];
 
 const prefItems = [
-  { label: "Settings", icon: Settings, path: "/intern/settings" },
-  { label: "FAQ", icon: HelpCircle, path: "/intern/faq" },
+  { label: "Settings", icon: Settings, path: "/internship/settings" },
+  { label: "FAQ", icon: HelpCircle, path: "/internship/faq" },
   { label: "Logout", icon: MdLogout, path: "/login-internify", danger: true, isLogout: true },
 ];
 
@@ -31,7 +31,7 @@ export default function SidebarIntern({ isOpen, closeSidebar }: SidebarProps) {
   };
 
   const handleLogout = () => {
-    document.cookie = "token=; path=/; max-age=86400; SameSite=Strict";
+    document.cookie = "token=; Max-Age=0; path=/; SameSite=Strict";
 
     closeSidebar();
     navigate("/login-internify", { replace: true });

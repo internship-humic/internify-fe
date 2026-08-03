@@ -10,7 +10,7 @@ const PrivateRoute = () => {
 
   useEffect(() => {
     if (!token) {
-      navigate("/humic-20242025-2");
+      navigate("/login-admin");
     }
   }, [navigate, token]);
 

@@ -1,42 +1,30 @@
 import { Outlet, Navigate } from "react-router-dom";
-import { decodeJWT } from "./decodeJWT";
+import { decodeJWT } from "../utils/decodeJWT";
 
-type Role = "intern" | "admin" | "mentor";
-interface RouteProps {
-  allowedRoles?: Role[];
+interface PrivateRouteProps {
+  allowedRoles?: ("intern" | "admin" | "mentor")[];
 }
 
-interface JwtPayload {
-  id: string;
-  email: string;
-  role: "intern" | "mentor" | "admin";
-  signature?: string | null;
-  iat: number;
-  exp: number;
-}
-
-const ProtectedRoutes = ({ allowedRoles }: RouteProps) => {
-  const token = sessionStorage.getItem("token");
+const ProtectedRoutes = ({ allowedRoles }: PrivateRouteProps) => {
+  const token = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("token="))
+    ?.split("=")[1];
 
   if (!token) {
     return <Navigate to="/login-internify" replace />;
   }
 
-  const decoded = decodeJWT<JwtPayload>(token);
-  const userRole = decoded?.role as Role | undefined;
+  const decoded = decodeJWT(token);
+  const userRole = decoded?.role as "intern" | "admin" | "mentor" | undefined;
 
   if (!userRole) {
-    sessionStorage.removeItem("token");
     return <Navigate to="/login-internify" replace />;
   }
 
   if (allowedRoles && !allowedRoles.includes(userRole)) {
-    return (
-      <Navigate
-        to={userRole === "intern" ? "/intern" : "/mentor"}
-        replace
-      />
-    );
+    if (userRole === "admin" || userRole === "mentor") return <Navigate to="/mentor" replace />;
+    if (userRole === "intern") return <Navigate to="/internship" replace />;
   }
 
   return <Outlet />;

@@ -22,7 +22,7 @@ export default function ProjectsPage() {
 
     if (projects.length === 0) {
       return (
-        <div className="col-span-full flex flex-col items-center justify-center py-2 gap-3 mt-19">
+        <div className="col-span-full flex flex-col items-center py-2 gap-3 mt-19">
           <img className="w-[440px]" src={TeamPana} alt="" />
           <p className="text-[18px] text-font-shade">Kamu belum tergabung ke projek apapun</p>
         </div>
