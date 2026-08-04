@@ -2,6 +2,7 @@ export interface CertificateUser {
   id: number;
   full_name: string;
   email: string;
+  intern_position: string;
 }
 
 export interface CertificateProject {
@@ -19,6 +20,7 @@ export interface Certificate {
   id_user: number;
   certificate_no: string;
   issued_at: string;
+  intern_position: string;
   uuid: string;
   user: CertificateUser;
   project: CertificateProject;
@@ -28,6 +30,7 @@ export interface Certificate {
 export interface CertificateVerification {
   uuid: string;
   intern_name: string;
+  intern_position: string;
   project_name: string;
   created_at: string;
 }
@@ -49,5 +52,6 @@ export interface CertificateVerifyResult {
   uuid: string;
   intern_name: string;
   project: projectbysertif;
+  intern_position: string;
   created_at: string;
 }

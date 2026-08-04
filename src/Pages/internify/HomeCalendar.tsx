@@ -143,21 +143,23 @@ export default function HomeCalendar() {
         ))}
 
         {currentDays.map(day => (
-          <div key={day} className="flex justify-center items-center py-0.5">
+          <div key={day} className="flex justify-center items-center py-1">
+            <div className="w-7 flex items-center justify-center">
             {isToday(day) ? (
-              <span className="w-8 h-7 flex items-center justify-center border-b-2 border-red- text-xs font-semibold">
+              <span className="w-8 h-7 flex items-center justify-center border-b-2 text-xs font-semibold">
                 {day}
               </span>
             ) : (
               <span
-                className={`w-full h-7 flex items-center justify-center text-xs
-                  ${isBold(day) ? 'font-bold text-gray-800' : 'text-gray-700'}
-                  ${hasDeadline(day) ? 'bg-red text-white' : ''}
-                  transition-colors`}
-              >
+              className={`w-full h-7 flex items-center justify-center text-xs
+                ${isBold(day) ? 'font-bold text-gray-800' : 'text-gray-700'}
+                ${hasDeadline(day) ? 'bg-red text-white rounded-full' : ''}
+                transition-colors`}
+                >
                 {day}
               </span>
             )}
+            </div>
           </div>
         ))}
 

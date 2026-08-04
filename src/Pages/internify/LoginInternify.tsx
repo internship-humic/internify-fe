@@ -52,7 +52,13 @@ export default function InternifyLogin() {
             <div className="w-full flex flex-col items-center mb-8">
                 <div className="text-center mb-8">
                     <div className="flex items-center justify-center gap-2 font-bold text-2xl tracking-tight text-black">
-                        <img src={logo} alt="Logo" />
+                        <button
+                            type="button"
+                            onClick={() => navigate("/")}
+                            className="flex items-center gap-2 hover:cursor-pointer w-[160px] md:w-full"
+                        >
+                            <img src={logo} alt="Logo" />
+                        </button>
                     </div>
                     <p className="text-[10px] tracking-widest text-yellow-950 font-semibold mt-1 uppercase">
                         HUMIC LMS PORTAL

@@ -118,12 +118,14 @@ export default function EligibleInternTable({
       id: intern.id_user,
       id_project: project.id,
       id_user: intern.id_user,
-      certificate_no: "No.2025/SPI3/CERT/yyddmm/X",
+      certificate_no: "No.2025/SPI3/CERT/MMDDYY/XXX",
       issued_at: new Date().toISOString().slice(0, 10),
       uuid: "HANYA SEBATAS PREVIEW",
+      intern_position: "[Posisi Intern]",
       user: {
         id: intern.id_user,
         full_name: intern.full_name,
+        intern_position: "[Posisi Intern]",
         email: intern.email,
       },
       project: {
@@ -185,12 +187,12 @@ export default function EligibleInternTable({
             const blob = await generateCertificate(
               templateUrl,
               cert.user.full_name,
-              cert.project.project_name,
+              cert.intern_position,
               cert.certificate_no,
               duration,
               cert.uuid,
             );
-            zip.file(`Sertifikat - ${cert.user.full_name}.png`, blob);
+            zip.file(`${cert.certificate_no}_${cert.user.full_name}_${cert.project.project_name}.png`, blob);
           })
         );
       })(),

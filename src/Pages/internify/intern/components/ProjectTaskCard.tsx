@@ -31,7 +31,7 @@ export default function TaskCard({ task }: { task: InternTaskItem }) {
   return (
     <div
       className="border border-card-outline rounded-xl px-6 py-4 mb-3 bg-box-primary flex items-start justify-between gap-3 cursor-pointer hover:bg-gray-50 transition-colors"
-      onClick={() => navigate(`/intern/projects/${task.project_slug}/${task.slug}?type=${task.submission_type}`)}
+      onClick={() => navigate(`/internship/projects/${task.project_slug}/${task.slug}?type=${task.submission_type}`)}
     >
       <div className="flex-1 min-w-0">
         <div className="md:hidden mb-[8px]">

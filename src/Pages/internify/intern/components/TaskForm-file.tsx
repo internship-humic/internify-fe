@@ -27,7 +27,14 @@ export default function TaskFormFile({ taskId, projectId, deadline, initialSubmi
     selectedFiles.forEach((file) => {
       const ext = file.name.split(".").pop()?.toLowerCase();
       if (ext && allowedExtensions.includes(ext)) {
-        if (file.size <= 5 * 1024 * 1024) validFiles.push(file);
+        if (file.size <= 5 * 1024 * 1024) {
+          validFiles.push(file);
+        } else {
+          customToast.error(
+            "File terlalu besar!",
+            `File ${file.name} melebihi batas ukuran 5MB.`
+          );
+        }
       }
     });
     if (validFiles.length > 0) setFiles((prev) => [...prev, ...validFiles]);

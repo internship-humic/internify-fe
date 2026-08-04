@@ -74,7 +74,7 @@ const OurDeveloper = () => {
               link: "https://www.linkedin.com/in/reihanramadhana/",
             },
             {
-              name: "Ayu",
+              name: "Nomi",
               role: "Web Designer",
               img: ayu,
               link: "https://www.linkedin.com/in/anom-ayu-radhaswasti/",

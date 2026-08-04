@@ -25,7 +25,7 @@ export const previewCertificate = async (
   const blob = await generateCertificate(
     resolveFileUrl(templateUrl),
     cert.user.full_name,
-    cert.project.project_name,
+    cert.intern_position,
     cert.certificate_no,
     formatDateRange(cert.project.start_date, cert.project.end_date),
     cert.uuid,
@@ -85,11 +85,11 @@ export const downloadCertificatePdf = async (
   cert: Certificate,
   templateUrl: string,
 ): Promise<void> => {
-  const fileName = `Sertifikat - ${cert.user.full_name} - ${cert.certificate_no}`;
+  const fileName = `${cert.certificate_no}_${cert.user.full_name}_${cert.project.project_name}`;
   const blob = await generateCertificate(
     resolveFileUrl(templateUrl),
     cert.user.full_name,
-    cert.project.project_name,
+    cert.intern_position,
     cert.certificate_no,
     formatDateRange(cert.project.start_date, cert.project.end_date),
     cert.uuid,
@@ -125,11 +125,11 @@ export const downloadCertificateImage = async (
   templateUrl: string,
   format: "png" | "jpg" = "png",
 ): Promise<void> => {
-  const fileName = `Sertifikat - ${cert.user.full_name} - ${cert.certificate_no}`;
+  const fileName = `${cert.certificate_no}_${cert.user.full_name}_${cert.project.project_name}`;
   const blob = await generateCertificate(
     resolveFileUrl(templateUrl),
     cert.user.full_name,
-    cert.project.project_name,
+    cert.intern_position,
     cert.certificate_no,
     formatDateRange(cert.project.start_date, cert.project.end_date),
     cert.uuid,
@@ -192,12 +192,12 @@ export const downloadAllCertificatesZip = async (
       const blob = await generateCertificate(
         resolveFileUrl(templateUrl),
         cert.user.full_name,
-        cert.project.project_name,
+        cert.intern_position,
         cert.certificate_no,
         formatDateRange(cert.project.start_date, cert.project.end_date),
         cert.uuid,
       );
-      zip.file(`Sertifikat - ${cert.user.full_name}.png`, blob);
+      zip.file(`${cert.certificate_no}_${projectName}_${cert.user.full_name}.png`, blob);
       onProgress?.(i + 1, total);
     }),
   );
@@ -205,7 +205,7 @@ export const downloadAllCertificatesZip = async (
   const zipBlob = await zip.generateAsync({ type: "blob" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(zipBlob);
-  a.download = `Sertifikat - ${projectName}.zip`;
+  a.download = `Sertifikat_${projectName}_${new Date().toISOString().slice(0, 10)}.zip`;
   a.click();
   URL.revokeObjectURL(a.href);
 };

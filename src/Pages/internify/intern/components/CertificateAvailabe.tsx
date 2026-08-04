@@ -41,7 +41,7 @@ export default function CertificateAvailable({ project, certificate, templateUrl
     generateCertificate(
       resolveFileUrl(templateUrl),
       certificate.user.full_name,
-      certificate.project.project_name,
+      certificate.intern_position,
       certificate.certificate_no,
       duration,
       verifyUrl,
@@ -139,7 +139,7 @@ export default function CertificateAvailable({ project, certificate, templateUrl
                 className="flex justify-between items-center text-sm border-b border-card-outline pb-2 last:border-0"
               >
                 <span className="text-font text-start text-xs md:text-sm">{row.label}</span>
-                <span className="text-font-shade font-bold text-start text-xs md:text-sm">{row.value}</span>
+                <span className="text-font-shade font-bold text-end text-xs md:text-sm">{row.value}</span>
               </div>
             ))}
           </div>

@@ -56,7 +56,7 @@ export default function SertificateList() {
                         <div
                             key={item.id}
                             className="bg-white border border-card-outline rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer group"
-                            onClick={() => navigate(`/intern/certificates/${item.slug}`, { state: { project: item } })}
+                            onClick={() => navigate(`/internship/certificates/${item.slug}`, { state: { project: item } })}
                         >
                             {/* Thumbnail */}
                             <div className="p-6 pb-0">

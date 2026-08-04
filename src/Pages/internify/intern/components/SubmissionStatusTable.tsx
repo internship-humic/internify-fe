@@ -15,13 +15,31 @@ interface SubmitStatusTableProps {
 
 function getTimeEarly(submittedAt: Date, deadline: Date): string {
   const diffMs = deadline.getTime() - submittedAt.getTime();
-  if (diffMs <= 0) return `Submitted after deadline (${Math.abs(Math.floor(diffMs / (1000 * 60 * 60)))} hours late)`;
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+
+  if (diffMs <= 0) {
+    const absHours = Math.abs(diffHours);
+    const days = Math.floor(absHours / 24);
+    const hours = absHours % 24;
+    const overdueParts = [] as string[];
+
+    if (days > 0) overdueParts.push(`${days} day${days > 1 ? "s" : ""}`);
+    if (hours > 0) overdueParts.push(`${hours} hour${hours > 1 ? "s" : ""}`);
+
+    if (overdueParts.length === 0) {
+      return "Submitted after deadline (0 hours late)";
+    }
+
+    return `Submitted after deadline (${overdueParts.join(" ")} late)`;
+  }
+
+  const parts = [] as string[];
   const days = Math.floor(diffHours / 24);
   const hours = diffHours % 24;
-  const parts = [];
+
   if (days > 0) parts.push(`${days} day${days > 1 ? "s" : ""}`);
   if (hours > 0) parts.push(`${hours} hour${hours > 1 ? "s" : ""}`);
+
   return `Assignment was submitted ${parts.join(" ")} early`;
 }
 

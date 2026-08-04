@@ -27,8 +27,8 @@ export default function MentorProjectsPage() {
     if (loading) {
       return (
         <div className="flex flex-row gap-3 w-full">
-          {[...Array(4)].map((_) => (
-            <div className="flex flex-row bg-gray-300 rounded-xl overflow-hidden shadow-sm w-[180px] min-h-[270px] animate-pulse">
+          {[...Array(4)].map((_, index) => (
+            <div key={index} className="flex flex-row bg-gray-300 rounded-xl overflow-hidden shadow-sm w-[180px] min-h-[270px] animate-pulse">
             </div>
           ))}
         </div>

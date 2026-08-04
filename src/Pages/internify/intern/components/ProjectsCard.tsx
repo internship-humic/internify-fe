@@ -12,7 +12,7 @@ const ProjectCard = (project: Project) => {
 
   return (
     <div
-      onClick={() => navigate(`/intern/projects/${project.slug}`)}
+      onClick={() => navigate(`/internship/projects/${project.slug}`)}
       className="w-[220px] min-h-[320px] flex flex-col bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer hover:shadow-md transition-shadow duration-200"
     >
       {/* Thumbnail */}
