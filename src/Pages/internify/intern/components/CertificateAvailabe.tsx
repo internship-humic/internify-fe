@@ -151,7 +151,7 @@ export default function CertificateAvailable({ project, certificate, templateUrl
             <button
               onClick={handleDownloadPdf}
               disabled={downloadingPdf}
-              className="flex items-center justify-center gap-2 w-full bg-red-700 hover:bg-red-800 active:scale-95 transition-all text-white font-semibold py-2 rounded-xl text-sm"
+              className="flex items-center justify-center gap-2 w-full bg-red-700 hover:bg-red-800 active:scale-95 transition-all text-white font-semibold py-2 rounded-xl text-sm hover:cursor-pointer"
             >
               <Download className="w-4 h-4" />
               {downloadingPdf ? "Memproses" : "Unduh Sertifikat"}
@@ -160,7 +160,7 @@ export default function CertificateAvailable({ project, certificate, templateUrl
             {/* Bagikan ke LinkedIn */}
             <button
               onClick={handleShareLinkedIn}
-              className="flex items-center justify-center gap-2 w-full bg-[#0A66C2] hover:bg-[#004182] active:scale-95 transition-all text-white font-semibold py-2 rounded-xl text-sm"
+              className="flex items-center justify-center gap-2 w-full bg-[#0A66C2] hover:bg-[#004182] active:scale-95 transition-all text-white font-semibold py-2 rounded-xl text-sm hover:cursor-pointer"
             >
               {/* LinkedIn icon */}
               <svg className="w-4 h-4 fill-white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -174,12 +174,13 @@ export default function CertificateAvailable({ project, certificate, templateUrl
               <button
                 onClick={handleDownloadImage}
                 disabled={downloadingImg}
-                className="flex flex-col items-center justify-center gap-1.5 border border-card-outline hover:bg-gray-50 active:scale-95 transition-all text-red-700 font-medium py-1 md:py-3.5 rounded-xl text-sm">
+                className="flex flex-col items-center justify-center gap-1.5 border border-card-outline hover:bg-gray-50 active:scale-95 transition-all text-red-700 font-medium py-1 md:py-3.5 rounded-xl text-sm hover:cursor-pointer"
+              >
                 <Printer className="w-4 h-4 md:w-5 md:h-5" />
                 <span className="text-xs md:text-sm">{downloadingImg ? "Memproses" : "Cetak"}</span>
               </button>
               <button
-                className="flex flex-col items-center justify-center gap-1.5 border border-card-outline hover:bg-gray-50 active:scale-95 transition-all text-red-700 font-medium py-1 md:py-3.5 rounded-xl text-sm"
+                className="flex flex-col items-center justify-center gap-1.5 border border-card-outline hover:bg-gray-50 active:scale-95 transition-all text-red-700 font-medium py-1 md:py-3.5 rounded-xl text-sm hover:cursor-pointer"
                 onClick={() => {
                   navigator.clipboard.writeText(`${window.location.origin}/verify-certificate/${certificate.uuid}`);
                   customToast.success("Link berhasil disalin!", "Link sudah disalin ke clipboard");

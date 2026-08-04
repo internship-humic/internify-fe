@@ -23,13 +23,13 @@ async function ensureFontsLoaded(): Promise<void> {
 
 // LAYOUT DEFAULT SERTIFIKAT YANG AKAN DIGENERATE
 const LAYOUT = {
-  internName:      { x: 0.54,  y: 0.47,  size: 130, font: "Great Vibes", color: "#800000" },
-  internNameSmall: { x: 0.82,  y: 0.889, size: 47,  font: "Great Vibes", color: "#090909" },
-  userposition:     { x: 0.855, y: 0.557, size: 46,  font: "Grenze",      color: "#800000" },
+  internName:      { x: 0.56,  y: 0.47,  size: 130, font: "Great Vibes", color: "#800000" },
+  internNameSmall: { x: 0.82,  y: 0.88, size: 42,  font: "Great Vibes", color: "#090909" },
+  userposition:     { x: 0.85, y: 0.557, size: 46,  font: "Grenze",      color: "#800000" },
   duration:        { x: 0.7, y: 0.615, size: 48,  font: "Grenze",      color: "#090909" },
   certNo:          { x: 0.56, y: 0.305, size: 50,  font: "Grenze",      color: "#090909" },
-  certNoSmall:     { x: 0.827, y: 0.92,  size: 32,  font: "Grenze",      color: "#090909"},
-  qr:              { x: 0.772,  y: 0.715, size: 0.103 },
+  certNoSmall:     { x: 0.827, y: 0.905,  size: 30,  font: "Grenze",      color: "#090909"},
+  qr:              { x: 0.771,  y: 0.715, size: 0.103 },
 };
 
 // HELPER: kurangi ukuran font 25% jika nama melebihi 22 karakter (termasuk spasi)
@@ -75,7 +75,7 @@ export async function generateCertificate(
   };
 
   text(LAYOUT.internName,      internName);
-  text(LAYOUT.internNameSmall, internName);
+  text(LAYOUT.internNameSmall, internName.trim().toLowerCase());
   text(LAYOUT.userposition,     userposition);
   text(LAYOUT.duration,        ProjectDuration);
   text(LAYOUT.certNo,          certificateNo);

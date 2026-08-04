@@ -17,7 +17,7 @@ function getFirstDayOfMonth(year: number, month: number) {
 }
 
 const formatDate = (dateInput: Date | string) =>
-    new Date(dateInput).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+  new Date(dateInput).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 
 export default function HomeCalendar() {
   const [today, setToday] = useState(new Date());
@@ -95,7 +95,7 @@ export default function HomeCalendar() {
     return (
       <div className="px-13 py-5 bg-gray-100 animate-pulse rounded-2xl">
         <div className="h-[260px] rounded-xl flex items-center justify-center animate-pulse">
-            <Loader2 className='w-5 h-5 animate-spin'/>
+          <Loader2 className='w-5 h-5 animate-spin' />
         </div>
       </div>
     )
@@ -103,95 +103,116 @@ export default function HomeCalendar() {
 
   return (
     <div className="box">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4 px-6">
-        <h2 className="font-bold text-font">
-          {MONTH_NAMES[currentMonth]} {currentYear}
-        </h2>
-        <div className="flex items-center">
-          <button
-            onClick={prevMonth}
-            className="p-1 rounded hover:bg-gray-100 transition-colors"
-            aria-label="Previous month"
-          >
-            <ChevronLeft className="w-4 h-4 text-gray-500" />
-          </button>
-          <button
-            onClick={nextMonth}
-            className="p-1 rounded hover:bg-gray-100 transition-colors"
-            aria-label="Next month"
-          >
-            <ChevronRight className="w-4 h-4 text-gray-500" />
-          </button>
+      <div className="flex flex-col py-4">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4 px-13">
+          <h2 className="font-bold text-font">
+            {MONTH_NAMES[currentMonth]} {currentYear}
+          </h2>
+
+          <div className="flex items-center">
+            <button
+              onClick={prevMonth}
+              className="p-1 rounded hover:bg-gray-100 transition-colors"
+              aria-label="Previous month"
+            >
+              <ChevronLeft className="w-4 h-4 text-gray-500" />
+            </button>
+
+            <button
+              onClick={nextMonth}
+              className="p-1 rounded hover:bg-gray-100 transition-colors"
+              aria-label="Next month"
+            >
+              <ChevronRight className="w-4 h-4 text-gray-500" />
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-7 mb-1 px-10 md:px-0">
+          {DAY_LABELS.map((day) => (
+            <div
+              key={day}
+              className="text-center text-xs text-gray-400 font-medium py-1"
+            >
+              {day}
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-7 px-10 md:px-0">
+          {/* Trailing days from previous month */}
+          {trailingDays.map((day) => (
+            <div key={`prev-${day}`} className="text-center py-2">
+              <span className="text-xs text-gray-400">{day}</span>
+            </div>
+          ))}
+
+          {currentDays.map((day) => (
+            <div
+              key={day}
+              className="flex justify-center items-center py-1"
+            >
+              <div className="w-7 flex items-center justify-center">
+                {isToday(day) ? (
+                  <span className="w-8 h-7 flex items-center justify-center text-red border-b-2 border-red text-xs font-semibold">
+                    {day}
+                  </span>
+                ) : (
+                  <span
+                    className={`w-full h-7 flex items-center justify-center text-xs
+                    ${isBold(day)
+                        ? "font-bold text-gray-800"
+                        : "text-gray-700"
+                      }
+                    ${hasDeadline(day)
+                        ? "bg-red text-white rounded-full"
+                        : ""
+                      }
+                    transition-colors`}
+                  >
+                    {day}
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
+
+          {/* Leading days from next month */}
+          {leadingDays.map((day) => (
+            <div key={`next-${day}`} className="text-center py-2">
+              <span className="text-xs text-gray-400">{day}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Divider */}
+        <hr className="my-1.5 border-box-border" />
+
+        {/* Upcoming Deadlines */}
+        <div className="px-8 mt-2">
+          <p className="text-[10px] font-semibold text-font uppercase tracking-widest mb-2">
+            Upcoming Deadlines
+          </p>
+
+          {upcomingDeadlines.length > 0 ? (
+            <ul className="flex flex-col gap-1">
+              {upcomingDeadlines.map((d, i) => (
+                <li key={i} className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-red flex-shrink-0" />
+                  <span className="text-xs text-font-shade">
+                    {formatDate(d.date)} - {d.label}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-[11px] text-font-shade">
+              No upcoming deadlines this month.
+            </p>
+          )}
         </div>
       </div>
-
-      <div className="grid grid-cols-7 mb-1 px-5">
-        {DAY_LABELS.map(day => (
-          <div key={day} className="text-center text-xs text-gray-400 font-medium py-1">
-            {day}
-          </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-7 px-5">
-        {/* Trailing days from prev month */}
-        {trailingDays.map(day => (
-          <div key={`prev-${day}`} className="text-center py-2">
-            <span className="text-xs text-gray-300">{day}</span>
-          </div>
-        ))}
-
-        {currentDays.map(day => (
-          <div key={day} className="flex justify-center items-center py-1">
-            <div className="w-7 flex items-center justify-center">
-            {isToday(day) ? (
-              <span className="w-8 h-7 flex items-center justify-center border-b-2 text-xs font-semibold">
-                {day}
-              </span>
-            ) : (
-              <span
-              className={`w-full h-7 flex items-center justify-center text-xs
-                ${isBold(day) ? 'font-bold text-gray-800' : 'text-gray-700'}
-                ${hasDeadline(day) ? 'bg-red text-white rounded-full' : ''}
-                transition-colors`}
-                >
-                {day}
-              </span>
-            )}
-            </div>
-          </div>
-        ))}
-
-        {/* Leading days from next month */}
-        {leadingDays.map(day => (
-          <div key={`next-${day}`} className="text-center py-2">
-            <span className="text-xs text-gray-300">{day}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* Divider */}
-      <hr className="my-3 border-box-border" />
-
-      {/* Upcoming Deadlines */}
-      <div className='px-5 mt-2'>
-        <p className="text-[10px] font-semibold text-font uppercase tracking-widest mb-2">
-          Upcoming Deadlines
-        </p>
-        {upcomingDeadlines.length > 0 ? (
-          <ul className="flex flex-col gap-1">
-            {upcomingDeadlines.map((d, i) => (
-              <li key={i} className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-red flex-shrink-0" />
-                <span className="text-xs text-font-shade">{formatDate(d.date)} - {d.label}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-[11px] text-font-shade">No upcoming deadlines this month.</p>
-        )}
-      </div>
     </div>
-  )
+  );
 }

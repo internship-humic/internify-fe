@@ -1,25 +1,23 @@
-import { Link } from 'react-router-dom';
 import { FaInstagram, FaLinkedin, FaRegEnvelope } from "react-icons/fa";
 import logoHumic from "../assets/logo.png";
 
 const internshipLinks = [
   { label: "Beranda", path: "/" },
   { label: "Tentang", path: "/about-us" },
-  { label: "Life At Humic", path: "" },
+  { label: "Life At Humic", path: "/internships" },
   { label: "Our Developer", path: "/our-developer" }
 ];
 
 const externalLinks = [
   { label: "Humic Website", href: "https://humic.telkomuniversity.ac.id/" },
   { label: "Our Activity", href: "https://humic.telkomuniversity.ac.id/humicinmedia/" },
-  { label: "Life At Humic", href: "" },
-  // { label: "Our Developer", href: "#" },
+  { label: "Life At Humic", href: "https://humic.telkomuniversity.ac.id/" },
 ];
 
 const socials = [
   { label: "Instagram", icon: FaInstagram, href: "https://www.instagram.com/humicengineering/" },
   { label: "LinkedIn", icon: FaLinkedin, href: "https://www.linkedin.com/company/humic-engineering/" },
-  { label: "Email", icon: FaRegEnvelope, href: "" },
+  { label: "Email", icon: FaRegEnvelope, href: "mailto:humic@telkomuniversity.ac.id" },
 ];
 
 export function FooterIntern() {
@@ -45,7 +43,7 @@ export function FooterIntern() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={label}
-              className="w-10 h-10 border rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors"
+              className="w-10 h-10 border rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-red-50 hover:text-red-800 transition-colors"
             >
               <Icon className="w-4 h-4" />
             </a>
@@ -60,12 +58,14 @@ export function FooterIntern() {
           <ul className="flex flex-col gap-0.5 font-semibold">
             {internshipLinks.map(({ label, path }) => (
               <li key={label}>
-                <Link
-                  to={path}
+                <a
+                  href={path}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-[12.5px] text-gray-600 hover:text-red-800 transition-colors"
                 >
                   {label}
-                </Link>
+                </a>
               </li>
             ))}
           </ul>

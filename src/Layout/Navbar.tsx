@@ -59,19 +59,19 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-8 text-[18px] font-semibold">
           <button
             onClick={() => navigate("/about-us")}
-            className="hover:text-gray-600 transition cursor-pointer"
+            className="hover:text-blue-600 transition cursor-pointer"
           >
             About Us
           </button>
           <button
             onClick={handleContactClick}
-            className="hover:text-gray-600 transition cursor-pointer"
+            className="hover:text-blue-600 transition cursor-pointer"
           >
             Contact Us
           </button>
           <button
             onClick={() => navigate("/internships")}
-            className="hover:text-gray-600 transition cursor-pointer"
+            className="hover:text-grblueay-600 transition cursor-pointer"
           >
             Internship
           </button>
@@ -80,7 +80,7 @@ const Navbar = () => {
             onClick={() => {
               navigate("/login-internify");
             }}
-            className="hover:text-red-600 transition cursor-pointer"
+            className="hover:text-blue-600 transition cursor-pointer"
           >
             Portal LMS
           </button>

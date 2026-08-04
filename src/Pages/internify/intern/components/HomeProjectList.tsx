@@ -20,7 +20,7 @@ const HomeProjectList = () => {
   if (error) return <p className="text-red-500 text-sm">{error}</p>;
 
   return (
-    <div className=''>
+    <div>
       <h2 className="text-lg font-semibold text-font-shade mb-5">Projects</h2>
 
       {projects.length === 0 ? (

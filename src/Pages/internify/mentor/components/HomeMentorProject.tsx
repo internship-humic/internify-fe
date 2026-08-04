@@ -28,8 +28,8 @@ const HomeMentorProject = () => {
 
     
     return (
-        <div className='flex flex-col'>
-            <div className='flex flex-row justify-between mb-3 items-center'>
+        <div className='flex flex-col box'>
+            <div className='flex flex-row justify-between mb-5 items-center'>
                 <h2 className="text-lg font-semibold text-gray-800">Projects</h2>
                 <button
                     className='bg-card p-1.5 rounded-lg font-bold hover:bg-card-hover border border-card-outline'
