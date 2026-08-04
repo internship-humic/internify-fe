@@ -10,7 +10,7 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
   const nav = useNavigate();
   const { user } = useCurrentUser();
   const [imageError, setImageError] = useState(false);
-  const { unreadCount } = useNotifications();
+  const { hasUnreadNotifications } = useNotifications();
   const photoUrl = resolveFileUrl(user?.profile_picture);
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
       <div className="flex flex-row gap-6 items-center">
         <button onClick={() => nav("notifications")} className="relative">
           <Bell className="w-5 h-5 hover:text-red-800"/>
-          {unreadCount > 0 && (
+          {hasUnreadNotifications && (
             <span className="absolute -top-1 -right-0.5 w-2.5 h-2.5 bg-red-600 rounded-full border-2 border-white" />
           )}
         </button>

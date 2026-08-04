@@ -19,35 +19,97 @@ export const useNotifications = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  useEffect(() => { refetch(); }, [refetch]);
+  useEffect(() => {
+    refetch();
+
+    const handleNotificationUpdate = () => {
+      refetch();
+    };
+
+    window.addEventListener("notifications-updated", handleNotificationUpdate);
+
+    return () => {
+      window.removeEventListener(
+        "notifications-updated",
+        handleNotificationUpdate,
+      );
+    };
+  }, [refetch]);
 
   const markAllRead = async () => {
     try {
       const { message } = await markAllAsRead();
-      setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
-      return { success: true as const, message };
+
+      setNotifications((prev) =>
+        prev.map((notification) => ({
+          ...notification,
+          is_read: true,
+        })),
+      );
+
+      window.dispatchEvent(new Event("notifications-updated"));
+
+      return {
+        success: true as const,
+        message,
+      };
     } catch (err: any) {
-      const msg = err?.response?.data?.message ?? "Gagal menandai semua notifikasi.";
+      const msg =
+        err?.response?.data?.message ?? "Gagal menandai semua notifikasi.";
+
       setError(msg);
-      return { success: false as const, message: msg };
+
+      return {
+        success: false as const,
+        message: msg,
+      };
     }
   };
 
   const markOneRead = async (id: number) => {
     try {
       const { message } = await markAsRead(id);
-      setNotifications(prev =>
-        prev.map(n => n.id === id ? { ...n, is_read: true } : n)
+
+      setNotifications((prev) =>
+        prev.map((notification) =>
+          notification.id === id
+            ? { ...notification, is_read: true }
+            : notification,
+        ),
       );
-      return { success: true as const, message };
+
+      window.dispatchEvent(new Event("notifications-updated"));
+
+      return {
+        success: true as const,
+        message,
+      };
     } catch (err: any) {
       const msg = err?.response?.data?.message ?? "Gagal menandai notifikasi.";
+
       setError(msg);
-      return { success: false as const, message: msg };
+
+      return {
+        success: false as const,
+        message: msg,
+      };
     }
   };
+  //notifikasi di header, jika ada notifikasi yang belum dibaca maka akan muncul titik merah di icon bell
+  const hasUnreadNotifications = notifications.some(
+    (notification) => !notification.is_read,
+  );
+  //jumlah notifikasi yang belum dibaca
+  const unreadCount = notifications.filter((n) => !n.is_read).length;
 
-  const unreadCount = notifications.filter(n => !n.is_read).length;
-
-  return { notifications, unreadCount, loading, error, refetch, markAllRead, markOneRead };
+  return {
+    notifications,
+    unreadCount,
+    hasUnreadNotifications,
+    loading,
+    error,
+    refetch,
+    markAllRead,
+    markOneRead,
+  };
 };
